@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaezi.bus.financialAffairs.dao.StandardInvoiceOutInfoDao">
+
+    <resultMap id="standardInvoiceOutInfo" type="com.jaezi.bus.financialAffairs.model.StandardInvoiceOutInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_voucher" property="materialVoucher" jdbcType="INTEGER"/>
+        <result column="voucher_project" property="voucherProject" jdbcType="INTEGER"/>
+        <result column="material" property="material" jdbcType="INTEGER"/>
+        <result column="material_describe" property="materialDescribe" jdbcType="VARCHAR"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="hong_project" property="hongProject" jdbcType="INTEGER"/>
+        <result column="interim_invoice_number" property="interimInvoiceNumber" jdbcType="INTEGER"/>
+        <result column="purchase_order" property="purchaseOrder" jdbcType="INTEGER"/>
+        <result column="quantity" property="quantity" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bsioi.id,bsioi.material_voucher,bsioi.voucher_project,bsioi.material,sm.material_description as material_describe,
+        bsioi.supplier_code,bsioi.hong_project,bsioi.interim_invoice_number,bsioi.purchase_order,bsioi.quantity
+      </sql>
+
+    <!-- 查询标准物资开票信息-->
+    <select id="findAll" resultMap="standardInvoiceOutInfo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_standard_invoice_out_info bsioi
+        LEFT JOIN sys_material sm ON bsioi.material = sm.material_number
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bsioi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bsioi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bsioi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="interimInvoiceNumber != null and interimInvoiceNumber != ''">
+                AND bsioi.interim_invoice_number = #{interimInvoiceNumber}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询标准物资开票信息-->
+    <select id="getAllVos" resultMap="standardInvoiceOutInfo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_standard_invoice_out_info bsioi
+        LEFT JOIN sys_material sm ON bsioi.material = sm.material_number
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                bsioi.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bsioi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bsioi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bsioi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="interimInvoiceNumber != null and interimInvoiceNumber != ''">
+                AND bsioi.interim_invoice_number = #{interimInvoiceNumber}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询标准物资开票信息-->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="standardInvoiceOutInfo">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_standard_invoice_out_info
+        WHERE id = #{id}
+    </select>
+
+    <!-- 删除标准物资开票信息-->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM bus_standard_invoice_out_info WHERE id = #{id}
+    </delete>
+
+    <!-- 根据临时订单号删除 标准物资开票-->
+    <delete id="deleteByInterimInvoiceNumber" parameterType="java.lang.Integer">
+        DELETE FROM bus_standard_invoice_out_info WHERE interim_invoice_number = #{interimInvoiceNumber}
+    </delete>
+
+    <!-- 根据临时发票号查询 -->
+    <select id="findByInterimInvoiceNumber" parameterType="java.lang.Integer"
+            resultType="com.jaezi.bus.financialAffairs.model.StandardInvoiceOutInfo">
+        select * FROM bus_standard_invoice_out_info WHERE interim_invoice_number = #{interimInvoiceNumber}
+    </select>
+
+    <!-- 添加标准物资开票信息-->
+    <insert id="add" parameterType="com.jaezi.bus.financialAffairs.model.StandardInvoiceOutInfo">
+        INSERT INTO bus_standard_invoice_out_info(material_voucher,voucher_project,material,supplier_code,hong_project,interim_invoice_number,
+        purchase_order,quantity)
+        VALUES(#{materialVoucher}, #{voucherProject}, #{material},#{supplierCode},#{hongProject},#{interimInvoiceNumber},
+        #{purchaseOrder},#{quantity})
+    </insert>
+
+    <!-- 更新标准物资开票信息-->
+    <update id="update" parameterType="com.jaezi.bus.financialAffairs.model.StandardInvoiceOutInfo">
+        UPDATE bus_standard_invoice_out_info
+        SET
+        <trim suffixOverrides=",">
+            <if test="materialVoucher != null and materialVoucher != ''">material_voucher = #{materialVoucher},</if>
+            <if test="voucherProject != null and voucherProject != ''">voucher_project = #{voucherProject},</if>
+            <if test="material != null and material != ''">material = #{material},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="hongProject != null and hongProject != ''">hong_project = #{hongProject},</if>
+            <if test="interimInvoiceNumber != null and interimInvoiceNumber != ''">interim_invoice_number = #{interimInvoiceNumber},</if>
+            <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
+            <if test="quantity != null and quantity != ''">quantity = #{quantity},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+</mapper>

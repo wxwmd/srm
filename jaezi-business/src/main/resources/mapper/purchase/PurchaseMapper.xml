@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaezi.bus.purchase.dao.PurchaseDao">
+
+    <resultMap id="purchase" type="com.jaezi.bus.purchase.model.Purchase">
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="un_description" property="unDescription" jdbcType="VARCHAR"/>
+        <result column="un_description_input" property="unDescriptionInput" jdbcType="VARCHAR"/>
+        <result column="urgent" property="urgent" jdbcType="BIT"/>
+        <result column="plant" property="plant" jdbcType="VARCHAR"/>
+        <result column="release_reason" property="releaseReason" jdbcType="VARCHAR"/>
+        <result column="p_order" property="pOrder" jdbcType="VARCHAR"/>
+        <result column="project" property="project" jdbcType="VARCHAR"/>
+        <result column="material_number" property="materialNumber" jdbcType="VARCHAR"/>
+        <result column="material_name" property="materialName" jdbcType="VARCHAR"/>
+        <result column="component_identity" property="componentIdentity" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="identity_information" property="identityInformation" jdbcType="VARCHAR"/>
+        <result column="qty" property="qty" jdbcType="DECIMAL"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="delivery_date" property="deliveryDate" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+        <result column="order_reason" property="orderReason" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="material_description" property="materialDescription" jdbcType="VARCHAR"/>
+        <result column="rescheduled_date" property="rescheduledDate" jdbcType="VARCHAR"/>
+        <result column="order_qty" property="orderQty" jdbcType="DECIMAL"/>
+        <result column="delivered_qty" property="deliveredQty" jdbcType="DECIMAL"/>
+        <result column="def_qty" property="defQty" jdbcType="DECIMAL"/>
+        <result column="is_satisfy" property="isSatisfy" jdbcType="VARCHAR"/>
+        <result column="qty1" property="qty1" jdbcType="DECIMAL"/>
+        <result column="delivery_date1" property="deliveryDate1" jdbcType="VARCHAR"/>
+        <result column="qty2" property="qty2" jdbcType="DECIMAL"/>
+        <result column="delivery_date2" property="deliveryDate2" jdbcType="VARCHAR"/>
+        <result column="qty3" property="qty3" jdbcType="DECIMAL"/>
+        <result column="delivery_date3" property="deliveryDate3" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="receiving_number" jdbcType="INTEGER" property="receivingNumber"/>
+        <result column="al_loading_shipment_number" jdbcType="INTEGER" property="alLoadingShipmentNumber"/>
+        <result column="inventory_matching" jdbcType="INTEGER" property="inventoryMatching"/>
+        <result column="storage_location" jdbcType="VARCHAR" property="storageLocation"/>
+        <result column="dimension_size" jdbcType="VARCHAR" property="dimensionSize"/>
+        <result column="purchase_group" jdbcType="VARCHAR" property="purchaseGroup"/>
+        <result column="supplier_material" jdbcType="VARCHAR" property="supplierMaterial"/>
+        <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+        <result column="contact_information" jdbcType="VARCHAR" property="contactInformation"/>
+        <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+        <result column="adjust_type" jdbcType="INTEGER" property="adjustType"/>
+        <result column="qm_status" jdbcType="VARCHAR" property="qmStatus"/>
+        <result column="unqualified_qty" jdbcType="DECIMAL" property="unqualifiedQty"/>
+        <result column="purchase_credentials" jdbcType="VARCHAR" property="purchaseCredentials"/>
+        <result column="audit_status" jdbcType="VARCHAR" property="auditStatus"/>
+        <result column="read_date" jdbcType="VARCHAR" property="readDate"/>
+        <result column="delivery_confirm" jdbcType="VARCHAR" property="deliveryConfirm"/>
+        <result column="shipment_info" jdbcType="VARCHAR" property="shipmentInfo"/>
+        <result column="receive_status" jdbcType="VARCHAR" property="receiveStatus"/>
+        <result column="receive_amount" jdbcType="INTEGER" property="receiveAmount"/>
+        <result column="quality_testing_status" jdbcType="VARCHAR" property="qualityTestingStatus"/>
+        <result column="qtnop" jdbcType="INTEGER" property="qtnop"/>
+        <result column="order_explanation" jdbcType="VARCHAR" property="orderExplanation"/>
+    </resultMap>
+
+    <resultMap id="purchaseVo" type="com.jaezi.bus.purchase.vo.PurchaseVo">
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="un_description" property="unDescription" jdbcType="VARCHAR"/>
+        <result column="un_description_input" property="unDescriptionInput" jdbcType="VARCHAR"/>
+        <result column="urgent" property="urgent" jdbcType="BIT"/>
+        <result column="plant" property="plant" jdbcType="VARCHAR"/>
+        <result column="release_reason" property="releaseReason" jdbcType="VARCHAR"/>
+        <result column="p_order" property="pOrder" jdbcType="VARCHAR"/>
+        <result column="project" property="project" jdbcType="VARCHAR"/>
+        <result column="material_number" property="materialNumber" jdbcType="VARCHAR"/>
+        <result column="material_name" property="materialName" jdbcType="VARCHAR"/>
+        <result column="component_identity" property="componentIdentity" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="identity_information" property="identityInformation" jdbcType="VARCHAR"/>
+        <result column="qty" property="qty" jdbcType="DECIMAL"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="delivery_date" property="deliveryDate" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+        <result column="order_reason" property="orderReason" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="material_description" property="materialDescription" jdbcType="VARCHAR"/>
+        <result column="rescheduled_date" property="rescheduledDate" jdbcType="VARCHAR"/>
+        <result column="order_qty" property="orderQty" jdbcType="DECIMAL"/>
+        <result column="delivered_qty" property="deliveredQty" jdbcType="DECIMAL"/>
+        <result column="def_qty" property="defQty" jdbcType="DECIMAL"/>
+        <result column="is_satisfy" property="isSatisfy" jdbcType="VARCHAR"/>
+        <result column="qty1" property="qty1" jdbcType="DECIMAL"/>
+        <result column="delivery_date1" property="deliveryDate1" jdbcType="VARCHAR"/>
+        <result column="qty2" property="qty2" jdbcType="DECIMAL"/>
+        <result column="delivery_date2" property="deliveryDate2" jdbcType="VARCHAR"/>
+        <result column="qty3" property="qty3" jdbcType="DECIMAL"/>
+        <result column="delivery_date3" property="deliveryDate3" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="receiving_number" jdbcType="INTEGER" property="receivingNumber"/>
+        <result column="al_loading_shipment_number" jdbcType="INTEGER" property="alLoadingShipmentNumber"/>
+        <result column="inventory_matching" jdbcType="INTEGER" property="inventoryMatching"/>
+        <result column="storage_location" jdbcType="VARCHAR" property="storageLocation"/>
+        <result column="dimension_size" jdbcType="VARCHAR" property="dimensionSize"/>
+        <result column="purchase_group" jdbcType="VARCHAR" property="purchaseGroup"/>
+        <result column="supplier_material" jdbcType="VARCHAR" property="supplierMaterial"/>
+        <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+        <result column="contact_information" jdbcType="VARCHAR" property="contactInformation"/>
+        <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+        <result column="adjust_type" jdbcType="INTEGER" property="adjustType"/>
+        <result column="qm_status" jdbcType="VARCHAR" property="qmStatus"/>
+        <result column="unqualified_qty" jdbcType="DECIMAL" property="unqualifiedQty"/>
+        <result column="purchase_credentials" jdbcType="VARCHAR" property="purchaseCredentials"/>
+        <result column="audit_status" jdbcType="VARCHAR" property="auditStatus"/>
+        <result column="colorStatus" jdbcType="VARCHAR" property="colorStatus"/>
+        <result column="read_date" jdbcType="VARCHAR" property="readDate"/>
+        <result column="delivery_confirm" jdbcType="VARCHAR" property="deliveryConfirm"/>
+        <result column="shipment_info" jdbcType="VARCHAR" property="shipmentInfo"/>
+        <result column="receive_status" jdbcType="VARCHAR" property="receiveStatus"/>
+        <result column="receive_amount" jdbcType="INTEGER" property="receiveAmount"/>
+        <result column="quality_testing_status" jdbcType="VARCHAR" property="qualityTestingStatus"/>
+        <result column="qtnop" jdbcType="INTEGER" property="qtnop"/>
+        <result column="order_explanation" jdbcType="VARCHAR" property="orderExplanation"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bp.`type`, bp.status, bp.un_description,bp.un_description_input, bp.urgent, bp.plant, bp.release_reason, bp.p_order, bp.project,
+        bp.material_number, sm.material_name, bp.component_identity, bp.version, bp.identity_information,
+        bp.qty, bp.unit, bp.delivery_date, bp.create_date, bp.order_reason, bp.price,
+        bp.supplier_code,
+        bp.rescheduled_date,
+        bp.order_qty,
+        bp.delivered_qty,
+        bp.def_qty,
+        bp.is_satisfy,
+        bp.qty1,
+        bp.delivery_date1,
+        bp.qty2,
+        bp.delivery_date2,
+        bp.qty3,
+        bp.delivery_date3,
+        bp.remark,
+        bp.loading_shipment_date,
+        bp.receiving_number,
+        bp.al_loading_shipment_number,
+        bp.inventory_matching,
+        bp.storage_location,
+        bp.dimension_size,
+        bp.purchase_group,
+        bp.supplier_material,
+        bp.purchase_person,
+        bp.contact_information,
+        bp.company_address,bp.adjust_type,bp.qm_status,bp.unqualified_qty,bp.purchase_credentials,bp.audit_status,
+        bp.read_date,bp.delivery_confirm,bp.shipment_info,bp.receive_status,bp.receive_amount,bp.quality_testing_status,
+        bp.qtnop,bp.order_explanation
+    </sql>
+
+    <!-- 查询所有采购订单列表 -->
+    <select id="getAllVos" resultMap="purchaseVo" parameterType="java.util.Map">
+        select
+        <include refid="base_column"/>,sm.material_description,
+        CASE
+        WHEN
+        CURDATE() = bp.create_date AND bp.status IS NULL
+        THEN
+        'yellow'
+        WHEN
+        status = 0 OR (CURDATE() &gt; bp.create_date AND status IS NULL)
+        THEN
+        'red'
+        ELSE
+        'yellow'
+        END AS colorStatus
+        FROM bus_purchase bp
+        LEFT JOIN sys_material sm ON bp.material_number = sm.material_number
+        <if test="(factoryColorStatus != null and factoryColorStatus != '') or (postponeColorStatus != null and postponeColorStatus != '')">
+            INNER JOIN bus_loading_record blr ON bp.p_order = blr.purchase_order AND bp.project = blr.line_item
+        </if>
+        <where>
+            <if test="pOrder != null and pOrder != ''">
+                bp.p_order = #{pOrder}
+            </if>
+            <if test="releaseReason != null and releaseReason != ''">
+                AND bp.release_reason = #{releaseReason}
+            </if>
+            <if test="status != null and status != ''">
+                <choose>
+                    <when test="status == '0'.toString()">
+                        AND (bp.status IS NULL OR bp.status = #{status})
+                    </when>
+                    <otherwise>
+                        AND bp.status = #{status}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND bp.supplier_code = #{supplierCode}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bp.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description LIKE CONCAT('%',#{materialDescription},'%')
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bp.plant LIKE CONCAT('%',#{plant},'%')
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bp.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bp.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND bp.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="colorStatus == 1">
+                AND CURDATE() = bp.create_date AND bp.status IS NULL
+            </if>
+            <if test="colorStatus == 2">
+                <!-- and CURDATE() &gt; bp.create_date and (bp.status = 0 or (bp.status = 1 and bp.un_description != '')) -->
+                AND (status = 0 OR (CURDATE() &gt; create_date AND status IS NULL))
+            </if>
+            <if test="factoryColorStatus == 1">
+                AND CURDATE() = blr.factory_time AND bp.receiving_number != bp.qty
+            </if>
+            <if test="factoryColorStatus == 2">
+                AND CURDATE() &gt; blr.factory_time AND bp.receiving_number != bp.qty
+            </if>
+            <if test="postponeColorStatus == 1">
+                AND CURDATE() = blr.factory_time AND (blr.remaining_quantity > 0 OR blr.remaining_quantity = NULL)
+            </if>
+            <if test="postponeColorStatus == 2">
+                AND CURDATE() &gt; blr.factory_time AND (blr.remaining_quantity > 0 OR blr.remaining_quantity = NULL)
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询一个采购订单 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="purchase">
+        select
+        <include refid="base_column"/>
+        from bus_purchase bp
+        LEFT JOIN sys_material sm ON bp.material_number = sm.material_number
+        where bp.id = #{id}
+    </select>
+
+    <!-- 删除采购订单 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+    <!-- 添加采购订单 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Purchase">
+
+    </insert>
+
+    <!-- 批量添加采购订单 -->
+    <insert id="save">
+        INSERT IGNORE bus_purchase (`type`, status, un_description, un_description_input, urgent, plant, release_reason,
+        p_order, project,
+        material_number, component_identity, version, identity_information,
+        qty, unit, delivery_date, create_date, order_reason, price,
+        supplier_code,
+        rescheduled_date,
+        order_qty,
+        delivered_qty,
+        def_qty,
+        is_satisfy,
+        qty1,
+        delivery_date1,
+        qty2,
+        delivery_date2,
+        qty3,
+        delivery_date3,
+        remark,
+        loading_shipment_date,
+        receiving_number,
+        al_loading_shipment_number,
+        inventory_matching,
+        storage_location,
+        dimension_size,
+        purchase_group,
+        supplier_material,
+        purchase_person,
+        contact_information,
+        company_address,adjust_type,qm_status,unqualified_qty,purchase_credentials,
+        read_date,delivery_confirm,shipment_info,receive_status,receive_amount,quality_testing_status,
+        qtnop,order_explanation)
+        VALUES
+        <foreach collection="purchaseList" item="item" index="index" separator=",">
+            (#{item.type},#{item.status},#{item.unDescription},
+            #{item.urgent},#{item.plant},#{item.releaseReason},#{item.pOrder},
+            #{item.project},#{item.materialNumber},
+            #{item.componentIdentity},#{item.version},#{item.identityInformation},#{item.qty},
+            #{item.unit},#{item.deliveryDate},#{item.createDate},
+            #{item.orderReason},#{item.price},#{item.supplierCode},
+            #{item.rescheduledDate},#{item.orderQty},#{item.deliveredQty},
+            #{item.defQty},#{item.isSatisfy},#{item.qty1},#{item.deliveryDate1},
+            #{item.qty2},#{item.deliveryDate2},#{item.qty3},
+            #{item.deliveryDate3},#{item.remark},#{item.loadingShipmentDate},#{item.receivingNumber},
+            #{item.alLoadingShipmentNumber},#{item.inventoryMatching},#{item.storageLocation},
+            #{item.dimensionSize},#{item.purchaseGroup},#{item.supplierMaterial},#{item.purchasePerson},
+            #{item.contactInformation},#{item.companyAddress},#{item.adjustType},#{item.qmStatus},#{item.unqualifiedQty},
+            #{item.purchaseCredentials},#{item.readDate},#{item.deliveryConfirm},#{item.shipmentInfo},#{item.receiveStatus},
+            #{item.receiveAmount},#{item.qualityTestingStatus},#{item.qtnop},#{item.orderExplanation})
+        </foreach>
+    </insert>
+
+    <!-- 更新采购订单 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Purchase">
+        UPDATE bus_purchase
+        SET
+        <trim suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="unDescription != null and unDescription != ''">un_description = #{unDescription},</if>
+            <if test="unDescriptionInput != null and unDescriptionInput != ''">un_description_input =
+                #{unDescriptionInput},
+            </if>
+            <if test="urgent != null and urgent != ''">urgent = #{urgent},</if>
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="releaseReason != null and releaseReason != ''">release_reason = #{releaseReason},</if>
+            <if test="pOrder != null and pOrder != ''">p_order = #{pOrder},</if>
+            <if test="project != null and project != ''">project = #{project},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="componentIdentity != null and componentIdentity != ''">component_identity =
+                #{componentIdentity},
+            </if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="identityInformation != null and identityInformation != ''">identity_information =
+                #{identityInformation},
+            </if>
+            <if test="qty != null and qty != ''">qty = #{qty},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">delivery_date = #{deliveryDate},</if>
+            <if test="createDate != null and createDate != ''">create_date = #{createDate},</if>
+            <if test="orderReason != null and orderReason != ''">order_reason = #{orderReason},</if>
+            <if test="price != null and price != ''">price = #{price},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="rescheduledDate != null and rescheduledDate != ''">rescheduled_date = #{rescheduledDate},</if>
+            <if test="orderQty != null and orderQty != ''">order_qty = #{orderQty},</if>
+            <if test="deliveredQty != null and deliveredQty != ''">delivered_qty = #{deliveredQty},</if>
+            <if test="defQty != null and defQty != ''">def_qty = #{defQty},</if>
+            <if test="isSatisfy != null and isSatisfy != ''">is_satisfy = #{isSatisfy},</if>
+            <if test="qty1 != null and qty1 != ''">qty1 = #{qty1},</if>
+            <if test="deliveryDate1 != null and deliveryDate1 != ''">delivery_date1 = #{deliveryDate1},</if>
+            <if test="qty2 != null and qty2 != ''">qty2 = #{qty2},</if>
+            <if test="deliveryDate2 != null and deliveryDate2 != ''">delivery_date2 = #{deliveryDate2},</if>
+            <if test="qty3 != null and qty3 != ''">qty3 = #{qty3},</if>
+            <if test="deliveryDate3 != null and deliveryDate3 != ''">delivery_date3 = #{deliveryDate3},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="loadingShipmentDate != null and loadingShipmentDate != ''">loading_shipment_date =
+                #{loadingShipmentDate},
+            </if>
+            <if test="receivingNumber != null and receivingNumber != ''">receiving_number = #{receivingNumber},</if>
+            <if test="alLoadingShipmentNumber != null and alLoadingShipmentNumber != ''">al_loading_shipment_number =
+                #{alLoadingShipmentNumber},
+            </if>
+            <if test="inventoryMatching != null and inventoryMatching != ''">inventory_matching =
+                #{inventoryMatching},
+            </if>
+            <if test="storageLocation != null and storageLocation != ''">storage_location = #{storageLocation},</if>
+            <if test="dimensionSize != null and dimensionSize != ''">dimension_size = #{dimensionSize},</if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">purchase_group = #{purchaseGroup},</if>
+            <if test="supplierMaterial != null and supplierMaterial != ''">supplier_material = #{supplierMaterial},</if>
+            <if test="purchasePerson != null and purchasePerson != ''">purchase_person = #{purchasePerson},</if>
+            <if test="contactInformation != null and contactInformation != ''">contact_information =
+                #{contactInformation},
+            </if>
+            <if test="companyAddress != null and companyAddress != ''">company_address = #{companyAddress},</if>
+            <if test="adjustType != null and adjustType != ''">adjust_type = #{adjustType},</if>
+            <if test="auditStatus != null and auditStatus != ''">audit_status = #{auditStatus},</if>
+            <if test="readDate != null and readDate != ''">read_date = #{readDate},</if>
+            <if test="deliveryConfirm != null and deliveryConfirm != ''">delivery_confirm = #{deliveryConfirm},</if>
+            <if test="shipmentInfo != null and shipmentInfo != ''">shipment_info = #{shipmentInfo},</if>
+            <if test="receiveStatus != null and receiveStatus != ''">receive_status = #{receiveStatus},</if>
+            <if test="receiveAmount != null and receiveAmount != ''">receive_amount = #{receiveAmount},</if>
+            <if test="qualityTestingStatus != null and qualityTestingStatus != ''">quality_testing_status =
+                #{qualityTestingStatus},
+            </if>
+            <if test="qtnop != null and qtnop != ''">qtnop = #{qtnop},</if>
+            <if test="orderExplanation != null and orderExplanation != ''">order_explanation = #{orderExplanation},</if>
+        </trim>
+        WHERE p_order = #{pOrder} AND project = #{project}
+    </update>
+
+    <!-- 根据采购订单号查询采购订单列表 -->
+    <select id="selectUnAffirm" resultType="java.lang.Integer">
+        SELECT count(1) FROM bus_purchase
+        <where>
+            <!-- and supplier_code = #{supplierCode} -->
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="colorStatus == 1">
+                AND status = 0
+            </if>
+            <if test="colorStatus == 2">
+                AND (status = 0 OR (status = 1 AND un_description != ''))
+            </if>
+        </where>
+    </select>
+
+    <!-- 获得对应状态 -->
+    <select id="unconfirmed" resultType="java.lang.Integer">
+        SELECT count(1) FROM bus_purchase WHERE (status = 0 OR status IS NULL)
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+    </select>
+
+    <!-- 订单未确认条数 -->
+    <select id="getByPurOrderAndMatNum" resultMap="purchase">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_purchase bp
+        <where>
+            <if test="pOrder != null and pOrder != ''">
+                bp.p_order = #{pOrder}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bp.material_number = #{materialNumber}
+            </if>
+        </where>
+    </select>
+
+</mapper>

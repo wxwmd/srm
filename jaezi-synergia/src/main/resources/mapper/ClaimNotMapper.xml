@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.ClaimNoteDao">
+    <resultMap id="claimNote" type="com.jaezi.synergia.model.ClaimNote">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="server_number" jdbcType="VARCHAR" property="serverNumber"/>
+        <result column="materials_expense" jdbcType="DECIMAL" property="materialsExpense"/>
+        <result column="man_hour_expense" jdbcType="DECIMAL" property="manHourExpense"/>
+        <result column="travel_expense" jdbcType="DECIMAL" property="travelExpense"/>
+        <result column="other_expenses" jdbcType="DECIMAL" property="otherExpenses"/>
+        <result column="amount" jdbcType="DECIMAL" property="amount"/>
+        <result column="is_pay" jdbcType="INTEGER" property="isPay"/>
+        <result column="info_id" jdbcType="INTEGER" property="infoId"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="claimNoteVo" type="com.jaezi.synergia.vo.ClaimNoteVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="server_number" jdbcType="VARCHAR" property="serverNumber"/>
+        <result column="materials_expense" jdbcType="DECIMAL" property="materialsExpense"/>
+        <result column="man_hour_expense" jdbcType="DECIMAL" property="manHourExpense"/>
+        <result column="travel_expense" jdbcType="DECIMAL" property="travelExpense"/>
+        <result column="other_expenses" jdbcType="DECIMAL" property="otherExpenses"/>
+        <result column="amount" jdbcType="DECIMAL" property="amount"/>
+        <result column="is_pay" jdbcType="INTEGER" property="isPay"/>
+        <result column="info_id" jdbcType="INTEGER" property="infoId"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="info" type="com.jaezi.synergia.model.Info">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="reply_id" jdbcType="INTEGER" property="replyId"/>
+        <result column="sender" jdbcType="VARCHAR" property="sender"/>
+        <result column="recipient" jdbcType="VARCHAR" property="recipient"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="sender_status" jdbcType="INTEGER" property="senderStatus"/>
+        <result column="sender_read_status" jdbcType="INTEGER" property="senderReadStatus"/>
+        <result column="recipient_status" jdbcType="INTEGER" property="recipientStatus"/>
+        <result column="recipient_read_status" jdbcType="INTEGER" property="recipientReadStatus"/>
+        <result column="accessory_collection" jdbcType="VARCHAR" property="accessoryCollection"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+    </resultMap>
+
+    <sql id="base_column">
+        scn.id,
+        scn.server_number,
+        scn.materials_expense,
+        scn.man_hour_expense,
+        scn.travel_expense,
+        scn.other_expenses,
+        scn.amount,
+        scn.is_pay,
+        scn.info_id,
+        scn.supplier_code,
+        scn.create_time,
+        scn.create_user,
+        scn.document_url,
+        scn.document_name
+    </sql>
+
+    <!-- 查询所有索赔信息 -->
+    <select id="getAllVos" resultMap="claimNote" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_claim_note scn
+        <where>
+            <if test="serverNumber != null and serverNumber != ''">
+                scn.server_number LIKE CONCAT('%',#{serverNumber},'%')
+            </if>
+            <if test="isPay != null and isPay != ''">
+                AND scn.is_pay = #{isPay}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND scn.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND scn.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+        </where>
+        ORDER BY scn.create_time DESC
+    </select>
+
+    <!-- 根据ID 获取索赔信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="claimNoteVo">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_claim_note scn WHERE scn.id = #{id}
+    </select>
+
+    <sql id="info_column">
+        si.id,
+        si.reply_id,
+        si.sender,
+        si.recipient,
+        si.title,
+        si.`type`,
+        si.content,
+        si.sender_status,
+        si.sender_read_status,
+        si.recipient_status,
+        CASE
+        WHEN
+        #{realName}
+        =
+        si.sender
+        THEN
+        si.sender_status
+        WHEN
+        #{realName}
+        =
+        si.recipient
+        THEN
+        si.recipient_read_status
+        END
+        AS recipient_read_status,
+        si.accessory_collection,
+        si.create_user,
+        si.create_time
+    </sql>
+
+    <!-- 根据回复ID查询信息列表 -->
+    <select id="getInfoByInfoId" resultMap="info">
+        SELECT
+        <include refid="info_column"></include>
+        FROM sys_info si
+        <where>
+            si.reply_id = #{replyId} OR si.id = #{replyId}
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 添加一个索赔信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.ClaimNote">
+        INSERT INTO syn_claim_note(server_number, materials_expense,
+                                   man_hour_expense, travel_expense, other_expenses, amount, info_id, is_pay,
+                                   supplier_code, create_time, create_user,document_url,document_name)
+        VALUES (#{serverNumber}, #{materialsExpense}, #{manHourExpense}, #{travelExpense},
+                #{otherExpenses}, #{amount}, #{infoId}, #{isPay}, #{supplierCode}, #{createTime},
+                #{createUser},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改索赔信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.ClaimNote">
+        UPDATE syn_claim_note
+        SET
+        <trim suffixOverrides=",">
+            <if test="serverNumber != null and serverNumber != ''">server_number = #{serverNumber},</if>
+            <if test="materialsExpense != null ">materials_expense = #{materialsExpense},</if>
+            <if test="manHourExpense != null ">man_hour_expense = #{manHourExpense},</if>
+            <if test="travelExpense != null ">travel_expense = #{travelExpense},</if>
+            <if test="otherExpenses != null ">other_expenses = #{otherExpenses},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="infoId != null ">info_id = #{infoId},</if>
+            <if test="isPay != null ">is_pay = #{isPay},</if>
+            <if test="supplierCode != null ">supplier_code = #{supplierCode},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null ">create_user = #{createUser},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个索赔信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM syn_claim_note
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据信息交流ID删除信息 -->
+    <delete id="deleteInfoByInfoId">
+        DELETE
+        FROM sys_info
+        WHERE id = #{infoId}
+    </delete>
+
+    <!-- 根据回复ID删除信息 -->
+    <delete id="deleteInfoByReplyId">
+        DELETE
+        FROM sys_info
+        WHERE reply_id = #{replyId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.supplierQuality.dao.MidQmFeedbackTablePersonDao">
+    <resultMap id="midQmFeedbackTablePerson" type="com.jaezi.bus.supplierQuality.model.MidQmFeedbackTablePerson">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="person_id" jdbcType="INTEGER" property="personId"/>
+        <result column="qm_feedbacktable_id" jdbcType="INTEGER" property="qmFeedbackTableId"/>
+    </resultMap>
+
+    <resultMap id="midQmFeedbackTablePersonVo" type="com.jaezi.bus.supplierQuality.vo.MidQmFeedbackTablePersonVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        mqfp.id,
+        mqfp.person_id,
+        mqfp.qm_feedbacktable_id
+    </sql>
+
+    <!-- 查询所有qm反馈单人员中间表信息 -->
+    <select id="getAllVos" resultMap="midQmFeedbackTablePerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_qm_feedbacktable_person mqfp
+        <where>
+            <if test="personId != null and personId != ''">
+                mqf.person_id = #{personId}
+            </if>
+            <if test="qmFeedbackTableId != null and qmFeedbackTableId != ''">
+                AND mqf.qm_feedbacktable_id = #{qmFeedbackTableId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据qm反馈单id查询集合 -->
+    <select id="getListByQmFeedbackTableId" resultMap="midQmFeedbackTablePerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_qm_feedbacktable_person mqfp
+        WHERE mqfp.qm_feedbacktable_id =#{qmFeedbackTableId}
+    </select>
+
+    <!-- 查询所有qm反馈单人员中间表信息 -->
+    <select id="getAll" resultMap="midQmFeedbackTablePerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_qm_feedbacktable_person mqfp
+        <where>
+            <if test="personId != null and personId != ''">
+                mqfp.person_id = #{personId}
+            </if>
+            <if test="qmFeedbackTableId != null and qmFeedbackTableId != ''">
+                AND mqfp.qm_feedbacktable_id = #{qmFeedbackTableId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取qm反馈单人员中间表信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="midQmFeedbackTablePerson">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_qm_feedbacktable_person mqfp
+        WHERE mqfp.id = #{id}
+    </select>
+
+    <!-- 添加qm反馈单人员中间表信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.supplierQuality.model.MidQmFeedbackTablePerson">
+        INSERT INTO mid_qm_feedbacktable_person(person_id,
+        qm_feedbacktable_id)
+        VALUES(#{personId}, #{qmFeedbackTableId})
+    </insert>
+
+    <!-- 修改qm反馈单人员中间表信息 -->
+    <update id="update" parameterType="com.jaezi.bus.supplierQuality.model.MidQmFeedbackTablePerson">
+        UPDATE mid_qm_feedbacktable_person(person_id
+        SET
+        <trim suffixOverrides=",">
+            <if test="personId != null and personId != ''">person_id = #{personId},</if>
+            <if test="qmFeedbackTableId != null and qmFeedbackTableId != ''">qm_feedbacktable_id = #{qmFeedbackTableId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 修改qm反馈单人员中间表数据 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM mid_qm_feedbacktable_person WHERE id = #{id}
+    </delete>
+
+    <!-- 修改qm反馈单人员中间表数据 -->
+    <delete id="deleteListByQmFeedbackTableId" parameterType="java.lang.Integer">
+        DELETE FROM mid_qm_feedbacktable_person WHERE qm_feedbacktable_id = #{qmFeedBackTableId}
+    </delete>
+
+</mapper>

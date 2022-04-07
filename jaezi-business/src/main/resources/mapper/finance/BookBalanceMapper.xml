@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.finance.dao.BookBalanceDao">
+    <resultMap id="bookBalance" type="com.jaezi.bus.finance.model.BookBalance">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="date" jdbcType="VARCHAR" property="date"/>
+        <result column="book_balance" jdbcType="INTEGER" property="bookBalance"/>
+        <result column="subject" jdbcType="INTEGER" property="subject"/>
+        <result column="lenders" jdbcType="VARCHAR" property="lenders"/>
+    </resultMap>
+
+    <resultMap id="bookBalanceVo" type="com.jaezi.bus.finance.vo.BookBalanceVo">
+    </resultMap>
+
+    <sql id="base_column">
+        bbb.id,
+        bbb.company,
+        bbb.`date`,
+        bbb.book_balance,
+        bbb.subject,
+        bbb.lenders
+    </sql>
+
+    <!-- 查询所有实际付款情况信息 -->
+    <select id="getAllVos" resultMap="bookBalance" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_book_balance bbb
+        <where>
+            <if test="company != null and company != ''">
+                bbb.company = #{company}
+            </if>
+            <if test="date != null and date != ''">
+                AND bbb.`date` = #{accdateountingYear}
+            </if>
+            <if test="bookBalance != null and bookBalance != ''">
+                AND bbb.book_balance = #{bookBalance}
+            </if>
+            <if test="subject != null and subject != ''">
+                AND bbb.subject = #{subject}
+            </if>
+            <if test="lenders != null and lenders != ''">
+                AND bbb.lenders = #{lenders}
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
+                AND bbb.`date` BETWEEN #{startTime} AND #{entTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取实际付款情况信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="bookBalance">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_book_balance bbb
+        WHERE bbb.id = #{id}
+    </select>
+
+    <!-- 添加一个实际付款情况信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.finance.model.BookBalance">
+        INSERT INTO bus_book_balance(company, `date`, book_balance, subject, lenders)
+        VALUES (#{company}, #{date}, #{bookBalance}, #{subject}, #{lenders})
+    </insert>
+
+    <!-- 修改装实际付款情况信息 -->
+    <update id="update" parameterType="com.jaezi.bus.finance.model.BookBalance">
+        UPDATE bus_book_balance
+        SET
+        <trim suffixOverrides=",">
+            <if test="company != null and company != ''">company = #{company},</if>
+            <if test="date != null and date != ''">`date` = #{accountingYear},</if>
+            <if test="bookBalance != null and bookBalance != ''">book_balance = #{bookBalance},</if>
+            <if test="subject != null and subject != ''">subject = #{subject},</if>
+            <if test="lenders != null and lenders != ''">lenders = #{lenders},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个实际付款情况信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_book_balance
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

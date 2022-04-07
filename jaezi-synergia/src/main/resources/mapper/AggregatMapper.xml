@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.AggregatDao">
+    <resultMap id="aggregat" type="com.jaezi.synergia.model.Aggregat">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="component_number" jdbcType="VARCHAR" property="componentNumber"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="material_type" jdbcType="INTEGER" property="materialType"/>
+        <result column="amount" jdbcType="VARCHAR" property="amount"/>
+        <result column="pgr" jdbcType="VARCHAR" property="pgr"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="aggregatVo" type="com.jaezi.synergia.vo.AggregatVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        sa.id,
+        sa.material_number,
+        sm.material_description,
+        sa.component_number,
+        sa.unit,
+        sa.material_type,
+        sa.amount,
+        sa.pgr,
+        sa.document_url,
+        sa.document_name
+    </sql>
+
+    <!-- 查询所有总成件组件 -->
+    <select id="getAllVos" resultMap="aggregat" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_aggregat sa
+        LEFT JOIN sys_material sm ON sa.material_number = sm.material_number
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                sa.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取总成件组件 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="aggregat">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_aggregat sa
+        LEFT JOIN sys_material sm ON sa.material_number = sm.material_number
+        WHERE sa.id = #{id}
+    </select>
+
+    <!-- 根据物料号获取总成件组件信息 -->
+    <select id="getAllByMaterial" resultMap="aggregat" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_aggregat sa
+        LEFT JOIN sys_material sm ON sa.material_number = sm.material_number
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                sa.material_number = #{materialNumber}
+            </if>
+        </where>
+    </select>
+
+    <!-- 添加一个总成件组件信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.Aggregat">
+        INSERT INTO syn_aggregat(material_number,component_number,unit,material_type,amount,pgr,document_url,document_name)
+        VALUES(#{materialNumber}, #{componentNumber}, #{unit}, #{materialType}, #{amount}, #{pgr},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改总成件组件信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.Aggregat">
+        UPDATE syn_aggregat
+        SET
+        <trim suffixOverrides=",">
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="componentNumber != null and componentNumber != ''">component_number = #{componentNumber},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="amount != null and amount != ''">amount = #{amount},</if>
+            <if test="pgr != null and pgr != ''">pgr = #{pgr},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个索赔信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM syn_aggregat WHERE id = #{id}
+    </delete>
+
+</mapper>

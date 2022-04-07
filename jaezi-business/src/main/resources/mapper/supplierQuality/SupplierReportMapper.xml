@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.supplierQuality.dao.SupplierReportDao">
+    <resultMap id="supplierReport" type="com.jaezi.bus.supplierQuality.model.SupplierReport">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="report_name" jdbcType="VARCHAR" property="reportName"/>
+        <result column="report_description" jdbcType="VARCHAR" property="reportDescription"/>
+        <result column="update_date" jdbcType="VARCHAR" property="updateDate"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="report_number" jdbcType="VARCHAR" property="reportNumber"/>
+        <result column="report_upload_date" jdbcType="VARCHAR" property="reportUploadDate"/>
+        <result column="report_type" jdbcType="INTEGER" property="reportType"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="supplierReportVo" type="com.jaezi.bus.supplierQuality.vo.SupplierReportVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bser.id,
+        bser.report_name,
+        bser.report_description,
+        bser.update_date,
+        bser.material_number,
+        bser.report_number,
+        bser.report_upload_date,
+        bser.report_type,
+        bser.url,
+        bser.supplier_code
+    </sql>
+
+    <!-- 查询所有供应商实验报告或者出厂报告信息 -->
+    <select id="getAllVos" resultMap="supplierReport" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_experiment_report bser
+        <where>
+            <if test="reportName != null and reportName != ''">
+                bser.report_name LIKE CONCAT('%',#{reportName},'%')
+            </if>
+            <if test="reportDescription != null and reportDescription != ''">
+                AND bser.report_description = #{reportDescription}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+               AND bser.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="reportNumber != null and reportNumber != ''">
+                AND bser.report_number LIKE CONCAT('%',#{reportNumber},'%')
+            </if>
+            <if test="reportType != null and reportType != ''">
+                AND bser.report_type = #{reportType}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bser.report_upload_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bser.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bser.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+        </where>
+        ORDER BY report_upload_date DESC
+    </select>
+
+    <!--查询所有寄售物资结收发存-->
+    <select id="findAll" resultMap="supplierReport" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_experiment_report bser
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                bser.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bser.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bser.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="reportName != null and reportName != ''">
+                AND bser.report_name LIKE CONCAT('%',#{reportName},'%')
+            </if>
+            <if test="reportDescription != null and reportDescription != ''">
+                AND bser.report_description = #{reportDescription}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bser.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="reportNumber != null and reportNumber != ''">
+                AND bser.report_number LIKE CONCAT('%',#{reportNumber},'%')
+            </if>
+            <if test="reportType != null and reportType != ''">
+                AND bser.report_type = #{reportType}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bser.report_upload_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY bser.report_upload_date DESC
+    </select>
+
+    <!-- 根据ID 获取供应商实验报告或者出厂报告及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="supplierReport">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_experiment_report bser
+        WHERE bser.id = #{id}
+    </select>
+
+    <!-- 添加一个供应商实验报告或者出厂报告信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.supplierQuality.model.SupplierReport">
+        INSERT INTO bus_supplier_experiment_report(report_name, report_description, update_date, material_number,
+                                                   report_number, report_upload_date, report_type, url, supplier_code)
+        VALUES (#{reportName}, #{reportDescription}, #{updateDate}, #{materialNumber}, #{reportNumber},
+                #{reportUploadDate}, #{reportType}, #{url}, #{supplierCode})
+    </insert>
+
+    <!-- 修改供应商实验报告或者出厂报告信息 -->
+    <update id="update" parameterType="com.jaezi.bus.supplierQuality.model.SupplierReport">
+        UPDATE bus_supplier_experiment_report
+        SET
+        <trim suffixOverrides=",">
+            <if test="reportName != null and reportName != ''">report_name = #{reportName},</if>
+            <if test="reportDescription != null and reportDescription != ''">report_description =
+                #{reportDescription},
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="reportNumber != null and reportNumber != ''">report_number = #{reportNumber},</if>
+            <if test="reportUploadDate != null and reportUploadDate != ''">report_upload_date = #{reportUploadDate},
+            </if>
+            <if test="updateDate != null and updateDate != ''">update_date = #{updateDate},</if>
+            <if test="reportType != null and reportType != ''">report_type = #{reportType},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个供应商实验报告或者出厂报告信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_supplier_experiment_report
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

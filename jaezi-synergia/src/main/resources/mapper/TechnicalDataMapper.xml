@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.TechnicalDataDao">
+    <resultMap id="technicalData" type="com.jaezi.synergia.model.TechnicalData">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="series_number" jdbcType="VARCHAR" property="seriesNumber"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="document_type" jdbcType="VARCHAR" property="documentType"/>
+        <result column="certificate_number" jdbcType="VARCHAR" property="certificateNumber"/>
+        <result column="certificate_versions" jdbcType="VARCHAR" property="certificateVersions"/>
+        <result column="certificate_description" jdbcType="VARCHAR" property="certificateDescription"/>
+        <result column="is_effectivity" jdbcType="INTEGER" property="isEffectivity"/>
+        <result column="effective_date" jdbcType="VARCHAR" property="effectiveDate"/>
+        <result column="topic_outline" jdbcType="VARCHAR" property="topicOutline"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="technicalDataVo" type="com.jaezi.synergia.vo.TechnicalDataVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        std.id,
+        std.series_number,
+        std.material_number,
+        sm.material_description as description,
+        std.document_type,
+        std.certificate_number,
+        std.certificate_versions,
+        std.certificate_description,
+        std.is_effectivity,
+        std.effective_date,
+        std.topic_outline,
+        std.visible,
+        std.url,
+        std.`name`,
+        std.document_url,
+        std.document_name
+    </sql>
+
+    <!-- 查询所有技术图档信息 -->
+    <select id="getAllVos" resultMap="technicalData" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_data std
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                std.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+        </where>
+        ORDER BY std.effective_date DESC
+    </select>
+
+    <!--查询所有技术图档-->
+    <select id="findByVisible" resultMap="technicalData" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_data std
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+        WHERE
+        std.visible = 1
+        <if test="materialNumber != null and materialNumber != ''">
+            AND std.material_number LIKE CONCAT('%',#{materialNumber},'%')
+        </if>
+        OR std.id IN
+        (SELECT technicalData_id FROM mid_technical_data_person WHERE person_id = #{userId})
+        ORDER BY std.effective_date DESC
+    </select>
+
+    <!--查询所有技术图档-->
+    <select id="findAll" resultMap="technicalData" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_data std
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                std.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="userType == 0">
+                AND std.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+        ORDER BY std.effective_date DESC
+    </select>
+
+    <!-- 根据ID集合 获取技术图档信息 -->
+    <select id="findByIds" parameterType="java.util.ArrayList" resultMap="technicalData">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_data std
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+        <where>
+            std.id IN (
+            <foreach collection="list" item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+        </where>
+        ORDER BY std.effective_date DESC
+    </select>
+
+    <!-- 根据ID 获取技术图档信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="technicalData">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_data std
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+        WHERE std.id = #{id}
+    </select>
+
+    <!-- 根据id查找附件集合 -->
+    <select id="getAccessoryInfo" resultType="java.lang.String">
+        SELECT accessory_collection
+        FROM syn_technical_data std
+        <where>
+            <if test="id != null and id != ''">
+                std.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <!-- 添加一个技术图档信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.TechnicalData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO syn_technical_data(series_number,
+                                       material_number,
+                                       document_type,
+                                       certificate_number,
+                                       certificate_versions,
+                                       certificate_description,
+                                       is_effectivity,
+                                       effective_date,
+                                       topic_outline,
+                                       visible,
+                                       url,
+                                       `name`,
+                                       document_url,
+                                       document_name)
+        VALUES (#{seriesNumber}, #{materialNumber}, #{documentType}, #{certificateNumber},
+                #{certificateVersions}, #{certificateDescription}, #{isEffectivity}, #{effectiveDate}, #{topicOutline},
+                #{visible}, #{url}, #{name},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改技术图档信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.TechnicalData">
+        UPDATE syn_technical_data
+        SET
+        <trim suffixOverrides=",">
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="seriesNumber != null and seriesNumber != ''">series_number = #{seriesNumber},</if>
+            <if test="documentType != null and documentType != ''">document_type = #{documentType},</if>
+            <if test="certificateNumber != null and certificateNumber != ''">certificate_number =
+                #{certificateNumber},
+            </if>
+            <if test="certificateVersions != null and certificateVersions != ''">certificate_versions =
+                #{certificateVersions},
+            </if>
+            <if test="certificateDescription != null and certificateDescription != ''">certificate_description =
+                #{certificateDescription},
+            </if>
+            <if test="isEffectivity != null ">is_effectivity =
+                #{isEffectivity},
+            </if>
+            <if test="effectiveDate != null and effectiveDate != ''">effective_date = #{effectiveDate},</if>
+            <if test="topicOutline != null and topicOutline != ''">topic_outline = #{topicOutline},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个技术图档信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM syn_technical_data
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据物料号，凭证号，凭证版本号查询技术图档 -->
+    <select id="findByMaNumberAndCerNumberAndCerVersions" resultMap="technicalData">
+        FROM syn_technical_data std
+        SELECT <include refid="base_column"></include>
+        WHERE std.material_number = #{materialNumber}
+        AND std.certificate_number = #{certificateNumber}
+        AND std.certificate_versions = #{certificateVersions}
+        LEFT JOIN sys_material sm ON std.material_number = sm.material_number
+    </select>
+
+</mapper>

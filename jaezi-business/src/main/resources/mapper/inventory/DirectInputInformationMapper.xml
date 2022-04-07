@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.inventory.dao.DirectInputInformationDao">
+    <resultMap id="directInputInformation" type="com.jaezi.bus.inventory.model.DirectInputInformation">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_number" jdbcType="INTEGER" property="materialNumber"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="nonstop_number" jdbcType="INTEGER" property="nonstopNumber"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="date" jdbcType="VARCHAR" property="date"/>
+        <result column="material_describe" jdbcType="VARCHAR" property="materialDescribe"/>
+        <result column="purchase_order" jdbcType="VARCHAR" property="purchaseOrder"/>
+        <result column="hong_project" jdbcType="VARCHAR" property="hongProject"/>
+        <result column="production_order" jdbcType="VARCHAR" property="productionOrder"/>
+        <result column="direct_sending_type" jdbcType="VARCHAR" property="directSendingType"/>
+        <result column="loading_list_number" jdbcType="VARCHAR" property="loadingListNumber"/>
+    </resultMap>
+
+    <resultMap id="directInputInformationVo" type="com.jaezi.bus.inventory.vo.DirectInputInformationVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bdii.id,
+        sm.material_number,
+        bdii.material_description,
+        bdii.qty,
+        bdii.`date`,
+        bdii.nonstop_number,
+        bdii.supplier_code,
+        bdii.material_describe,
+        bdii.purchase_order,
+        bdii.hong_project,
+        bdii.production_order,
+        bdii.direct_sending_type,
+        bdii.loading_list_number
+    </sql>
+
+    <!-- 查询所有直送入库信息 -->
+    <select id="getAllVos" resultMap="directInputInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_direct_input_information bdii
+        LEFT JOIN sys_material sm ON bdii.material_number = sm.material_number
+        <where>
+            <if test="materialName != null and materialName != ''">
+                sm.material_number = #{materialNumber}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="qty != null and qty != ''">
+                AND bdii.qty = #{qty}
+            </if>
+            <!--<if test="supplierCode != null and supplierCode != ''">and supplier_code = #{supplierCode}</if>-->
+            <if test="nonstopNumber != null and nonstopNumber != ''">
+                AND bdii.nonstop_number = #{nonstopNumber}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bdii.`date` BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bdii.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bdii.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bdii.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!--查询所有直送入库信息-->
+    <select id="findAll" resultMap="directInputInformation" parameterType="java.util.Map">
+        SELECT
+        bdii.*,sm.material_description
+        FROM bus_direct_input_information bdii
+        LEFT JOIN sys_material sm ON bdii.material_number = sm.material_number
+        <where>
+            <!--<if test="supplierCode != '' and supplierCode != null">
+                supplier_code = #{supplierCode}
+            </if>-->
+            <if test="materialName != null and materialName != ''">
+                AND bdii.material_number = #{materialNumber}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="qty != null and qty != ''">
+                AND bdii.qty = #{qty}
+            </if>
+            <if test="nonstopNumber != null and nonstopNumber != ''">
+                AND bdii.nonstop_number = #{nonstopNumber}
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
+                AND bdii.`date` BETWEEN #{startTime} AND #{entTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bdii.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bdii.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bdii.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取直送入库信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="directInputInformation">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_direct_input_information bdii
+        WHERE bdii.id = #{id}
+    </select>
+
+
+    <!-- 添加一个直送入库信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.inventory.model.DirectInputInformation">
+        INSERT INTO bus_direct_input_information(material_number, qty, `date`, nonstop_number, supplier_code,
+                                                 material_describe, purchase_order, hong_project,
+                                                 production_order, direct_sending_type, loading_list_number)
+        VALUES (#{materialNumber}, #{qty}, #{date}, #{nonstopNumber}, #{supplierCode}, #{materialDescribe},
+                #{purchaseOrder}, #{hongProject}, #{productionOrder},
+                #{directSendingType}, #{loadingListNumber})
+    </insert>
+
+    <!-- 修改直送入库信息 -->
+    <update id="update" parameterType="com.jaezi.bus.inventory.model.DirectInputInformation">
+        UPDATE bus_direct_input_information
+        SET
+        <trim suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="materialName != null and materialName != ''">material_number = #{materialNumber},</if>
+            <if test="qty != null and qty != ''">qty = #{qty},</if>
+            <if test="nonstopNumber != null and nonstopNumber != ''">nonstop_number = #{nonstopNumber},</if>
+            <if test="materialDescribe != null and materialDescribe != ''">material_describe = #{materialDescribe},</if>
+            <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
+            <if test="hongProject != null and hongProject != ''">hong_project = #{hongProject},</if>
+            <if test="productionOrder != null and productionOrder != ''">production_order = #{productionOrder},</if>
+            <if test="directSendingType != null and directSendingType != ''">direct_sending_type =
+                #{directSendingType},
+            </if>
+            <if test="loadingListNumber != null and loadingListNumber != ''">loading_list_number =
+                #{loadingListNumber},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个直送入库信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_direct_input_information
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

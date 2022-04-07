@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.salesreturn.dao.ReturnConfirmationDao">
+    <resultMap id="returnConfirmation" type="com.jaezi.bus.salesreturn.model.ReturnConfirmation">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="status" property="status"/>
+        <result column="material_number" jdbcType="INTEGER" property="materialNumber"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="p_Type" jdbcType="VARCHAR" property="pType"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="plant" jdbcType="VARCHAR" property="plant"/>
+        <result column="apply_qty" jdbcType="VARCHAR" property="applyQty"/>
+        <result column="confirm_qty" jdbcType="DECIMAL" property="confirmQty"/>
+        <result column="unit" jdbcType="DECIMAL" property="unit"/>
+        <result column="un_purchase_order" jdbcType="DECIMAL" property="unPurchaseOrder"/>
+        <result column="mode_transport" jdbcType="DECIMAL" property="modeTransport"/>
+        <result column="express_company" jdbcType="DECIMAL" property="expressCompany"/>
+        <result column="shipping_address" jdbcType="DECIMAL" property="shippingAddress"/>
+        <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="returnConfirmationVo" type="com.jaezi.bus.salesreturn.vo.ReturnConfirmationVo">
+    </resultMap>
+
+    <sql id="base_column">
+        brc.id,
+        brc.status,
+        brc.material_number,
+        sm.material_description,
+        brc.p_type,
+        brc.create_date,
+        brc.plant,
+        brc.apply_qty,
+        brc.confirm_qty,
+        brc.unit,
+        brc.un_purchase_order,
+        brc.mode_transport,
+        brc.express_company,
+        brc.shipping_address,
+        brc.consignee_name,
+        brc.phone,
+        brc.supplier_code
+    </sql>
+
+    <!-- 查询所有退货单 -->
+    <select id="getAllVos" resultMap="returnConfirmation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_return_confirmation brc
+        LEFT JOIN sys_material sm ON brc.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                brc.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND brc.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND brc.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                AND brc.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="returnNo != null and returnNo != ''">
+                AND brc.return_no = #{returnNo}
+            </if>
+            <if test="returnType != null and returnType != ''">
+                AND brc.return_type = #{returnType}
+            </if>
+            <if test="returnState != null and returnState != ''">
+                AND brc.status = #{returnState}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND brc.material_number = #{materialNumber}
+            </if>
+            <if test="purchaseType != null and purchaseType != ''">
+                AND brc.p_type = #{purchaseType}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND brc.create_date &lt;= #{purchaseType}
+            </if>
+            <if test="entDate != null and entDate != ''">
+                AND brc.create_date &gt;= #{entDate}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取退货单 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="returnConfirmation">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_return_confirmation WHERE id = #{id}
+    </select>
+
+    <!-- 添加退货单 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 批量添加退货单 -->
+    <insert id="saveBath">
+        INSERT INTO bus_return_confirmation (id,
+        status,
+        material_number,
+        p_type,
+        create_date,
+        plant,
+        apply_qty,
+        confirm_qty,
+        unit,
+        un_purchase_order,
+        mode_transport,
+        express_company,
+        shipping_address,
+        consignee_name,
+        phone,
+        supplier_code)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (NULL,#{item.status},#{item.materialNumber},
+            #{item.pType},#{item.createDate},#{item.plant},#{item.applyQty},
+            #{item.confirmQty},#{item.unit},#{item.unPurchaseOrder},
+            #{item.modeTransport},#{item.expressCompany},#{item.shippingAddress},#{item.consigneeName},
+            #{item.phone},#{item.supplierCode})
+        </foreach>
+    </insert>
+
+    <!-- 更新添加退货单 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+
+    </update>
+
+    <!-- 删除添加退货单 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+</mapper>

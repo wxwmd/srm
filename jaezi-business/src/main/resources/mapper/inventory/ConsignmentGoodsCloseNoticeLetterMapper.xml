@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.inventory.dao.ConsignmentGoodsCloseNoticeLetterDao">
+    <resultMap id="consignmentGoodsCloseNoticeLetter"
+               type="com.jaezi.bus.inventory.model.ConsignmentGoodsCloseNoticeLetter">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="supplier" jdbcType="VARCHAR" property="supplier"/>
+        <result column="period" jdbcType="VARCHAR" property="period"/>
+        <result column="report_date" jdbcType="VARCHAR" property="reportDate"/>
+        <result column="special_suggestion" jdbcType="VARCHAR" property="specialSuggestion"/>
+        <result column="number" jdbcType="INTEGER" property="number"/>
+        <result column="material_number" jdbcType="INTEGER" property="materialNumber"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="count" jdbcType="INTEGER" property="count"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="consignmentGoodsCloseNoticeLetterVo"
+               type="com.jaezi.bus.inventory.vo.ConsignmentGoodsCloseNoticeLetterVo">
+    </resultMap>
+
+    <sql id="base_column">
+        bcgcnl.id,
+        bcgcnl.factory,
+        bcgcnl.supplier,
+        bcgcnl.`period`,
+        bcgcnl.report_date,
+        bcgcnl.special_suggestion,
+        bcgcnl.`number`,
+        bcgcnl.material_number,
+        bcgcnl.material_name,
+        bcgcnl.`count`,
+        bcgcnl.supplier_code
+    </sql>
+
+    <!-- 查询所有寄售物资结算通知单信息 -->
+    <select id="getAllVos" resultMap="consignmentGoodsCloseNoticeLetter" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_close_notice_letter bcgcnl
+        <where>
+            <if test="factory != null and factory != ''">
+                bcgcnl.factory = #{factory}
+            </if>
+            <if test="supplier != null and supplier != ''">
+                AND bcgcnl.supplier = #{supplier}
+            </if>
+            <if test="period != null and period != ''">
+                AND bcgcnl.`period` = #{period}
+            </if>
+            <if test="specialSuggestion != null and specialSuggestion != ''">
+                AND bcgcnl.special_suggestion = #{specialSuggestion}
+            </if>
+            <if test="number != null and number != ''">
+                AND bcgcnl.`number` = #{number}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcgcnl.material_number = #{materialNumber}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND bcgcnl.material_name = #{materialName}
+            </if>
+            <if test="count != null and count != ''">
+                AND bcgcnl.`count` = #{count}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bcgcnl.report_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcgcnl.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcgcnl.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcgcnl.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+
+    <!--查询所有寄售物资结算通知单信息-->
+    <select id="findAll" resultMap="consignmentGoodsCloseNoticeLetter" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>,sm.material_name
+        FROM bus_consignment_goods_close_notice_letter bcgcnl
+        LEFT JOIN sys_material sm ON bcgcnl.material_number = sm.material_number
+        <where>
+            <if test="factory != null and factory != ''">
+                AND bcgcnl.factory = #{factory}
+            </if>
+            <if test="supplier != null and supplier != ''">
+                AND bcgcnl.supplier = #{supplier}
+            </if>
+            <if test="period != null and period != ''">
+                AND bcgcnl.period = #{period}
+            </if>
+            <if test="specialSuggestion != null and specialSuggestion != ''">
+                AND bcgcnl.special_suggestion = #{specialSuggestion}
+            </if>
+            <if test="number != null and number != ''">
+                AND bcgcnl.`number` = #{number}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcgcnl.material_number = #{materialNumber}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND bcgcnl.material_name = #{materialName}
+            </if>
+            <if test="count != null and count != ''">
+                AND bcgcnl.`count` = #{count}
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != ''">
+                AND bcgcnl.report_date BETWEEN #{startTime} AND #{entTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcgcnl.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcgcnl.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcgcnl.material_number IN (
+                SELECT material_number FROM sys_material where buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取寄售物资结算通知单信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentGoodsCloseNoticeLetter">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_close_notice_letter bcgcnl
+        LEFT JOIN sys_material sm on bcgcnl.material_number = sm.material_number
+        WHERE bcgcnl.id = #{id}
+    </select>
+
+
+    <!-- 添加一个寄售物资结算通知单信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.inventory.model.ConsignmentGoodsCloseNoticeLetter">
+        INSERT INTO bus_consignment_goods_close_notice_letter(factory, supplier, period, report_date,
+                                                              special_suggestion, `number`, material_number,
+                                                              `count`, supplier_code)
+        VALUES (#{factory}, #{supplier}, #{period}, #{reportDate}, #{specialSuggestion}, #{number}, #{materialNumber},
+                #{count}, #{supplierCode})
+    </insert>
+
+    <!-- 修改寄售物资结算通知单信息 -->
+    <update id="update" parameterType="com.jaezi.bus.inventory.model.ConsignmentGoodsCloseNoticeLetter">
+        UPDATE bus_consignment_goods_close_notice_letter
+        SET
+        <trim suffixOverrides=",">
+            <if test="factory != null and factory != ''">factory = #{factory},</if>
+            <if test="supplier != null and supplier != ''">supplier = #{supplier},</if>
+            <if test="period != null and period != ''">period = #{period},</if>
+            <if test="reportDate != null and reportDate != ''">report_date = #{reportDate},</if>
+            <if test="specialSuggestion != null and specialSuggestion != ''">special_suggestion =
+                #{specialSuggestion},
+            </if>
+            <if test="number != null and number != ''">`number`r = #{number},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="count != null and count != ''">`count` = #{count},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个寄售物资结算通知单信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_consignment_goods_close_notice_letter
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.direct.dao.LoadingDirectDeliveryDetailDao">
+    <resultMap id="loadingDirectDeliveryDetail" type="com.jaezi.bus.direct.model.LoadingDirectDeliveryDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="r_id" jdbcType="INTEGER" property="rid"/>
+        <result column="production_order" jdbcType="VARCHAR" property="productionOrder"/>
+        <result column="turner" jdbcType="VARCHAR" property="turner"/>
+        <result column="work_center" jdbcType="VARCHAR" property="workCenter"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="station" jdbcType="VARCHAR" property="station"/>
+        <result column="key_materials" jdbcType="VARCHAR" property="keyMaterials"/>
+        <result column="number_immediately" jdbcType="VARCHAR" property="numberImmediately"/>
+        <result column="assembly_material" jdbcType="VARCHAR" property="assemblyMaterial"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+    <resultMap id="loadingDirectDeliveryDetailVo" type="com.jaezi.bus.direct.vo.LoadingDirectDeliveryDetailVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        blddd.id,
+        blddd.r_id,
+        blddd.production_order,
+        blddd.turner,
+        blddd.work_center,
+        blddd.material_number,
+        blddd.material_description,
+        blddd.plan_qty,
+        blddd.actual_qty,
+        blddd.unit,
+        blddd.station,
+        blddd.key_materials,
+        blddd.number_immediately,
+        blddd.assembly_material,
+        blddd.remark
+    </sql>
+
+    <!-- 查询所有直送入库信息 -->
+    <select id="getAllVos" resultMap="loadingDirectDeliveryDetail" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_direct_delivery_detail blddd
+        <where>
+            <if test="rid != null and rid != ''">
+                blddd.r_id = #{rid}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取直送入库信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="loadingDirectDeliveryDetail">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_direct_delivery_detail blddd
+        WHERE blddd.id = #{id}
+    </select>
+
+    <!-- 添加一个直送入库信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.direct.model.LoadingDirectDeliveryDetail">
+        INSERT INTO bus_loading_direct_delivery_detail(r_id,
+                                                       production_order,
+                                                       turner,
+                                                       work_center,
+                                                       material_number,
+                                                       material_description,
+                                                       plan_qty,
+                                                       actual_qty,
+                                                       unit,
+                                                       station,
+                                                       key_materials,
+                                                       number_immediately,
+                                                       assembly_material,
+                                                       remark)
+        VALUES(#{rid}, #{productionOrder}, #{turner},#{workCenter},#{materialNumber},#{materialDescription},#{planQty},
+               #{actualQty},#{unit},#{station},#{keyMaterials},#{numberImmediately},#{assemblyMaterial},#{remark})
+    </insert>
+
+    <!-- 修改直送入库信息 -->
+    <update id="update" parameterType="com.jaezi.bus.direct.model.LoadingDirectDeliveryDetail">
+        UPDATE bus_loading_direct_delivery_detail
+        SET
+        <trim suffixOverrides=",">
+            <if test="rid != null and rid != ''">r_id = #{rid},</if>
+            <if test="productionOrder != null and productionOrder != ''">production_order = #{productionOrder},</if>
+            <if test="turner != null and turner != '' ">
+                turner = #{turner},
+            </if>
+            <if test="workCenter != null and workCenter != ''">work_center = #{workCenter},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="materialDescription != null and materialDescription != ''">material_description = #{materialDescription},</if>
+            <if test="planQty != null and planQty != ''">plan_qty = #{planQty},</if>
+            <if test="actualQty != null and actualQty != '' ">
+                actual_qty = #{actualQty},
+            </if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="station != null and station != ''">station = #{station},</if>
+            <if test="keyMaterials != null and keyMaterials != '' ">
+                key_materials = #{keyMaterials},
+            </if>
+            <if test="numberImmediately != null and numberImmediately != ''">number_immediately = #{numberImmediately},</if>
+            <if test="assemblyMaterial != null and assemblyMaterial != ''">assembly_material = #{assemblyMaterial},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个直送入库信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_loading_direct_delivery_detail
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

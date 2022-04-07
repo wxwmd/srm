@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceOutInfoDao">
+
+    <resultMap id="consignmentSalesInvoiceOutInfo" type="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOutInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="plant" property="plant" jdbcType="INTEGER"/>
+        <result column="material_number" property="materialNumber" jdbcType="VARCHAR"/>
+        <result column="quantity" property="quantity" jdbcType="INTEGER"/>
+        <result column="purchase_order" property="purchaseOrder" jdbcType="VARCHAR"/>
+        <result column="out_invoice_period" property="outInvoicePeriod" jdbcType="VARCHAR"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="material_describe" property="materialDescribe" jdbcType="VARCHAR"/>
+        <result column="invoice_number" property="invoiceNumber" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bcsioi.id,bcsioi.plant,bcsioi.material_number,bcsioi.quantity,bcsioi.out_invoice_period,bcsioi.supplier_code,
+        bcsioi.purchase_order,sm.material_description as material_describe,bcsioi.invoice_number
+      </sql>
+
+    <!-- 寄售物资开票信息查询-->
+    <select id="getAllVos" resultMap="consignmentSalesInvoiceOutInfo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_consignment_sales_invoice_out_info bcsioi
+        LEFT JOIN sys_material sm ON bcsioi.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                bcsioi.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcsioi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcsioi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcsioi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bcsioi.plant = #{plant}
+            </if>
+            <if test="invoiceNumber != null and invoiceNumber != ''">
+                AND bcsioi.invoice_number = #{invoiceNumber}
+            </if>
+        </where>
+    </select>
+
+    <!-- 寄售物资开票信息查询-->
+    <select id="findAll" resultMap="consignmentSalesInvoiceOutInfo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_consignment_sales_invoice_out_info bcsioi
+        LEFT JOIN sys_material sm ON bcsioi.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                bcsioi.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcsioi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcsioi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcsioi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bcsioi.plant = #{plant}
+            </if>
+            <if test="invoiceNumber != null and invoiceNumber != ''">
+                AND bcsioi.invoice_number = #{invoiceNumber}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询一个寄售物资开票信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentSalesInvoiceOutInfo">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_consignment_sales_invoice_out_info bcsioi
+        LEFT JOIN sys_material sm ON bcsioi.material_number = sm.material_number
+        WHERE bcsioi.id = #{id}
+    </select>
+
+    <!-- 删除寄售物资开票信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM bus_consignment_sales_invoice_out_info WHERE id = #{id}
+    </delete>
+
+    <!-- 添加寄售物资开票信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOutInfo">
+        INSERT INTO bus_consignment_sales_invoice_out_info(plant,material_number,quantity,out_invoice_period,supplier_code,
+                                                           purchase_order,invoice_number)
+        VALUES(#{plant},#{materialNumber},#{quantity},#{outInvoicePeriod},#{supplierCode},#{purchaseOrder},#{invoiceNumber})
+    </insert>
+
+    <!-- 更新寄售物资开票信息 -->
+    <update id="update" parameterType="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOutInfo">
+        UPDATE bus_consignment_sales_invoice_out_info
+        SET
+        <trim suffixOverrides=",">
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="quantity != null and quantity != ''">quantity = #{quantity},</if>
+            <if test="outInvoicePeriod != null and outInvoicePeriod != ''">out_invoice_period = #{outInvoicePeriod},</if>
+            <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
+            <if test="invoiceNumber != null and invoiceNumber != ''">invoice_number = #{invoiceNumber},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+</mapper>

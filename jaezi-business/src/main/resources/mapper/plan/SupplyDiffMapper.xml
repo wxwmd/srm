@@ -1,0 +1,3091 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.plan.dao.SupplyDiffDao">
+    <resultMap id="supplyDiff" type="com.jaezi.bus.plan.model.SupplyDiff">
+        <id column="id" property="id"/>
+        <result column="plant" property="plant"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="type" property="type"/>
+        <result column="past_due" property="pastDue"/>
+        <result column="next_day" property="nextDay"/>
+        <result column="third_day" property="thirdDay"/>
+        <result column="four_day" property="fourDay"/>
+        <result column="five_day" property="fiveDay"/>
+        <result column="six_day" property="sixDay"/>
+        <result column="seventh_day" property="seventhDay"/>
+        <result column="eighth_day" property="eighthDay"/>
+        <result column="ninth_day" property="ninthDay"/>
+        <result column="ten_day" property="tenDay"/>
+        <result column="eleventh_day" property="eleventhDay"/>
+        <result column="twelfth_day" property="twelfthDay"/>
+        <result column="thirteen_Day" property="thirteenDay"/>
+        <result column="fourteenth_Day" property="fourteenthDay"/>
+        <result column="fifteenth_day" property="fifteenthDay"/>
+        <result column="sixteenth_day" property="sixteenthDay"/>
+        <result column="seventeenth_day" property="seventeenthDay"/>
+        <result column="eighteenth_day" property="eighteenthDay"/>
+        <result column="nineteenth_day" property="nineteenthDay"/>
+        <result column="twenty_day" property="twentyDay"/>
+        <result column="twenty_one_day" property="twentyOneDay"/>
+        <result column="twenty_two_day" property="twentyTwoDay"/>
+        <result column="twenty_three_day" property="twentyThreeDay"/>
+        <result column="twenty_four_day" property="twentyFourDay"/>
+        <result column="twenty_five_day" property="twentyFiveDay"/>
+        <result column="twenty_six_day" property="twentySixDay"/>
+        <result column="twenty_seventh_day" property="twentySeventhDay"/>
+        <result column="twenty_eighth_day" property="twentyEighthDay"/>
+        <result column="twenty_nine_day" property="twentyNineDay"/>
+        <result column="thirty_day" property="thirtyDay"/>
+        <result column="thirty_one_day" property="thirtyOneDay"/>
+        <result column="thirty_two_day" property="thirtyTwoDay"/>
+        <result column="thirty_three_day" property="thirtyThreeDay"/>
+        <result column="thirty_four_day" property="thirtyFourDay"/>
+        <result column="thirty_five_day" property="thirtyFiveDay"/>
+        <result column="thirty_six_day" property="thirtySixDay"/>
+        <result column="thick_seventh_day" property="thickSeventhDay"/>
+        <result column="thick_eighth_day" property="thickEighthDay"/>
+        <result column="thick_nine_day" property="thickNineDay"/>
+        <result column="forty_day" property="fortyDay"/>
+        <result column="forty_one_day" property="fortyOneDay"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="material_up_time" property="materialUpTime"/>
+    </resultMap>
+
+    <resultMap id="supplyDiffVo" type="com.jaezi.bus.plan.vo.SupplyDiffVo">
+
+    </resultMap>
+
+    <resultMap id="supplyDiffSumDto" type="com.jaezi.bus.plan.dto.SupplyDiffSumDto">
+        <result column="past_due" property="pastDue"/>
+        <result column="next_day" property="nextDay"/>
+        <result column="third_day" property="thirdDay"/>
+        <result column="four_day" property="fourDay"/>
+        <result column="five_day" property="fiveDay"/>
+        <result column="six_day" property="sixDay"/>
+        <result column="seventh_day" property="seventhDay"/>
+        <result column="eighth_day" property="eighthDay"/>
+        <result column="ninth_day" property="ninthDay"/>
+        <result column="ten_day" property="tenDay"/>
+        <result column="eleventh_day" property="eleventhDay"/>
+        <result column="twelfth_day" property="twelfthDay"/>
+        <result column="thirteen_Day" property="thirteenDay"/>
+        <result column="fourteenth_Day" property="fourteenthDay"/>
+        <result column="third_week" property="thirdWeek"/>
+        <result column="fourth_week" property="fourthWeek"/>
+        <result column="fifth_week" property="fifthWeek"/>
+        <result column="sixth_week" property="sixthWeek"/>
+        <result column="sum" property="sum"/>
+        <result column="supplier_code" property="supplierCode"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bsd
+        .
+        id
+        ,
+        bsd.plant,
+        bsd.material_number,
+        sm.material_description,
+        bsd.`type`,
+        bsd.past_due,
+        bsd.next_day,
+        bsd.third_day,
+        bsd.four_day,
+        bsd.five_day,
+        bsd.six_day,
+        bsd.seventh_day,
+        bsd.eighth_day,
+        bsd.ninth_day,
+        bsd.ten_day,
+        bsd.eleventh_day,
+        bsd.twelfth_day,
+        bsd.thirteen_day,
+        bsd.fourteenth_day,
+        bsd.fifteenth_day,
+        bsd.sixteenth_day,
+        bsd.seventeenth_day,
+        bsd.eighteenth_day,
+        bsd.nineteenth_day,
+        bsd.twenty_day,
+        bsd.twenty_one_day,
+        bsd.twenty_two_day,
+        bsd.twenty_three_day,
+        bsd.twenty_four_day,
+        bsd.twenty_five_day,
+        bsd.twenty_six_day,
+        bsd.twenty_seventh_day,
+        bsd.twenty_eighth_day,
+        bsd.twenty_nine_day,
+        bsd.thirty_day,
+        bsd.thirty_one_day,
+        bsd.thirty_two_day,
+        bsd.thirty_three_day,
+        bsd.thirty_four_day,
+        bsd.thirty_five_day,
+        bsd.thirty_six_day,
+        bsd.thick_seventh_day,
+        bsd.thick_eighth_day,
+        bsd.thick_nine_day,
+        bsd.forty_day,
+        bsd.forty_one_day,
+        bsd.supplier_code
+    </sql>
+
+    <sql id="all_column">
+        bsd
+        .
+        id
+        ,
+        bsd.plant,
+        bsd.material_number,
+        bsd.material_description,
+        bsd.type,
+        bsd.past_due,
+        bsd.next_day,
+        bsd.third_day,
+        bsd.four_day,
+        bsd.five_day,
+        bsd.six_day,
+        bsd.seventh_day,
+        bsd.eighth_day,
+        bsd.ninth_day,
+        bsd.ten_day,
+        bsd.eleventh_day,
+        bsd.twelfth_day,
+        bsd.thirteen_day,
+        bsd.fourteenth_day,
+        bsd.fifteenth_day,
+        bsd.sixteenth_day,
+        bsd.seventeenth_day,
+        bsd.eighteenth_day,
+        bsd.nineteenth_day,
+        bsd.twenty_day,
+        bsd.twenty_one_day,
+        bsd.twenty_two_day,
+        bsd.twenty_three_day,
+        bsd.twenty_four_day,
+        bsd.twenty_five_day,
+        bsd.twenty_six_day,
+        bsd.twenty_seventh_day,
+        bsd.twenty_eighth_day,
+        bsd.twenty_nine_day,
+        bsd.thirty_day,
+        bsd.thirty_one_day,
+        bsd.thirty_two_day,
+        bsd.thirty_three_day,
+        bsd.thirty_four_day,
+        bsd.thirty_five_day,
+        bsd.thirty_six_day,
+        bsd.thick_seventh_day,
+        bsd.thick_eighth_day,
+        bsd.thick_nine_day,
+        bsd.forty_day,
+        bsd.forty_one_day,
+        bp.material_up_time
+    </sql>
+
+    <!-- 查询所有供需差异 -->
+    <select id="getAllVos" resultMap="supplyDiff" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supply_diff bsd
+        left join sys_material sm on bsd.material_number = sm.material_number
+        inner join (
+        <if test="date == 'pastDue'">
+            <include refid="past_due_date"></include>
+        </if>
+        <if test="date == 'nextDay'">
+            <include refid="next_day_date"></include>
+        </if>
+        <if test="date == 'thirdDay'">
+            <include refid="third_day_date"></include>
+        </if>
+        <if test="date == 'fourDay'">
+            <include refid="four_day_date"></include>
+        </if>
+        <if test="date == 'fiveDay'">
+            <include refid="five_day_date"></include>
+        </if>
+        <if test="date == 'sixDay'">
+            <include refid="six_day_date"></include>
+        </if>
+        <if test="date == 'seventhDay'">
+            <include refid="seventh_day_date"></include>
+        </if>
+        <if test="date == 'eighthDay'">
+            <include refid="eighth_day_date"></include>
+        </if>
+        <if test="date == 'ninthDay'">
+            <include refid="ninth_day_date"></include>
+        </if>
+        <if test="date == 'tenDay'">
+            <include refid="ten_day_date"></include>
+        </if>
+        <if test="date == 'eleventhDay'">
+            <include refid="eleventh_day_date"></include>
+        </if>
+        <if test="date == 'twelfthDay'">
+            <include refid="twelfth_day_date"></include>
+        </if>
+        <if test="date == 'thirteenDay'">
+            <include refid="thirteen_day_date"></include>
+        </if>
+        <if test="date == 'fourteenthDay'">
+            <include refid="fourteenth_day_date"></include>
+        </if>
+        <if test="date == 'fourteenthDay'">
+            <include refid="fourteenth_day_date"></include>
+        </if>
+        <if test="date == 'thirdWeek'">
+            <include refid="third_week_date"></include>
+        </if>
+        <if test="date == 'fourthWeek'">
+            <include refid="fourth_week_date"></include>
+        </if>
+        <if test="date == 'fifthWeek'">
+            <include refid="fifth_week_date"></include>
+        </if>
+        <if test="date == 'sixthWeek'">
+            <include refid="sixth_week_date"></include>
+        </if>
+        <if test="date == 'sum'">
+            <include refid="sum_date"></include>
+        </if>
+        ) tmp on tmp.material_number = bsd.material_number and tmp.supplier_code = bsd.supplier_code
+        <where>
+            <!--<if test="supplierCode != null and supplierCode != ''">
+                supplier_code = #{supplierCode}
+            </if>-->
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bsd.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bsd.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND bsd.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有供需差异 -->
+    <select id="getAll" resultMap="supplyDiff" parameterType="java.util.Map">
+        SELECT DISTINCT
+        <include refid="all_column"></include>
+        FROM bus_supply_diff bsd
+        LEFT JOIN bus_purchase bp ON bp.material_number = bsd.material_number
+    </select>
+
+    <!-- 根据ID 获取供需差异 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="supplyDiff">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supply_diff bsd WHERE bsd.id = #{id}
+    </select>
+
+    <sql id="past_due_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        past_due &lt; 0
+        AND type = 3
+        AND supplier_code = #{username}
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user where real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="next_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="third_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="four_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="five_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="six_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="seventh_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="eighth_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="ninth_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="ten_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="eleventh_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="twelfth_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="thirteen_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="fourteenth_day_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="third_week_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (fourteenth_day &lt; 0
+        OR fifteenth_day &lt; 0
+        OR sixteenth_day &lt; 0
+        OR seventeenth_day &lt; 0
+        OR eighteenth_day &lt; 0
+        OR nineteenth_day &lt; 0
+        OR twenty_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="fourth_week_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (twenty_one_day &lt; 0
+        OR twenty_two_day &lt; 0
+        OR twenty_three_day &lt; 0
+        OR twenty_four_day &lt; 0
+        OR twenty_five_day &lt; 0
+        OR twenty_six_day &lt; 0
+        OR twenty_seventh_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="fifth_week_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (twenty_eighth_day &lt; 0
+        OR twenty_nine_day &lt; 0
+        OR thirty_day &lt; 0
+        OR thirty_one_day &lt; 0
+        OR thirty_two_day &lt; 0
+        OR thirty_three_day &lt; 0
+        OR thirty_four_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="sixth_week_date">
+        SELECT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (thirty_five_day &lt; 0
+        OR thirty_six_day &lt; 0
+        OR thick_seventh_day &lt; 0
+        OR thick_eighth_day &lt; 0
+        OR thick_nine_day &lt; 0
+        OR forty_day &lt; 0
+        OR forty_one_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="sum_date">
+        SELECT DISTINCT
+        material_number,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (past_due &lt; 0
+        OR next_day &lt; 0
+        OR third_day &lt; 0
+        OR four_day &lt; 0
+        OR five_day &lt; 0
+        OR six_day &lt; 0
+        OR seventh_day &lt; 0
+        OR eighth_day &lt; 0
+        OR ninth_day &lt; 0
+        OR ten_day &lt; 0
+        OR eleventh_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR thirteen_day &lt; 0
+        OR fourteenth_day &lt; 0
+        OR fifteenth_day &lt; 0
+        OR sixteenth_day &lt; 0
+        OR seventeenth_day &lt; 0
+        OR eighteenth_day &lt; 0
+        OR nineteenth_day &lt; 0
+        OR twenty_day &lt; 0
+        OR twenty_one_day &lt; 0
+        OR twenty_two_day &lt; 0
+        OR twenty_three_day &lt; 0
+        OR twenty_four_day &lt; 0
+        OR twenty_five_day &lt; 0
+        OR twenty_six_day &lt; 0
+        OR twenty_seventh_day &lt; 0
+        OR twenty_eighth_day &lt; 0
+        OR twenty_nine_day &lt; 0
+        OR thirty_day &lt; 0
+        OR thirty_one_day &lt; 0
+        OR thirty_two_day &lt; 0
+        OR thirty_three_day &lt; 0
+        OR thirty_four_day &lt; 0
+        OR thirty_five_day &lt; 0
+        OR thirty_six_day &lt; 0
+        OR thick_seventh_day &lt; 0
+        OR thick_eighth_day &lt; 0
+        OR thick_nine_day &lt; 0
+        OR forty_day &lt; 0
+        OR forty_one_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        GROUP BY supplier_code,material_number
+    </sql>
+
+    <sql id="past_due">
+        SELECT
+        COUNT( past_due ) AS past_due,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        past_due &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="next_day">
+        SELECT
+        COUNT( next_day ) AS next_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="third_day">
+        SELECT
+        COUNT( third_day ) AS third_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="four_day">
+        SELECT
+        COUNT( four_day ) AS four_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="five_day">
+        SELECT
+        COUNT( five_day ) AS five_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="six_day">
+        SELECT
+        COUNT( six_day ) AS six_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="seventh_day">
+        SELECT
+        COUNT( seventh_day ) AS seventh_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="eighth_day">
+        SELECT
+        COUNT( eighth_day ) AS eighth_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="ninth_day">
+        SELECT
+        COUNT( ninth_day ) AS ninth_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="ten_day">
+        SELECT
+        COUNT( ten_day ) AS ten_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="eleventh_day">
+        SELECT
+        COUNT( eleventh_day ) AS eleventh_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="twelfth_day">
+        SELECT
+        COUNT( twelfth_day ) AS twelfth_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user where real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="thirteen_day">
+        SELECT
+        COUNT( thirteen_day ) AS thirteen_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="fourteenth_day">
+        SELECT
+        COUNT( fourteenth_day ) AS fourteenth_day,
+        supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        next_day &lt; 0
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="third_week">
+        SELECT
+        COUNT( 1 ) as third_week,supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (fourteenth_day &lt; 0
+        OR fifteenth_day &lt; 0
+        OR sixteenth_day &lt; 0
+        OR seventeenth_day &lt; 0
+        OR eighteenth_day &lt; 0
+        OR nineteenth_day &lt; 0
+        OR twenty_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="fourth_week">
+        SELECT
+        COUNT( 1 ) as fourth_week,supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (twenty_one_day &lt; 0
+        OR twenty_two_day &lt; 0
+        OR twenty_three_day &lt; 0
+        OR twenty_four_day &lt; 0
+        OR twenty_five_day &lt; 0
+        OR twenty_six_day &lt; 0
+        OR twenty_seventh_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="fifth_week">
+        SELECT
+        COUNT( 1 ) AS fifth_week,supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (twenty_eighth_day &lt; 0
+        OR twenty_nine_day &lt; 0
+        OR thirty_day &lt; 0
+        OR thirty_one_day &lt; 0
+        OR thirty_two_day &lt; 0
+        OR thirty_three_day &lt; 0
+        OR thirty_four_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="sixth_week">
+        SELECT
+        COUNT( 1 ) as sixth_week,supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (thirty_five_day &lt; 0
+        OR thirty_six_day &lt; 0
+        OR thick_seventh_day &lt; 0
+        OR thick_eighth_day &lt; 0
+        OR thick_nine_day &lt; 0
+        OR forty_day &lt; 0
+        OR forty_one_day &lt; 0)
+        AND type = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="sum">
+        SELECT DISTINCT
+        COUNT( material_number ) AS sum,supplier_code
+        FROM
+        bus_supply_diff
+        WHERE
+        (past_due &lt; 0
+        OR next_day &lt; 0
+        OR third_day &lt; 0
+        OR four_day &lt; 0
+        OR five_day &lt; 0
+        OR six_day &lt; 0
+        OR seventh_day &lt; 0
+        OR eighth_day &lt; 0
+        OR ninth_day &lt; 0
+        OR ten_day &lt; 0
+        OR eleventh_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR twelfth_day &lt; 0
+        OR thirteen_day &lt; 0
+        OR fourteenth_day &lt; 0
+        OR fifteenth_day &lt; 0
+        OR sixteenth_day &lt; 0
+        OR seventeenth_day &lt; 0
+        OR eighteenth_day &lt; 0
+        OR nineteenth_day &lt; 0
+        OR twenty_day &lt; 0
+        OR twenty_one_day &lt; 0
+        OR twenty_two_day &lt; 0
+        OR twenty_three_day &lt; 0
+        OR twenty_four_day &lt; 0
+        OR twenty_five_day &lt; 0
+        OR twenty_six_day &lt; 0
+        OR twenty_seventh_day &lt; 0
+        OR twenty_eighth_day &lt; 0
+        OR twenty_nine_day &lt; 0
+        OR thirty_day &lt; 0
+        OR thirty_one_day &lt; 0
+        OR thirty_two_day &lt; 0
+        OR thirty_three_day &lt; 0
+        OR thirty_four_day &lt; 0
+        OR thirty_five_day &lt; 0
+        OR thirty_six_day &lt; 0
+        OR thick_seventh_day &lt; 0
+        OR thick_eighth_day &lt; 0
+        OR thick_nine_day &lt; 0
+        OR forty_day &lt; 0
+        OR forty_one_day &lt; 0)
+        AND TYPE = 3
+        <if test="userType == 1">
+            <!-- 供应商看自己的数据 -->
+            AND supplier_code IN (
+            SELECT username FROM sys_user WHERE real_name = #{realName}
+            )
+        </if>
+        <if test="userType == 0">
+            <!-- 企业用户看绑定供应商的数据 -->
+            AND supplier_code IN (
+            SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+            sys_material WHERE buyer_number = #{realName})
+            )
+            AND material_number IN (
+            SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+            )
+        </if>
+        <if test="userType == 3">
+            <choose>
+                <when test="role == 1">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    AND supplier_code IN (
+                    SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                    FROM
+                    sys_material)
+                    )
+                    AND material_number IN (
+                    SELECT material_number FROM sys_material
+                    )
+                </when>
+                <otherwise>
+                    <!-- 供应商看自己的数据 -->
+                    AND supplier_code IN (
+                    SELECT username FROM sys_user su
+                    INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                    )
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="selectDiffSum" resultMap="supplyDiffSumDto">
+        SELECT
+        IFNULL(su.username,'') AS supplier_code,
+        IFNULL(SUM(tmp.past_due),0) AS past_due,
+        IFNULL(SUM(tmp1.next_day),0) AS next_day,
+        IFNULL(SUM(tmp3.third_day),0) AS third_day,
+        IFNULL(SUM(tmp4.four_day),0) AS four_day,
+        IFNULL(SUM(tmp5.five_day),0) AS five_day,
+        IFNULL(SUM(tmp6.six_day),0) AS six_day,
+        IFNULL(SUM(tmp7.seventh_day),0) AS seventh_day,
+        IFNULL(SUM(tmp8.eighth_day),0) AS eighth_day,
+        IFNULL(SUM(tmp9.ninth_day),0) AS ninth_day,
+        IFNULL(SUM(tmp10.ten_day),0) AS ten_day,
+        IFNULL(SUM(tmp11.eleventh_day),0) AS eleventh_day,
+        IFNULL(SUM(tmp12.twelfth_day),0) AS twelfth_day,
+        IFNULL(SUM(tmp13.thirteen_day),0) AS thirteen_day,
+        IFNULL(SUM(tmp14.fourteenth_day),0) AS fourteenth_day,
+        IFNULL(SUM(tmp15.third_week),0) AS third_week,
+        IFNULL(SUM(tmp16.fourth_week),0) AS fourth_week,
+        IFNULL(SUM(tmp17.fifth_week),0) AS fifth_week,
+        IFNULL(SUM(tmp18.sixth_week),0) AS sixth_week,
+        IFNULL(SUM(tmp19.sum),0) AS sum
+        FROM
+        sys_user su
+        <choose>
+            <when test="role == 1">
+                INNER JOIN sys_material sm ON su.real_name = sm.buyer_number
+                INNER JOIN sys_material_supplier sms ON sm.material_number = sms.material_number
+            </when>
+            <otherwise>
+                INNER JOIN sys_supplier ss ON su.id = ss.user_id
+            </otherwise>
+        </choose>
+        LEFT JOIN
+        (
+        <include refid="past_due"/>
+        GROUP BY
+        supplier_code
+        ) tmp ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp.supplier_code
+        LEFT JOIN (
+        <include refid="next_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp1.supplier_code
+        LEFT JOIN (
+        <include refid="third_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp3 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp3.supplier_code
+        LEFT JOIN (
+        <include refid="four_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp4 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp4.supplier_code
+        LEFT JOIN (
+        <include refid="five_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp5 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp5.supplier_code
+        LEFT JOIN (
+        <include refid="six_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp6 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp6.supplier_code
+        LEFT JOIN (
+        <include refid="seventh_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp7 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp7.supplier_code
+        LEFT JOIN (
+        <include refid="eighth_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp8 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp8.supplier_code
+        LEFT JOIN (
+        <include refid="ninth_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp9 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp9.supplier_code
+        LEFT JOIN (
+        <include refid="ten_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp10 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp10.supplier_code
+        LEFT JOIN (
+        <include refid="eleventh_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp11 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp11.supplier_code
+        LEFT JOIN (
+        <include refid="twelfth_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp12 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp12.supplier_code
+        LEFT JOIN (
+        <include refid="thirteen_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp13 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp13.supplier_code
+        LEFT JOIN (
+        <include refid="fourteenth_day"/>
+        GROUP BY
+        supplier_code
+        ) tmp14 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp14.supplier_code
+        LEFT JOIN (
+        <include refid="third_week"/>
+        GROUP BY
+        supplier_code
+        ) tmp15 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp15.supplier_code
+        LEFT JOIN (
+        <include refid="fourth_week"/>
+        GROUP BY
+        supplier_code
+        ) tmp16 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp16.supplier_code
+        LEFT JOIN (
+        <include refid="fifth_week"/>
+        GROUP BY
+        supplier_code
+        ) tmp17 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp17.supplier_code
+        LEFT JOIN (
+        <include refid="sixth_week"/>
+        GROUP BY
+        supplier_code
+        ) tmp18 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp18.supplier_code
+        LEFT JOIN (
+        <include refid="sum"/>
+        GROUP BY
+        supplier_code
+        ) tmp19 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = tmp19.supplier_code
+        GROUP BY su.username
+    </select>
+
+    <select id="selectAbnormalDeliverySum" resultType="com.jaezi.bus.plan.dto.AbnormalDeliverySumDto">
+        SELECT
+        <choose>
+            <when test="role == 1">
+                IFNULL( su.username, '' ) AS supplierCode,
+                IFNULL( SUM(purchase.purchaseYellow), 0 ) AS purchaseYellow,
+                IFNULL( SUM(purchase1.purchaseRed), 0 ) AS purchaseRed,
+                IFNULL( SUM(inventory.inventoryYellow), 0 ) AS inventoryYellow,
+                IFNULL( SUM(inventory1.inventoryRed), 0 ) AS inventoryRed,
+                IFNULL( SUM(truck.truckYellow), 0 ) AS truckYellow,
+                IFNULL( SUM(truck1.truckRed), 0 ) AS truckRed,
+                IFNULL( SUM(factory.factoryYellow), 0 ) AS factoryYellow,
+                IFNULL( SUM(factory1.factoryRed), 0 ) AS factoryRed,
+                IFNULL( SUM(postpone.postponeYellow), 0 ) AS postponeYellow,
+                IFNULL( SUM(postpone1.postponeRed), 0 ) AS postponeRed
+            </when>
+            <otherwise>
+                IFNULL( su.username, '' ) AS supplierCode,
+                IFNULL( purchase.purchaseYellow, 0 ) AS purchaseYellow,
+                IFNULL( purchase1.purchaseRed, 0 ) AS purchaseRed,
+                IFNULL( inventory.inventoryYellow, 0 ) AS inventoryYellow,
+                IFNULL( inventory1.inventoryRed, 0 ) AS inventoryRed,
+                IFNULL( truck.truckYellow, 0 ) AS truckYellow,
+                IFNULL( truck1.truckRed, 0 ) AS truckRed,
+                IFNULL( factory.factoryYellow, 0 ) AS factoryYellow,
+                IFNULL( factory1.factoryRed, 0 ) AS factoryRed,
+                IFNULL( postpone.postponeYellow, 0 ) AS postponeYellow,
+                IFNULL( postpone1.postponeRed, 0 ) AS postponeRed
+            </otherwise>
+        </choose>
+        FROM
+        sys_user su
+        <choose>
+            <when test="role == 1">
+                INNER JOIN sys_material sm ON su.real_name = sm.buyer_number
+                INNER JOIN sys_material_supplier sms ON sm.material_number = sms.material_number
+            </when>
+            <otherwise>
+                INNER JOIN sys_supplier ss ON su.id = ss.user_id
+            </otherwise>
+        </choose>
+        LEFT JOIN ( SELECT count( 1 ) AS purchaseYellow, supplier_code FROM bus_purchase
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND status IS NULL AND CURDATE() = create_date
+        </where>
+        GROUP BY supplier_code) purchase ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = purchase.supplier_code
+        LEFT JOIN ( SELECT count( 1 ) AS purchaseRed, supplier_code FROM bus_purchase
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND (status = 0 OR (CURDATE() &gt; create_date AND status IS NULL))
+            <!-- or (status = 1 and un_description != '')) and CURDATE() &gt; create_date -->
+        </where>
+        GROUP BY supplier_code ) purchase1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = purchase1.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS inventoryYellow,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND SUBDATE(CURDATE(), 1) = blr.loading_shipment_date AND blr.material_number IN (SELECT
+            bii.material_number
+            FROM bus_inventory_import bii WHERE bii.supplier_inventory &lt; (SELECT SUM(blr.loading_shipment_number)
+            FROM bus_loading_record blr
+            WHERE blr.material_number = bii.material_number GROUP BY blr.material_number))
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) inventory ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = inventory.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS inventoryRed,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() &gt;= blr.loading_shipment_date AND blr.material_number IN (SELECT bii.material_number
+            FROM
+            bus_inventory_import bii WHERE bii.supplier_inventory &lt; (SELECT SUM(blr.loading_shipment_number) FROM
+            bus_loading_record blr
+            WHERE blr.material_number = bii.material_number GROUP BY blr.material_number))
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) inventory1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = inventory1.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS truckYellow,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() = blr.loading_shipment_date AND blr.loading_shipment_number = NULL
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) truck ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = truck.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS truckRed,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() &gt; blr.loading_shipment_date AND (blr.loading_shipment_number = NULL OR
+            blr.remaining_quantity > 0)
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) truck1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = truck1.supplier_code
+        LEFT JOIN (
+        SELECT
+        count( 1 ) AS factoryYellow,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        LEFT JOIN bus_purchase bp ON blr.purchase_order = bp.p_order
+        AND blr.line_item = bp.project
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material where buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() = blr.factory_time AND bp.receiving_number != bp.qty
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) factory ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = factory.supplier_code
+        LEFT JOIN (
+        SELECT
+        count( 1 ) AS factoryRed,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        LEFT JOIN bus_purchase bp ON blr.purchase_order = bp.p_order
+        AND blr.line_item = bp.project
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() &gt; blr.factory_time AND bp.receiving_number != bp.qty
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) factory1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = factory1.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS postponeYellow,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material where buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() = blr.factory_time AND (blr.remaining_quantity > 0 OR blr.remaining_quantity = NULL)
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) postpone ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = postpone.supplier_code
+        LEFT JOIN (
+        SELECT
+        COUNT( 1 ) AS postponeRed,
+        bld.supplier_code
+        FROM
+        bus_loading_record blr
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND blr.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 3">
+                <choose>
+                    <when test="role == 1">
+                        <!-- 企业用户看绑定供应商的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number
+                        FROM
+                        sys_material)
+                        )
+                        AND blr.material_number IN (
+                        SELECT material_number FROM sys_material
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 供应商看自己的数据 -->
+                        AND bld.supplier_code IN (
+                        SELECT username FROM sys_user su
+                        INNER JOIN sys_supplier ss ON su.id = ss.user_id
+                        )
+                    </otherwise>
+                </choose>
+            </if>
+            AND CURDATE() &gt; blr.factory_time AND (blr.remaining_quantity > 0 OR blr.remaining_quantity = NULL)
+        </where>
+        GROUP BY
+        bld.supplier_code
+        ) postpone1 ON
+        <choose>
+            <when test="role == 1">
+                sms.supplier_code
+            </when>
+            <otherwise>
+                su.username
+            </otherwise>
+        </choose>
+        = postpone1.supplier_code
+        <if test="role == 1">
+            GROUP BY su.username
+        </if>
+    </select>
+
+    <select id="getUser" resultType="java.util.Map">
+        select username, CAST(user_type AS CHAR) AS user_type, real_name
+        from sys_user
+        where username = #{username}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+
+    </update>
+
+    <update id="updateBath">
+        update bus_supply_diff
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="next_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.nextDay}
+                </foreach>
+            </trim>
+            <trim prefix="third_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirdDay}
+                </foreach>
+            </trim>
+            <trim prefix="four_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fourDay}
+                </foreach>
+            </trim>
+            <trim prefix="five_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fiveDay}
+                </foreach>
+            </trim>
+            <trim prefix="six_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.sixDay}
+                </foreach>
+            </trim>
+            <trim prefix="seventh_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.seventhDay}
+                </foreach>
+            </trim>
+            <trim prefix="ninth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.ninthDay}
+                </foreach>
+            </trim>
+            <trim prefix="ten_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.tenDay}
+                </foreach>
+            </trim>
+            <trim prefix="eleventh_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.eleventhDay}
+                </foreach>
+            </trim>
+            <trim prefix="twelfth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twelfthDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirteen_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirteenDay}
+                </foreach>
+            </trim>
+            <trim prefix="fourteenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fourteenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="fifteenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fifteenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="sixteenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.sixteenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="seventeenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.seventeenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="eighteenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.eighteenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="nineteenth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.nineteenthDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_one_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyOneDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_two_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyTwoDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_three_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyThreeDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_four_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyFourDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_five_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyFiveDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_six_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentySixDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_seventh_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentySeventhDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_eighth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyEighthDay}
+                </foreach>
+            </trim>
+            <trim prefix="twenty_nine_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.twentyNineDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_one_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyOneDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_two_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyTwoDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_three_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyThreeDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_four_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyFourDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_five_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtyFiveDay}
+                </foreach>
+            </trim>
+            <trim prefix="thirty_six_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thirtySixDay}
+                </foreach>
+            </trim>
+            <trim prefix="thick_seventh_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thickSeventhDay}
+                </foreach>
+            </trim>
+            <trim prefix="thick_eighth_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thickEighthDay}
+                </foreach>
+            </trim>
+            <trim prefix="thick_nine_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.thickNineDay}
+                </foreach>
+            </trim>
+            <trim prefix="forty_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fortyDay}
+                </foreach>
+            </trim>
+            <trim prefix="forty_one_day = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    WHEN id = #{item.id}
+                    THEN #{item.fortyOneDay}
+                </foreach>
+            </trim>
+        </trim>
+        WHERE id IN
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+</mapper>

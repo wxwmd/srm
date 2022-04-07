@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.finance.dao.DetailAccountDao">
+    <resultMap id="detailAccount" type="com.jaezi.bus.finance.model.DetailAccount">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="date" jdbcType="VARCHAR" property="date"/>
+        <result column="voucher_number" jdbcType="INTEGER" property="voucherNumber"/>
+        <result column="digest" jdbcType="VARCHAR" property="digest"/>
+        <result column="debit_domestic" jdbcType="INTEGER" property="debitDomestic"/>
+        <result column="credit_domestic" jdbcType="INTEGER" property="creditDomestic"/>
+        <result column="direction" jdbcType="VARCHAR" property="direction"/>
+        <result column="balance_domestic" jdbcType="INTEGER" property="balanceDomestic"/>
+    </resultMap>
+
+    <resultMap id="detailAccountVo" type="com.jaezi.bus.finance.vo.DetailAccountVo">
+    </resultMap>
+
+    <sql id="base_column">
+        bda.id,
+        bda.company,
+        bda.`date`,
+        bda.voucher_number,
+        bda.digest,
+        bda.debit_domestic,
+        bda.credit_domestic,
+        bda.direction,
+        bda.balance_domestic
+    </sql>
+
+    <!-- 查询所有实际付款情况信息 -->
+    <select id="getAllVos" resultMap="detailAccount" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_detail_account bda
+        <where>
+            <if test="company != null and company != ''">
+                AND bda.company = #{company},
+            </if>
+            <if test="date != null and date != ''">
+                AND bda.`date` = #{date},
+            </if>
+            <if test="voucherNumber != null and voucherNumber != ''">
+                AND bda.voucher_number = #{voucherNumber},
+            </if>
+            <if test="digest != null and digest != ''">
+                AND bda.digest = #{digest},
+            </if>
+            <if test="debitDomestic != null and debitDomestic != ''">
+                AND bda.debit_domestic = #{debitDomestic},
+            </if>
+            <if test="creditDomestic != null and creditDomestic != ''">
+                AND bda.credit_domestic = #{creditDomestic},
+            </if>
+            <if test="direction != null and direction != ''">
+                AND bda.direction = #{direction},
+            </if>
+            <if test="balanceDomestic != null and balanceDomestic != ''">
+                AND bda.balance_domestic = #{balanceDomestic},
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
+                AND bda.`date` BETWEEN #{startTime} AND #{entTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取实际付款情况信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="detailAccount">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_detail_account bda
+        WHERE bda.id = #{id}
+    </select>
+
+    <!-- 添加一个实际付款情况信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.finance.model.DetailAccount">
+        INSERT INTO bus_detail_account(company, `date`, voucher_number, digest, debit_domestic, credit_domestic,
+                                       direction, balance_domestic)
+        VALUES (#{company}, #{date}, #{voucherNumber}, #{digest}, #{debitDomestic}, #{creditDomestic}, #{direction},
+                #{balanceDomestic})
+    </insert>
+
+    <!-- 修改装实际付款情况信息 -->
+    <update id="update" parameterType="com.jaezi.bus.finance.model.DetailAccount">
+        UPDATE bus_detail_account
+        SET
+        <trim suffixOverrides=",">
+            <if test="company != null and company != ''">company = #{company},</if>
+            <if test="date != null and date != ''">`date` = #{date},</if>
+            <if test="voucherNumber != null and voucherNumber != ''">voucherNumber = #{voucherNumber},</if>
+            <if test="digest != null and digest != ''">digest = #{digest},</if>
+            <if test="debitDomestic != null and debitDomestic != ''">debit_domestic = #{debitDomestic},</if>
+            <if test="creditDomestic != null and creditDomestic != ''">credit_domestic = #{creditDomestic},</if>
+            <if test="direction != null and direction != ''">direction = #{direction},</if>
+            <if test="balanceDomestic != null and balanceDomestic != ''">balance_domestic = #{balanceDomestic},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个实际付款情况信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_detail_account
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

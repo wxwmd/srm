@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.UserDao">
+    <resultMap id="user" type="com.jaezi.system.model.User">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="last_login_time" jdbcType="BIGINT" property="lastLoginTime"/>
+        <result column="user_type" jdbcType="INTEGER" property="userType"/>
+        <result column="real_name" jdbcType="INTEGER" property="realName"/>
+        <result column="quota" jdbcType="DECIMAL" property="quota"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="examine_status" jdbcType="VARCHAR" property="examineStatus"/>
+        <result column="role_type" jdbcType="VARCHAR" property="roleType"/>
+    </resultMap>
+
+    <resultMap id="userVo" type="com.jaezi.system.vo.UserVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="last_login_time" jdbcType="BIGINT" property="lastLoginTime"/>
+        <result column="user_type" jdbcType="INTEGER" property="userType"/>
+        <result column="real_name" jdbcType="INTEGER" property="realName"/>
+        <result column="quota" jdbcType="DECIMAL" property="quota"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+    </resultMap>
+
+    <sql id="base_column">
+        id
+        ,
+        username,
+        role_id,
+        create_time,
+        status,
+        last_login_time,
+        user_type,
+        real_name,
+        quota,
+        phone
+    </sql>
+
+    <sql id="SU_Col">
+        su
+        .
+        id
+        ,
+        su.username,
+        su.role_id,
+        su.create_time,
+        su.status,
+        su.last_login_time,
+        su.user_type,
+        su.real_name,
+        su.quota,
+        su.phone
+    </sql>
+
+    <!--根据ID 获取用户-->
+    <select id="getOneById" resultMap="user" parameterType="java.lang.Integer">
+        SELECT id, username, role_id, create_time, status, user_type
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户Id获取密码 -->
+    <select id="getPassword" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT password
+        FROM sys_user
+        WHERE id = #{id}
+          AND status = 0
+    </select>
+
+    <!--根据用户名获取用户-->
+    <select id="getUserByUsernameAndStatus" resultMap="user" parameterType="java.lang.String">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_user
+        WHERE username = #{username}
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <select id="getAllVos" resultMap="userVo">
+        SELECT <include refid="SU_Col"></include>,
+        sr.role_name AS roleName
+        FROM sys_user su
+        LEFT JOIN sys_role sr ON sr.id = su.role_id
+        <where>
+            <if test="isAdmin == 2">
+                su.user_type != 1
+            </if>
+            <if test="infoUserType == 1 and realName != null and realName != ''">
+                <!-- 供应商和绑定的企业的发消息 -->
+                and su.real_name in (
+                SELECT buyer_number
+                FROM sys_material sm
+                INNER JOIN sys_material_supplier sms on sm.material_number = sms.material_number
+                INNER JOIN sys_user su on sms.supplier_code = su.username
+                WHERE su.real_name = #{realName}
+                UNION all
+                SELECT real_name from sys_user where user_type = 3
+                )
+            </if>
+            <if test="infoUserType == 0 and realName != null and realName != ''">
+                and su.real_name in (
+                SELECT real_name
+                FROM sys_user su
+                INNER JOIN sys_material_supplier sms ON su.username = sms.supplier_code
+                INNER JOIN sys_material sm ON sms.material_number = sm.material_number
+                WHERE sm.buyer_number = #{realName}
+                )
+            </if>
+            <if test="infoUserType == 3 and realName != null and realName != ''">
+                and su.real_name != #{realName} and su.user_type != 2
+            </if>
+            <if test="userType != null and userType != ''">
+                and su.user_type = #{userType}
+            </if>
+            <if test="status != null and status != ''">
+                and su.status = #{status}
+            </if>
+        </where>
+        ORDER BY su.status, su.id
+    </select>
+
+    <!--添加一个用户-->
+    <insert id="add" parameterType="com.jaezi.system.model.User" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO sys_user(username, password, role_id, create_time, user_type, real_name, quota, phone, status)
+        VALUES (#{username}, #{password}, #{roleId}, #{createTime}, #{userType}, #{realName}, #{quota}, #{phone},
+                #{status})
+    </insert>
+
+    <insert id="saveBath" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert IGNORE sys_user (username, password, role_id, create_time, user_type, real_name, quota, phone)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.username},#{item.password},#{item.roleId},
+            #{item.createTime},#{item.userType},#{item.realName},#{item.quota},
+            #{item.phone})
+        </foreach>
+    </insert>
+
+    <!--修改用户资料-->
+    <update id="update" parameterType="com.jaezi.system.model.User">
+        UPDATE sys_user
+        SET
+        <trim suffixOverrides=",">
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="roleId != null and roleId != ''">role_id = #{roleId},</if>
+            <if test="status != null and status &gt; -1">status = #{status},</if>
+            <if test="lastLoginTime != null and lastLoginTime != ''">last_login_time = #{lastLoginTime},</if>
+            <if test="realName != null and realName != ''">real_name = #{realName},</if>
+            <if test="token != null and token != ''">token = #{token},</if>
+            <if test="quota != null and quota != ''">quota = #{quota},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <update id="removeToken">
+        UPDATE sys_user
+        SET token = ''
+        WHERE id = #{id}
+    </update>
+
+    <!--删除用户-->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_user
+        WHERE id = #{id}
+          AND id &gt; 1
+    </delete>
+
+    <!--根据角色Id获取用户-->
+    <select id="getUserByRoleId" resultMap="user" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_user
+        WHERE role_id = #{roleId} AND status = 0
+    </select>
+
+    <!-- 根据用户类型和用户名获取用户 -->
+    <select id="getUser" resultMap="user">
+        SELECT
+        <include refid="SU_Col"></include>,sr.role_type
+        <if test="userType == 1">
+            ,ss.examine_status
+        </if>
+        FROM sys_user su
+        left join sys_role sr on su.role_id = sr.id
+        <if test="userType == 1">
+            inner join sys_supplier ss on su.id = ss.user_id
+        </if>
+        WHERE su.username = #{userName} AND su.user_type = #{userType} AND su.status = 0
+    </select>
+
+    <select id="getToken" resultType="java.lang.String">
+        SELECT token
+        FROM sys_user
+        where id = #{userId}
+    </select>
+
+    <select id="getSupplierByUsername" resultType="java.lang.String">
+        SELECT `编号`
+        FROM supplier
+        where `编号` = #{username} LIMIT 1
+    </select>
+
+</mapper>

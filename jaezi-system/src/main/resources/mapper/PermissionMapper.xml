@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.PermissionDao">
+    <resultMap id="permission" type="com.jaezi.system.model.Permission">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode" />
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+        <result column="permission_type" jdbcType="INTEGER" property="permissionType" />
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    </resultMap>
+
+    <resultMap id="permissionVo" type="com.jaezi.system.vo.PermissionVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode" />
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType" />
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    </resultMap>
+
+    <sql id="base_column">
+        id,
+        pid,
+        permission_code,
+        permission_name,
+        permission_type,
+        is_leaf,
+        create_time,
+        status
+    </sql>
+
+    <select id="getAllVos" resultMap="permissionVo" parameterType="java.util.Map">
+        SELECT <include refid="base_column"></include>
+        FROM sys_permission
+        <where>
+            <if test="permissionType != null and permissionType != ''">
+                permission_type = #{permissionType}
+            </if>
+        </where>
+    </select>
+
+    <select id="getOneById" parameterType="java.lang.Integer" resultType="com.jaezi.system.model.Permission">
+        SELECT <include refid="base_column"></include>
+        FROM sys_permission WHERE id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.system.model.Permission">
+        INSERT INTO sys_permission(pid, permission_name, permission_code, permission_type, is_leaf, create_time, status)
+        VALUES(#{pid}, #{permissionName}, #{permissionCode}, #{permissionType}, #{isLeaf}, #{createTime}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.system.model.Permission">
+        UPDATE sys_permission
+        SET
+        <trim suffixOverrides=",">
+            <if test="pid != null and pid &gt; -1">pid = #{pid},</if>
+            <if test="permissionName != null and permissionName != ''">permission_name = #{permissionName},</if>
+            <if test="permissionCode != null and permissionCode != ''">permission_code = #{permissionCode},</if>
+            <if test="permissionType != null and permissionType != ''">permission_type = #{permissionType},</if>
+            <if test="isLeaf != null and isLeaf != ''">is_leaf = #{isLeaf},</if>
+            <if test="status != null and status &gt; -1">status = #{status},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_permission WHERE id = #{id}
+    </delete>
+
+    <select id="getPermissionByName" parameterType="java.lang.String" resultMap="permission">
+        SELECT  <include refid="base_column"></include>
+        FROM sys_permission WHERE permission_name = #{permissionName}
+    </select>
+
+    <select id="getPermissionIdsByRoleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT permission_id
+        FROM sys_role_permission
+        WHERE role_id = #{roleId}
+    </select>
+
+</mapper>

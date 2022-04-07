@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceDao">
+
+    <resultMap id="consignmentSalesInvoice" type="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoice">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="plant" property="plant" jdbcType="INTEGER"/>
+        <result column="material_number" property="materialNumber" jdbcType="INTEGER"/>
+        <result column="quantity" property="quantity" jdbcType="DECIMAL"/>
+        <result column="out_invoice_period" property="outInvoicePeriod" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="tax_amount" property="taxAmount" jdbcType="DECIMAL"/>
+        <result column="tax_price_total" property="taxPriceTotal" jdbcType="DECIMAL"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="invoice_code" property="invoiceCode" jdbcType="INTEGER"/>
+        <result column="invoice_number" property="invoiceNumber" jdbcType="INTEGER"/>
+        <result column="out_invoice_date" property="outInvoiceDate" jdbcType="VARCHAR"/>
+        <result column="tax_rate" property="taxRate" jdbcType="DECIMAL"/>
+        <result column="purchase_order" property="purchaseOrder" jdbcType="INTEGER"/>
+        <result column="hong_project" property="hongProject" jdbcType="INTEGER"/>
+        <result column="material_voucher" property="materialVoucher" jdbcType="INTEGER"/>
+        <result column="invoice_status" property="invoiceStatus" jdbcType="INTEGER"/>
+        <result column="voucher_project" property="voucherProject" jdbcType="INTEGER"/>
+        <result column="material" property="material" jdbcType="VARCHAR"/>
+        <result column="material_describe" property="materialDescribe" jdbcType="VARCHAR"/>
+        <result column="invoice_date" property="invoiceDate" jdbcType="VARCHAR"/>
+        <result column="interim_invoice_number" property="interimInvoiceNumber" jdbcType="INTEGER"/>
+        <result column="discount_cause" property="discountCause" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bcsi.id,bcsi.plant,bcsi.material_number,sm.material_name,bcsi.quantity,bcsi.out_invoice_period,bcsi.amount,bcsi.tax_amount,
+        bcsi.tax_price_total,bcsi.create_time,bcsi.supplier_code,
+        bcsi.invoice_code,bcsi.invoice_number,bcsi.out_invoice_date,bcsi.tax_rate,bcsi.purchase_order,bcsi.hong_project,
+        bcsi.material_voucher,bcsi.voucher_project,
+        bcsi.invoice_status,sm.material_name AS material,sm.material_description AS material_describe,bcsi.invoice_date,
+        bcsi.interim_invoice_number,bcsi.discount_cause
+    </sql>
+
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentSalesInvoice">
+        SELECT <include refid="base_column"/>
+        FROM bus_consignment_sales_invoice bcsi
+        LEFT JOIN sys_material sm ON bcsi.material_number = sm.material_number
+        WHERE bcsi.id = #{id}
+    </select>
+
+    <!-- 寄售物资发票拆票查询-->
+    <select id="findAll" resultMap="consignmentSalesInvoice" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_consignment_sales_invoice bcsi
+        LEFT JOIN sys_material sm ON bcsi.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                bcsi.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcsi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bcsi.plant = #{plant}
+            </if>
+            <if test="invoiceDate != null and invoiceDate != ''">
+                AND bcsi.invoice_date = #{invoiceDate}
+            </if>
+            <if test="invoiceNumber != null and invoiceNumber != ''">
+                AND bcsi.invoice_number = #{invoiceNumber}
+            </if>
+            <if test="invoiceStatus != null and invoiceStatus != ''">
+                AND bcsi.invoice_status = #{invoiceStatus}
+            </if>
+        </where>
+    </select>
+
+    <!-- 添加寄售物资发票拆票-->
+    <insert id="add" parameterType="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoice">
+        INSERT INTO bus_consignment_sales_invoice(plant, material_number, quantity, out_invoice_period, amount,
+                                                  tax_amount, tax_price_total, create_time, supplier_code,
+                                                  invoice_code, invoice_number, out_invoice_date, tax_rate,
+                                                  purchase_order, hong_project, material_voucher, voucher_project,
+                                                  invoice_date, interim_invoice_number, invoice_status, discount_cause)
+        VALUES (#{plant}, #{materialNumber}, #{quantity}, #{outInvoicePeriod}, #{amount}, #{taxAmount},
+                #{taxPriceTotal}, #{createTime}, #{supplierCode},
+                #{invoiceCode}, #{invoiceNumber}, #{outInvoiceDate}, #{taxRate}, #{purchaseOrder}, #{hongProject},
+                #{materialVoucher}, #{voucherProject},
+                #{invoiceDate}, #{interimInvoiceNumber}, #{invoiceStatus}, #{discountCause})
+    </insert>
+
+    <!-- 更新寄售物资发票拆票-->
+    <update id="update" parameterType="com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoice">
+        UPDATE bus_consignment_sales_invoice
+        SET
+        <trim suffixOverrides=",">
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="quantity != null and quantity != ''">quantity = #{quantity},</if>
+            <if test="outInvoicePeriod != null and outInvoicePeriod != ''">out_invoice_period = #{outInvoicePeriod},
+            </if>
+            <if test="amount != null and amount != ''">amount = #{amount},</if>
+            <if test="taxAmount != null and taxAmount != ''">tax_amount = #{taxAmount},</if>
+            <if test="taxPriceTotal != null and taxPriceTotal != ''">tax_price_total = #{taxPriceTotal},</if>
+            <if test="invoiceCode != null and invoiceCode != ''">invoice_code = #{invoiceCode},</if>
+            <if test="invoiceNumber != null and invoiceNumber != ''">invoice_number = #{invoiceNumber},</if>
+            <if test="outInvoiceDate != null and outInvoiceDate != ''">out_invoice_date = #{outInvoiceDate},</if>
+            <if test="taxRate != null and taxRate != ''">tax_rate = #{taxRate},</if>
+            <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
+            <if test="hongProject != null and hongProject != ''">hong_project = #{hongProject},</if>
+            <if test="materialVoucher != null and materialVoucher != ''">material_voucher = #{materialVoucher},</if>
+            <if test="voucherProject != null and voucherProject != ''">voucher_project = #{voucherProject},</if>
+            <if test="invoiceDate != null and invoiceDate != ''">invoice_date = #{invoiceDate},</if>
+            <if test="invoiceStatus != null">invoice_status = #{invoiceStatus},</if>
+            <if test="discountCause != null">discount_cause = #{discountCause},</if>
+            <if test="interimInvoiceNumber != null and interimInvoiceNumber != ''">interim_invoice_number =
+                #{interimInvoiceNumber},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除寄售物资发票拆票-->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_consignment_sales_invoice
+        WHERE id = #{id}
+    </delete>
+</mapper>

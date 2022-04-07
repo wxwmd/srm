@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.inventory.dao.OutsourcingSubcontractInventoryDao">
+    <resultMap id="outsourcingSubcontractInventory"
+               type="com.jaezi.bus.inventory.model.OutsourcingSubcontractInventory">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_number" jdbcType="INTEGER" property="materialNumber"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="plant" jdbcType="INTEGER" property="plant"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="qty1" jdbcType="DECIMAL" property="qty1"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="dtsourcingSubcontractInventoryVo"
+               type="com.jaezi.bus.inventory.vo.OutsourcingSubcontractInventoryVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bosi.id,
+        bosi.material_number,
+        sm.material_description,
+        bosi.plant,
+        bosi.qty,
+        bosi.qty1,
+        bosi.supplier_code
+    </sql>
+
+    <!-- 查询所有外协分包库存 -->
+    <select id="getAllVos" resultMap="outsourcingSubcontractInventory" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_outsourcing_subcontract_inventory bosi
+        LEFT JOIN sys_material sm ON bosi.material_number = sm.material_number
+        <where>
+            <!--<if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode}</if>-->
+            <if test="materialName != null and materialName != ''">
+                AND bosi.material_number = #{materialNumber}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bosi.plant = #{plant}
+            </if>
+            <if test="qty != null and qty != ''">
+                AND bosi.qty = #{qty}
+            </if>
+            <if test="qty1 != null and qty1 != ''">
+                AND bosi.qty1 = #{qty1}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bosi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bosi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bosi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有外协分包库存 -->
+    <select id="findAll" resultMap="outsourcingSubcontractInventory" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_outsourcing_subcontract_inventory bosi
+        LEFT JOIN sys_material sm ON bosi.material_number = sm.material_number
+        <where>
+            <!--<if test="supplierCode != null and supplierCode != ''">bosi.supplier_code = #{supplierCode}</if>-->
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bosi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bosi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bosi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bosi.material_number = #{materialNumber}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bosi.plant = #{plant}
+            </if>
+            <if test="qty != null and qty != ''">
+                AND bosi.qty = #{qty}
+            </if>
+            <if test="qty1 != null and qty1 != ''">
+                AND bosi.qty1 = #{qty1}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取外协分包库存信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="outsourcingSubcontractInventory">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_outsourcing_subcontract_inventory bosi
+        LEFT JOIN sys_material sm ON bosi.material_number = sm.material_number
+        WHERE bosi.id = #{id}
+    </select>
+
+    <!-- 添加一个外协分包库存信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.inventory.model.OutsourcingSubcontractInventory">
+        INSERT INTO bus_outsourcing_subcontract_inventory(material_number, plant, qty, qty1, supplier_code)
+        VALUES (#{materialNumber}, #{plant}, #{qty}, #{qty1}, #{supplierCode})
+    </insert>
+
+    <!-- 修改外协分包库存信息 -->
+    <update id="update" parameterType="com.jaezi.bus.inventory.model.OutsourcingSubcontractInventory">
+        UPDATE bus_outsourcing_subcontract_inventory
+        SET
+        <trim suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="materialName != null and materialName != ''">material_number = #{materialNumber},</if>
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="qty != null and qty != ''">qty = #{qty},</if>
+            <if test="qty1 != null and qty1 != ''">qty1 = #{qty1},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个外协分包库存信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_outsourcing_subcontract_inventory
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

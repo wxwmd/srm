@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.DictDataDao">
+    <resultMap id="dictData" type="com.jaezi.system.model.DictData">
+        <id property="dictCode" jdbcType="INTEGER" column="dict_code"/>
+        <result property="dictSort" jdbcType="INTEGER" column="dict_sort"/>
+        <result property="dictLabel" jdbcType="VARCHAR" column="dict_label"/>
+        <result property="dictValue" jdbcType="VARCHAR" column="dict_value"/>
+        <result property="dictType" jdbcType="VARCHAR" column="dict_type"/>
+        <result property="listClass" jdbcType="VARCHAR" column="list_class"/>
+        <result property="isDefault" jdbcType="CHAR" column="is_default"/>
+        <result property="status" jdbcType="CHAR" column="status"/>
+        <result property="remark" jdbcType="VARCHAR" column="remark"/>
+
+        <!--<result property="createBy"   column="create_by"   />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy"   column="update_by"   />
+        <result property="updateTime" column="update_time" />-->
+    </resultMap>
+
+    <resultMap id="dictDataVo" type="com.jaezi.system.vo.DictDataVo">
+        <!--<id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode" />
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType" />
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />-->
+    </resultMap>
+
+    <sql id="base_column">
+        dict_code
+        ,
+        dict_sort,
+        dict_label,
+        dict_value,
+        dict_type,
+        list_class,
+        is_default,
+        status,
+        remark
+    </sql>
+
+    <!-- 查询所有字典 -->
+    <select id="getAllVos" resultMap="dictData" parameterType="java.util.Map">
+        select
+        <include refid="base_column"></include>
+        from sys_dict_data
+        <where>
+            <if test="dictType != null and dictType != ''">
+                dict_type = #{dictType}
+            </if>
+        </where>
+        order by dict_sort
+    </select>
+
+    <!-- 根据id获取字典 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="dictData">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_dict_data
+        WHERE dict_code = #{dictCode}
+    </select>
+
+    <!-- 添加字典 -->
+    <insert id="add" parameterType="com.jaezi.system.model.DictData">
+        INSERT INTO sys_dict_data(dict_sort, dict_label, dict_value, dict_type, list_class, is_default, status, remark)
+        VALUES (#{dictSort}, #{dictLabel}, #{dictValue}, #{dictType}, #{listClass}, #{isDefault}, #{status}, #{remark})
+    </insert>
+
+    <!-- 更新字典 -->
+    <update id="update" parameterType="com.jaezi.system.model.DictData">
+        UPDATE sys_dict_data
+        SET
+        <trim suffixOverrides=",">
+            <if test="dictSort != null and dictSort != ''">dict_sort = #{dictSort},</if>
+            <if test="dictLabel != null and dictLabel != ''">dict_label = #{dictLabel},</if>
+            <if test="dictValue != null and dictValue != ''">dict_value = #{dictValue},</if>
+            <if test="dictType != null and dictType != ''">dict_type = #{dictType},</if>
+            <if test="listClass != null and listClass != ''">list_class = #{listClass},</if>
+            <if test="isDefault != null and isDefault != ''">is_default = #{isDefault},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+        </trim>
+        WHERE dict_code = #{dictCode}
+    </update>
+
+    <!-- 删除字典 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_dict_data
+        WHERE dict_code = #{id}
+    </delete>
+
+    <!-- 根据字典类型删除字典数据 -->
+    <delete id="deleteDictDataByType">
+        DELETE
+        FROM sys_dict_data
+        WHERE dict_type = #{dictType}
+    </delete>
+
+    <!-- 根据字典类型或者状态找字典数据 -->
+    <select id="selectDictDataByTypeAndStatus" resultMap="dictData" resultType="java.lang.String">
+        select
+        <include refid="base_column"></include>
+        from sys_dict_data
+        <where>
+            <if test="dictType != null and dictType != ''">
+                dict_type = #{dictType}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by dict_sort
+    </select>
+
+</mapper>

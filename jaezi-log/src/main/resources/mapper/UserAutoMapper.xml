@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.log.dao.UserAuthDao">
+    <resultMap id="userAuth" type="com.jaezi.log.model.UserAuth">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="login_type" jdbcType="VARCHAR" property="loginType"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="browser_name" jdbcType="VARCHAR" property="browserName"/>
+        <result column="browser_version" jdbcType="VARCHAR" property="browserVersion"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="device_os" jdbcType="VARCHAR" property="deviceOs"/>
+        <result column="os_name" jdbcType="VARCHAR" property="osName"/>
+        <result column="os_version" jdbcType="VARCHAR" property="osVersion"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="create_time" jdbcType="INTEGER" property="createTime"/>
+    </resultMap>
+
+    <sql id="base_column">
+        sua.id,
+        sua.username,
+        sua.login_type,
+        sua.ip,
+        sua.browser_name,
+        sua.browser_version,
+        sua.device_type,
+        sua.device_os,
+        sua.os_name,
+        sua.os_version,
+        sua.`result`,
+        sua.create_time
+    </sql>
+
+    <!-- 查询所有用户登录日志 -->
+    <select id="getAllVos" resultMap="userAuth" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_user_auth sua
+        <where>
+            <if test="username != null and username != ''">
+                sua.username LIKE CONCAT('%',#{username},'%')
+            </if>
+        </where>
+        ORDER BY sua.id DESC
+    </select>
+
+    <!-- 根据ID 获取用户登录日志 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="userAuth">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_user_auth sua WHERE sua.id = #{id}
+    </select>
+
+    <!-- 添加一个用户登录日志 -->
+    <insert id="add" parameterType="com.jaezi.log.model.UserAuth" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO sys_user_auth(username, login_type, ip, browser_name, browser_version, device_type, device_os,
+                                  os_name, os_version, result, create_time)
+        VALUES (#{username}, #{loginType}, #{ip}, #{browserName}, #{browserVersion}, #{deviceType}, #{deviceOs},
+                #{osName}, #{osVersion}, #{result}, #{createTime})
+    </insert>
+
+    <!-- 转存用户登录日志 -->
+    <insert id="userAuthDump">
+        CREATE TABLE ${userAuth} AS
+        SELECT *
+        FROM sys_user_auth
+    </insert>
+
+    <!-- 修改用户登录日志 -->
+    <update id="update" parameterType="com.jaezi.log.model.UserAuth">
+        UPDATE sys_user_auth
+        SET
+        <trim suffixOverrides=",">
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="loginType != null and loginType != ''">
+                login_type = #{loginType},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="browserName != null and browserName != ''">
+                browser_name = #{browserName},
+            </if>
+            <if test="browserVersion != null and browserVersion != ''">
+                browser_version = #{browserVersion},
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                device_type = #{deviceType},
+            </if>
+            <if test="deviceOs != null and deviceOs != ''">
+                device_os = #{deviceOs},
+            </if>
+            <if test="osName != null and osName != ''">
+                os_name = #{osName},
+            </if>
+            <if test="osVersion != null and osVersion != ''">
+                os_version = #{osVersion},
+            </if>
+            <if test="result != null and result != ''">
+                result = #{result},
+            </if>
+            <if test="createTime != null and createTime != ''">
+                create_time = #{createTime},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个用户登录日志 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_user_auth
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 删除用户登录日志 -->
+    <delete id="deleteUserAuth">
+        TRUNCATE sys_user_auth
+    </delete>
+
+</mapper>

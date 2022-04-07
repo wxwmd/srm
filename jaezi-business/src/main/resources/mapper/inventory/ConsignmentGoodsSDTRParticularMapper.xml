@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.inventory.dao.ConsignmentGoodsSDTRParticularDao">
+    <resultMap id="consignmentGoodsSDTRParticular" type="com.jaezi.bus.inventory.model.ConsignmentGoodsSDTRParticular">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="order_no" jdbcType="INTEGER" property="orderNo"/>
+        <result column="line" jdbcType="INTEGER" property="line"/>
+        <result column="booked_date" jdbcType="VARCHAR" property="bookedDate"/>
+        <result column="shipping_mark" jdbcType="VARCHAR" property="shippingMark"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="money" jdbcType="DECIMAL" property="money"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+    </resultMap>
+
+    <resultMap id="consignmentGoodsSDTRVo" type="com.jaezi.bus.inventory.vo.ConsignmentGoodsSDTRVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bcgs.id,
+        bcgs.order_no,
+        bcgs.line,
+        bcgs.booked_date,
+        bcgs.shipping_mark,
+        bcgs.qty,
+        bcgs.money,
+        bcgs.material_number
+    </sql>
+
+    <!--查询所有寄售物资结收发存-->
+    <select id="findAll" resultMap="consignmentGoodsSDTRParticular" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr_particular bcgs
+        <where>
+            <if test="line != null and line != ''">
+                AND bcgs.line = #{line}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcgs.material_number = #{materialNumber}
+            </if>
+        </where>
+    </select>
+
+    <!--查询所有寄售物资结收发存-->
+    <select id="getAllVos" resultMap="consignmentGoodsSDTRParticular" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr_particular bcgs
+        <where>
+            <if test="line != null and line != ''">
+                AND bcgs.line = #{line}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcgs.material_number = #{materialNumber}
+            </if>
+        </where>
+    </select>
+
+    <!--查询一个寄售物资结收发存-->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentGoodsSDTRParticular">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr_particular bcgs
+        WHERE bcgs.id = #{id}
+    </select>
+
+    <!-- 添加一个寄售物资结收发存详情 -->
+    <insert id="add" parameterType="com.jaezi.bus.inventory.model.ConsignmentGoodsSDTRParticular">
+        INSERT INTO bus_consignment_goods_sdtr_particular(order_no, line,
+                                                          booked_date, shipping_mark, qty, money, material_number)
+        VALUES (#{orderNo}, #{line}, #{bookedDate}, #{shippingMark}, #{qty}, #{money}, #{materialNumber})
+    </insert>
+
+    <!-- 删除一个寄售物资结收发存详情 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_consignment_goods_sdtr_particular
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.srminterface.dao.MaterialSupplierDao">
+
+    <!-- 批量插入物料/供应商中间表 -->
+    <insert id="saveBath" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT IGNORE sys_material_supplier (material_number, supplier_code)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.materialNumber},#{item.supplierCode})
+        </foreach>
+    </insert>
+
+    <!-- 通过物料号获取供应商编号 -->
+    <select id="getSupplierByMaterial" resultType="java.lang.String">
+        SELECT supplier_code
+        FROM sys_material_supplier
+        WHERE material_number = #{materialSupplyDemand}
+    </select>
+
+</mapper>

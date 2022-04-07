@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.MidTechnicalDataPersonDao">
+    <resultMap id="midTechnicalDataPerson" type="com.jaezi.synergia.model.MidTechnicalDataPerson">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="person_id" jdbcType="INTEGER" property="personId"/>
+        <result column="technicalData_id" jdbcType="INTEGER" property="technicalDataId"/>
+    </resultMap>
+
+    <resultMap id="midTechnicalDataPersonVo" type="com.jaezi.synergia.vo.MidTechnicalDataPersonVo">
+    </resultMap>
+
+    <sql id="base_column">
+        mtdp.id,
+        mtdp.person_id,
+        mtdp.technicalData_id
+    </sql>
+
+    <!-- 查询所有人员技术图档信息 -->
+    <select id="getAllVos" resultMap="midTechnicalDataPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_data_person mtdp
+        <where>
+            <if test="personId != null ">
+                mtdp.person_id = #{personId}
+            </if>
+            <if test="technicalDataId != null ">
+                mtdp.technicalData_id = #{technicalDataId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据技术图档id查询人员技术图档 -->
+    <select id="getListByTechnicalDataId" resultMap="midTechnicalDataPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_data_person mtdp
+        WHERE mtdp.technicalData_id =#{technicalDataId}
+    </select>
+
+    <!-- 查询所有人员技术图档信息 -->
+    <select id="getAll" resultMap="midTechnicalDataPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_data_person mtdp
+        <where>
+            <if test="personId != null ">
+                mtdp.person_id = #{personId}
+            </if>
+            <if test="technicalDataId != null ">
+                mtdp.technicalData_id = #{technicalDataId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取人员技术图档信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="midTechnicalDataPerson">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_data_person
+        WHERE id = #{id}
+    </select>
+
+    <!-- 添加一个人员技术图档可见性信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.MidTechnicalDataPerson">
+        INSERT INTO mid_technical_data_person(person_id,
+        technicalData_id)
+        VALUES(#{personId}, #{technicalDataId})
+    </insert>
+
+    <!-- 修改人员技术图档可见性信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.MidTechnicalDataPerson">
+        UPDATE mid_technical_data_person(person_id
+        SET
+        <trim suffixOverrides=",">
+            <if test="personId != null ">person_id = #{personId},</if>
+            <if test="technicalDataId != null ">technicalData_id = #{technicalDataId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除技术图档可见性信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM mid_technical_data_person WHERE id = #{id}
+    </delete>
+
+    <!-- 根据可见人员id集合删除技术图档可见性 -->
+    <delete id="deleteByTechnicalDataIds" parameterType="java.util.ArrayList">
+        DELETE FROM mid_technical_data_person
+        <where>
+            technicalData_id in (
+            <foreach collection="list"  item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+        </where>
+    </delete>
+
+    <!-- 根据技术图档id删除技术图档和人员中间表 -->
+    <delete id="deleteByTechnicalDataId" parameterType="java.lang.Integer">
+        DELETE FROM mid_technical_data_person WHERE technicalData_id = #{technicalDataId}
+    </delete>
+
+</mapper>

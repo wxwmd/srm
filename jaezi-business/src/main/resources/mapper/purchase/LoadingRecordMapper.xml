@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.LoadingRecordDao">
+    <resultMap id="loadingRecord" type="com.jaezi.bus.purchase.model.LoadingRecord">
+        <id column="r_id" jdbcType="INTEGER" property="id"/>
+        <result column="purchase_order" jdbcType="VARCHAR" property="purchaseOrder"/>
+        <result column="line_item" jdbcType="VARCHAR" property="lineItem"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="delivery_date" jdbcType="VARCHAR" property="deliveryDate"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
+        <result column="receiving_number" jdbcType="INTEGER" property="receivingNumber"/>
+        <result column="loading_shipment_number" jdbcType="INTEGER" property="loadingShipmentNumber"/>
+        <result column="loading_document_id" jdbcType="INTEGER" property="loadingDocumentId"/>
+        <result column="inventory_matching" jdbcType="INTEGER" property="inventoryMatching"/>
+        <result column="remaining_quantity" jdbcType="INTEGER" property="remainingQuantity"/>
+        <result column="remaining_date" jdbcType="VARCHAR" property="remainingDate"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="storage_location" jdbcType="VARCHAR" property="storageLocation"/>
+        <result column="shipping_space" jdbcType="VARCHAR" property="shippingSpace"/>
+        <result column="proposer" jdbcType="VARCHAR" property="proposer"/>
+        <result column="version_number" jdbcType="VARCHAR" property="versionNumber"/>
+        <result column="dimension_size" jdbcType="VARCHAR" property="dimensionSize"/>
+        <result column="purchase_group" jdbcType="VARCHAR" property="purchaseGroup"/>
+        <result column="supplier_material" jdbcType="VARCHAR" property="supplierMaterial"/>
+        <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+        <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+        <result column="contact_information" jdbcType="VARCHAR" property="contactInformation"/>
+        <result column="factory_time" jdbcType="VARCHAR" property="factoryTime"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="loadingRecordVo" type="com.jaezi.bus.purchase.vo.LoadingRecordVo">
+        <id column="r_id" jdbcType="INTEGER" property="id"/>
+        <result column="purchase_order" jdbcType="VARCHAR" property="purchaseOrder"/>
+        <result column="line_item" jdbcType="INTEGER" property="lineItem"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="delivery_date" jdbcType="VARCHAR" property="deliveryDate"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
+        <result column="receiving_number" jdbcType="INTEGER" property="receivingNumber"/>
+        <result column="loading_shipment_number" jdbcType="INTEGER" property="loadingShipmentNumber"/>
+        <result column="loading_document_id" jdbcType="INTEGER" property="loadingDocumentId"/>
+        <result column="inventory_matching" jdbcType="INTEGER" property="inventoryMatching"/>
+        <result column="remaining_quantity" jdbcType="INTEGER" property="remainingQuantity"/>
+        <result column="remaining_date" jdbcType="VARCHAR" property="remainingDate"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="storage_location" jdbcType="VARCHAR" property="storageLocation"/>
+        <result column="shipping_space" jdbcType="VARCHAR" property="shippingSpace"/>
+        <result column="proposer" jdbcType="VARCHAR" property="proposer"/>
+        <result column="version_number" jdbcType="VARCHAR" property="versionNumber"/>
+        <result column="dimension_size" jdbcType="VARCHAR" property="dimensionSize"/>
+        <result column="purchase_group" jdbcType="VARCHAR" property="purchaseGroup"/>
+        <result column="supplier_material" jdbcType="VARCHAR" property="supplierMaterial"/>
+        <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+        <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+        <result column="contact_information" jdbcType="VARCHAR" property="contactInformation"/>
+        <result column="factory_time" jdbcType="VARCHAR" property="factoryTime"/>
+        <result column="purchaseId" jdbcType="VARCHAR" property="purchaseId"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <sql id="base_column">
+        blr.r_id,
+        blr.purchase_order,
+        blr.line_item,
+        blr.`type`,
+        blr.material_number,
+        blr.factory,
+        sm.material_description,
+        blr.create_date,
+        blr.delivery_date,
+        blr.loading_shipment_date,
+        blr.order_number,
+        blr.receiving_number,
+        blr.loading_shipment_number,
+        blr.loading_document_id,
+        blr.inventory_matching,
+        blr.remaining_quantity,
+        blr.remaining_date,
+        blr.unit,
+        blr.storage_location,
+        blr.shipping_space,
+        blr.proposer,
+        blr.version_number,
+        blr.dimension_size,
+        blr.purchase_group,
+        blr.supplier_material,
+        blr.purchase_person,
+        blr.company_address,
+        blr.contact_information,
+        blr.factory_time,
+        blr.document_url,
+        blr.document_name,
+        blr.document_url,
+        blr.document_name
+    </sql>
+
+    <!--查询所有装车单记录信息-->
+    <select id="findAll" resultMap="loadingRecord" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_record blr
+        LEFT JOIN sys_material sm ON blr.material_number = sm.material_number
+        <where>
+            <if test="purchaseOrder != null and purchaseOrder != ''">
+                AND blr.purchase_order = #{purchaseOrder}
+            </if>
+            <if test="factoryTime != null and factoryTime != ''">
+                AND blr.factory_time = #{factoryTime}
+            </if>
+            <if test="type != null and type != ''">
+                AND blr.`type` = #{type}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND blr.material_number = #{materialNumber}
+            </if>
+            <if test="factory != null and factory != ''">
+                AND blr.factory = #{factory}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="createDate != null and createDate != ''">
+                AND blr.create_date = #{createDate}
+            </if>
+            <if test="deliveryDate != null and deliveryDate != ''">
+                AND blr.delivery_date = #{deliveryDate}
+            </if>
+            <if test="loadingShipmentDate != null and loadingShipmentDate != ''">
+                AND blr.loading_shipment_date = #{loadingShipmentDate}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND blr.order_number = #{orderNumber}
+            </if>
+            <if test="receivingNumber != null and receivingNumber != ''">
+                AND blr.receiving_number = #{receivingNumber}
+            </if>
+            <if test="loadingShipmentNumber != null and loadingShipmentNumber != ''">
+                AND blr.loading_shipment_number = #{loadingShipmentNumber}
+            </if>
+            <if test="loadingDocumentId != null and loadingDocumentId != ''">
+                AND blr.loading_document_id = #{loadingDocumentId}
+            </if>
+            <if test="inventoryMatching != null and inventoryMatching != ''">
+                AND blr.inventory_matching = #{inventoryMatching}
+            </if>
+            <if test="remainingQuantity != null and remainingQuantity != ''">
+                AND blr.remaining_quantity = #{remainingQuantity}
+            </if>
+            <if test="remainingDate != null and remainingDate != ''">
+                AND blr.remaining_date = #{remainingDate}
+            </if>
+            <if test="unit != null and unit != ''">
+                AND blr.unit = #{unit}
+            </if>
+            <if test="storageLocation != null and storageLocation != ''">
+                AND blr.storage_location = #{storageLocation}
+            </if>
+            <if test="shippingSpace != null and shippingSpace != ''">
+                AND blr.shipping_space = #{shippingSpace}
+            </if>
+            <if test="proposer != null and proposer != ''">
+                AND blr.proposer = #{proposer}
+            </if>
+            <if test="versionNumber != null and versionNumber != ''">
+                AND blr.version_number = #{versionNumber}
+            </if>
+            <if test="dimensionSize != null and dimensionSize != ''">
+                AND blr.dimension_size = #{dimensionSize}
+            </if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">
+                AND blr.purchase_group = #{purchaseGroup}
+            </if>
+            <if test="supplierMaterial != null and supplierMaterial != ''">
+                AND blr.supplier_material = #{supplierMaterial}
+            </if>
+            <if test="purchasePerson != null and purchasePerson != ''">
+                AND blr.purchase_person = #{purchasePerson}
+            </if>
+            <if test="companyAddress != null and companyAddress != ''">
+                AND blr.company_address = #{companyAddress}
+            </if>
+            <if test="contactInformation != null and contactInformation != ''">
+                AND blr.contact_information = #{contactInformation}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有装车单记录信息 -->
+    <select id="getAllVos" resultMap="loadingRecord" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_record blr
+        LEFT JOIN sys_material sm ON blr.material_number = sm.material_number
+        <where>
+            <if test="purchaseOrder != null and purchaseOrder != ''">
+                AND blr.purchase_order = #{purchaseOrder}
+            </if>
+            <if test="factoryTime != null and factoryTime != ''">
+                AND blr.factory_time = #{factoryTime}
+            </if>
+            <if test="type != null and type != ''">
+                AND blr.`type` = #{type}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND blr.material_number = #{materialNumber}
+            </if>
+            <if test="factory != null and factory != ''">
+                AND blr.factory = #{factory}
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description = #{materialDescription}
+            </if>
+            <if test="createDate != null and createDate != ''">
+                AND blr.create_date = #{createDate}
+            </if>
+            <if test="deliveryDate != null and deliveryDate != ''">
+                AND blr.delivery_date = #{deliveryDate}
+            </if>
+            <if test="loadingShipmentDate != null and loadingShipmentDate != ''">
+                AND blr.loading_shipment_date = #{loadingShipmentDate}
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND blr.order_number = #{orderNumber}
+            </if>
+            <if test="receivingNumber != null and receivingNumber != ''">
+                AND blr.receiving_number = #{receivingNumber}
+            </if>
+            <if test="loadingShipmentNumber != null and loadingShipmentNumber != ''">
+                AND blr.loading_shipment_number = #{loadingShipmentNumber}
+            </if>
+            <if test="loadingDocumentId != null and loadingDocumentId != ''">
+                AND blr.loading_document_id = #{loadingDocumentId}
+            </if>
+            <if test="inventoryMatching != null and inventoryMatching != ''">
+                AND blr.inventory_matching = #{inventoryMatching}
+            </if>
+            <if test="remainingQuantity != null and remainingQuantity != ''">
+                AND blr.remaining_quantity = #{remainingQuantity}
+            </if>
+            <if test="remainingDate != null and remainingDate != ''">
+                AND blr.remaining_date = #{remainingDate}
+            </if>
+            <if test="unit != null and unit != ''">
+                AND blr.unit = #{unit}
+            </if>
+            <if test="storageLocation != null and storageLocation != ''">
+                AND blr.storage_location = #{storageLocation}
+            </if>
+            <if test="shippingSpace != null and shippingSpace != ''">
+                AND blr.shipping_space = #{shippingSpace}
+            </if>
+            <if test="proposer != null and proposer != ''">
+                AND blr.proposer = #{proposer}
+            </if>
+            <if test="versionNumber != null and versionNumber != ''">
+                AND blr.version_number = #{versionNumber}
+            </if>
+            <if test="dimensionSize != null and dimensionSize != ''">
+                AND blr.dimension_size = #{dimensionSize}
+            </if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">
+                AND blr.purchase_group = #{purchaseGroup}
+            </if>
+            <if test="supplierMaterial != null and supplierMaterial != ''">
+                AND blr.supplier_material = #{supplierMaterial}
+            </if>
+            <if test="purchasePerson != null and purchasePerson != ''">
+                AND blr.purchase_person = #{purchasePerson}
+            </if>
+            <if test="companyAddress != null and companyAddress != ''">
+                AND blr.company_address = #{companyAddress}
+            </if>
+            <if test="contactInformation != null and contactInformation != ''">
+                AND blr.contact_information = #{contactInformation}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取装车单记录信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="loadingRecord">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_record blr
+        LEFT JOIN sys_material sm ON blr.material_number = sm.material_number
+        WHERE blr.r_id = #{id}
+    </select>
+
+    <!-- 添加一个装车单记录信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.LoadingRecord">
+        INSERT INTO bus_loading_record(purchase_order,
+                                       line_item,
+                                       `type`,
+                                       material_number,
+                                       factory,
+                                       create_date,
+                                       delivery_date,
+                                       loading_shipment_date,
+                                       order_number,
+                                       receiving_number,
+                                       loading_shipment_number,
+                                       loading_document_id,
+                                       inventory_matching,
+                                       remaining_quantity,
+                                       remaining_date,
+                                       unit,
+                                       storage_location,
+                                       shipping_space,
+                                       proposer,
+                                       version_number,
+                                       dimension_size,
+                                       purchase_group,
+                                       supplier_material,
+                                       purchase_person,
+                                       company_address,
+                                       contact_information,
+                                       factory_time,
+                                       document_url,
+                                       document_name)
+        VALUES (#{purchaseOrder},
+                #{lineItem},
+                #{type},
+                #{materialNumber},
+                #{factory},
+                #{createDate},
+                #{deliveryDate},
+                #{loadingShipmentDate},
+                #{orderNumber},
+                #{receivingNumber},
+                #{loadingShipmentNumber},
+                #{loadingDocumentId},
+                #{inventoryMatching},
+                #{remainingQuantity},
+                #{remainingDate},
+                #{unit},
+                #{storageLocation},
+                #{shippingSpace},
+                #{proposer},
+                #{versionNumber},
+                #{dimensionSize},
+                #{purchaseGroup},
+                #{supplierMaterial},
+                #{purchasePerson},
+                #{companyAddress},
+                #{contactInformation},
+                #{factoryTime},
+                #{documentUrl},
+                #{documentName})
+    </insert>
+
+    <!-- 修改装货单记录信息 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.LoadingRecord">
+        UPDATE bus_loading_record
+        SET
+        <trim suffixOverrides=",">
+            <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
+            <if test="type != null and type != ''">`type` = #{type},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="factory != null and factory != ''">factory = #{factory},</if>
+            <if test="createDate != null and createDate != ''">create_date = #{createDate},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">delivery_date = #{deliveryDate},</if>
+            <if test="loadingShipmentDate != null and loadingShipmentDate != ''">loading_shipment_date =
+                #{loadingShipmentDate},
+            </if>
+            <if test="orderNumber != null and orderNumber != ''">order_number = #{orderNumber},</if>
+            <if test="receivingNumber != null and receivingNumber != ''">receiving_number = #{receivingNumber},</if>
+            <if test="loadingShipmentNumber != null and loadingShipmentNumber != ''">loading_shipment_number =
+                #{loadingShipmentNumber},
+            </if>
+            <if test="loadingDocumentId != null and loadingDocumentId != ''">loading_document_id =
+                #{loadingDocumentId},
+            </if>
+            <if test="inventoryMatching != null and inventoryMatching != ''">inventory_matching =
+                #{inventoryMatching},
+            </if>
+            <if test="remainingQuantity != null and remainingQuantity != ''">remaining_quantity =
+                #{remainingQuantity},
+            </if>
+            <if test="remainingDate != null and remainingDate != ''">remaining_date = #{remainingDate},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="storageLocation != null and storageLocation != ''">storage_location = #{storageLocation},</if>
+            <if test="shippingSpace != null and shippingSpace != ''">shipping_space = #{shippingSpace},</if>
+            <if test="proposer != null and proposer != ''">proposer = #{proposer},</if>
+            <if test="versionNumber != null and versionNumber != ''">version_number = #{versionNumber},</if>
+            <if test="dimensionSize != null and dimensionSize != ''">dimension_size = #{dimensionSize},</if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">purchase_group = #{purchaseGroup},</if>
+            <if test="supplierMaterial != null and supplierMaterial != ''">supplier_material = #{supplierMaterial},</if>
+            <if test="purchasePerson != null and purchasePerson != ''">purchase_person = #{purchasePerson},</if>
+            <if test="companyAddress != null and companyAddress != ''">company_address = #{companyAddress},</if>
+            <if test="contactInformation != null and contactInformation != ''">contact_information =
+                #{contactInformation},
+            </if>
+            <if test="factoryTime != null and factoryTime != ''">factory_time = #{factoryTime},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE r_id = #{id}
+    </update>
+
+    <!-- 删除一个装车单记录信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_loading_record
+        WHERE r_id = #{id}
+    </delete>
+
+    <!-- 删除一个装车单记录信息 -->
+    <delete id="deleteByLoadingDocumentId" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_loading_record
+        WHERE loading_document_id = #{loadingDocumentId}
+    </delete>
+
+    <select id="getLoadingPurchase" resultMap="loadingRecordVo">
+        SELECT
+        bp.id AS purchaseId,
+        bp.plant AS factory,
+        bp.p_order AS purchase_order,
+        bp.project AS line_item,
+        bp.material_number,
+        bp.create_date,
+        bp.delivery_date,
+        bp.loading_shipment_date,
+        bp.qty AS order_number,
+        bp.receiving_number,
+        bp.qty - IFNULL(blr.loading_shipment_number,0) AS remaining_quantity,
+        IFNULL(blr.loading_shipment_number,0) AS loading_shipment_number,
+        bp.inventory_matching,
+        bp.remaining_date,
+        sm.material_description,
+        bp.unit,
+        bp.storage_location,
+        bp.type,
+        bp.proposer,
+        bp.shipping_space,
+        bp.version_number,
+        bp.dimension_size,
+        bp.purchase_group,
+        bp.supplier_material,
+        bp.purchase_person,
+        bp.contact_information,
+        bp.company_address,
+        bp.supplier_code
+        FROM bus_purchase bp
+        <choose>
+            <when test="filter.userType == 0">
+                LEFT JOIN (SELECT * FROM sys_material sm WHERE buyer_number = #{filter.realName}) sm ON
+                bp.material_number = sm.material_number
+            </when>
+            <otherwise>
+                LEFT JOIN sys_material sm ON bp.material_number = sm.material_number
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="filter.colorStatus != null and filter.colorStatus != ''">
+                INNER JOIN
+            </when>
+            <otherwise>
+                LEFT JOIN
+            </otherwise>
+        </choose>
+        ( SELECT SUM( loading_shipment_number ) AS loading_shipment_number, purchase_order, line_item
+        FROM bus_loading_record
+        <where>
+            <if test="filter.colorStatus == 1">
+                AND CURDATE() = loading_shipment_date AND loading_shipment_number = NULL
+            </if>
+            <if test="filter.colorStatus == 2">
+                AND CURDATE() &gt; loading_shipment_date AND (loading_shipment_number = NULL OR
+                remaining_quantity > 0)
+            </if>
+        </where>
+        GROUP BY purchase_order, line_item
+        ) blr ON
+        blr.purchase_order = bp.p_order
+        AND bp.project = blr.line_item
+        <if test="filter.userType == 0">
+            LEFT JOIN sys_material_supplier sms ON sms.material_number = bp.material_number
+            LEFT JOIN sys_user su ON sms.supplier_code = su.username
+            INNER JOIN sys_supplier ss ON ss.user_id = su.id
+        </if>
+        <if test="filter.userType == 1">
+            LEFT JOIN sys_material_supplier sms ON sms.material_number = bp.material_number
+            LEFT JOIN sys_user su ON bp.supplier_code = su.username
+            INNER JOIN sys_supplier ss ON ss.user_id = su.id
+        </if>
+        <where>
+            bp.status = 1
+            <if test="(filter.userType == 1 or filter.userType == 0) and (filter.colorStatus == null or filter.colorStatus == '')">
+                AND (DATE_SUB(bp.delivery_date,INTERVAL ss.supplier_haul_cycle DAY)) BETWEEN CURDATE() AND
+                DATE_ADD(CURDATE(),INTERVAL 3 DAY)
+            </if>
+            <!--            <if test="filter.userType == 0">-->
+            <!--                (DATE_SUB(bp.delivery_date,INTERVAL ss.supplier_haul_cycle DAY)) BETWEEN CURDATE() AND-->
+            <!--                DATE_ADD(CURDATE(),INTERVAL 3 DAY)-->
+            <!--            </if>-->
+            <if test="filter.supplierCode != null and filter.supplierCode != ''">
+                AND bp.supplier_code = #{filter.supplierCode}
+            </if>
+            <if test="filter.pOrder != null and filter.pOrder != ''">
+                AND bp.p_order = #{filter.pOrder}
+            </if>
+            <if test="filter.plant != null and filter.plant != ''">
+                AND bp.plant = #{filter.plant}
+            </if>
+            <if test="filter.userType == 1 or filter.userType == 0">
+                AND bp.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{filter.realName} OR buyer_number = #{filter.realName}
+                )
+            </if>
+            <if test="filter.userType == 0">
+                AND bp.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{filter.realName}
+                )
+            </if>
+            <if test="purchaseIdList != null and purchaseIdList != '' and purchaseIdList.size() != 0">
+                AND bp.id IN
+                <foreach item="item" collection="purchaseIdList" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="filter.startTime != null and filter.startTime != '' and filter.entTime != null and filter.entTime != '' ">
+                AND bp.delivery_date BETWEEN #{filter.startTime} AND #{filter.entTime}
+            </if>
+        </where>
+    </select>
+</mapper>

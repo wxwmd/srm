@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.supplierQuality.dao.MidSupplierQualityInformationPersonDao">
+    <resultMap id="midSupplierQualityInformationPerson" type="com.jaezi.bus.supplierQuality.model.MidSupplierQualityInformationPerson">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="person_id" jdbcType="INTEGER" property="personId"/>
+        <result column="supplier_quality_information_id" jdbcType="INTEGER" property="supplierQualityInformationId"/>
+    </resultMap>
+
+    <resultMap id="midSupplierQualityInformationPersonVo" type="com.jaezi.bus.supplierQuality.vo.MidSupplierQualityInformationPersonVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        msqip.id,
+        msqip.person_id,
+        msqip.supplier_quality_information_id
+    </sql>
+
+    <!-- 查询所有供应商质量信息人员中间表信息 -->
+    <select id="getAllVos" resultMap="midSupplierQualityInformationPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_supplier_quality_information_person msqip
+        <where>
+            <if test="personId != null and personId != ''">
+                msqip.person_id = #{personId}
+            </if>
+            <if test="supplierQualityInformationId != null and supplierQualityInformationId != ''">
+                AND msqip.supplier_quality_information_id = #{supplierQualityInformationId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据供应商质量信息id查询集合 -->
+    <select id="getListBySupplierQualityInformationId" resultMap="midSupplierQualityInformationPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_supplier_quality_information_person msqip
+        WHERE msqip.supplier_quality_information_id =#{supplierQualityInformationId}
+    </select>
+
+    <!-- 查询所有供应商质量信息人员中间表信息 -->
+    <select id="getAll" resultMap="midSupplierQualityInformationPerson" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_supplier_quality_information_person msqip
+        <where>
+            <if test="personId != null and personId != ''">
+                msqip.person_id = #{personId}
+            </if>
+            <if test="supplierQualityInformationId != null and supplierQualityInformationId != ''">
+                AND msqip.supplier_quality_information_id = #{supplierQualityInformationId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取供应商质量信息人员中间表信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="midSupplierQualityInformationPerson">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_supplier_quality_information_person msqip
+        WHERE msqip.id = #{id}
+    </select>
+
+    <!-- 添加供应商质量信息人员中间表信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.supplierQuality.model.MidSupplierQualityInformationPerson">
+        INSERT INTO mid_supplier_quality_information_person(person_id,
+        supplier_quality_information_id)
+        VALUES(#{personId}, #{supplierQualityInformationId})
+    </insert>
+
+    <!-- 修改供应商质量信息人员中间表信息 -->
+    <update id="update" parameterType="com.jaezi.bus.supplierQuality.model.MidQmFeedbackTablePerson">
+        UPDATE mid_supplier_quality_information_person(person_id
+        SET
+        <trim suffixOverrides=",">
+            <if test="personId != null and personId != ''">person_id = #{personId},</if>
+            <if test="supplierQualityInformationId != null and supplierQualityInformationId != ''">supplier_quality_information_id = #{supplierQualityInformationId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 修改供应商质量信息人员中间表数据 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM mid_supplier_quality_information_person WHERE id = #{id}
+    </delete>
+
+    <!-- 删除供应商质量信息人员中间表数据 -->
+    <delete id="deleteListBysupplierQualityInformationId" parameterType="java.lang.Integer">
+        DELETE FROM mid_supplier_quality_information_person WHERE supplier_quality_information_id = #{supplierQualityInformationId}
+    </delete>
+
+</mapper>

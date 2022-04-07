@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.TechnicalInformationDao">
+    <resultMap id="technicalInformation" type="com.jaezi.synergia.model.TechnicalInformation">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="technicalInformationVo" type="com.jaezi.synergia.vo.TechnicalInformationVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <sql id="base_column">
+        sti.id,
+        sti.`name`,
+        sti.description,
+        sti.update_time,
+        sti.url,
+        sti.visible,
+        sti.document_url,
+        sti.document_name
+    </sql>
+
+    <!-- 查询所有技术资料信息 -->
+    <select id="getAllVos" resultMap="technicalInformationVo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_information sti
+        <where>
+            <if test="name != null and name != ''">
+                sti.name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                AND sti.description = #{description}
+            </if>
+            <if test="startTime != null and map.startTime != ''">
+                AND sti.update_time &gt;= #{map.startTime}
+            </if>
+            <if test="endTime != null and map.endTime != ''">
+                AND sti.update_time &lt;= #{map.endTime}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
+
+    <!--查询所有技术资料可见性-->
+    <select id="findByVisible" resultMap="technicalInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_information sti
+        WHERE
+        sti.visible = 1
+        <if test="name != null and name != ''">
+            AND sti.name = #{name}
+        </if>
+        <if test="description != null and description != ''">
+            AND sti.description = #{description}
+        </if>
+        <if test="startTime != null and map.startTime != ''">
+            AND sti.update_time &gt;= #{map.startTime}
+        </if>
+        <if test="endTime != null and map.endTime != ''">
+            AND sti.update_time &lt;= #{map.endTime}
+        </if>
+        OR sti.id IN
+        (SELECT information_id from mid_technical_information_supplier WHERE person_id = #{userId})
+        ORDER BY sti.update_time DESC
+    </select>
+
+    <!-- 根据id获取技术资料信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="technicalInformation">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_information sti
+        WHERE sti.id = #{id}
+    </select>
+
+    <!-- 添加一个技术资料信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.TechnicalInformation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO syn_technical_information(
+        name,
+        description,
+        url,
+        visible,
+        update_time,
+        document_name,
+        document_url
+        )
+        VALUES(#{name}, #{description}, #{url},#{visible},#{updateTime},#{documentName},#{documentUrl})
+    </insert>
+
+    <!-- 修改技术资料信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.TechnicalInformation">
+        UPDATE syn_technical_information
+        SET
+        <trim suffixOverrides=",">
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="updateTime != null and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="visible != null ">visible = #{visible},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个技术资料信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM syn_technical_information WHERE id = #{id}
+    </delete>
+
+    <!-- 根据技术资料id集合查询技术资料 -->
+    <select id="findByIds" parameterType="java.util.ArrayList" resultMap="technicalInformation">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_information sti
+        <where>
+            sti.id IN (
+            <foreach collection="list" item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+        </where>
+        ORDER BY update_time DESC
+    </select>
+
+    <!-- 查询所有技术资料 -->
+    <select id="findAll" resultMap="technicalInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_technical_information sti
+        <where>
+            <if test="name != null and name != ''">
+                sti.name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                AND sti.description = #{description}
+            </if>
+            <if test="startTime != null and map.startTime != ''">
+                AND sti.update_time &gt;= #{map.startTime}
+            </if>
+            <if test="endTime != null and map.endTime != ''">
+                AND sti.update_time &lt;= #{map.endTime}
+            </if>
+        </where>
+        ORDER BY sti.update_time DESC
+    </select>
+
+</mapper>

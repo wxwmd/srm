@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.ParamDesignDao">
+    <resultMap id="paramDesign" type="com.jaezi.synergia.model.ParamDesign">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="supplier_id" jdbcType="INTEGER" property="supplierId"/>
+        <result column="written_by" jdbcType="VARCHAR" property="writtenBy"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="document_no" jdbcType="INTEGER" property="documentNo"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="split_a" jdbcType="VARCHAR" property="splitA"/>
+        <result column="no_per_unit" jdbcType="VARCHAR" property="noPerUnit"/>
+        <result column="is_lossy" jdbcType="INTEGER" property="isLossy"/>
+        <result column="failure_repair_mode" jdbcType="INTEGER" property="failureRepairMode"/>
+        <result column="design_service_life" jdbcType="INTEGER" property="designServiceLife"/>
+        <result column="life_unit" jdbcType="INTEGER" property="lifeUnit"/>
+    </resultMap>
+
+    <resultMap id="paramDesignVo" type="com.jaezi.synergia.vo.ParamDesignVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        spd.id,
+        spd.supplier_id,
+        spd.written_by,
+        spd.phone,
+        spd.email,
+        spd.status,
+        spd.document_no,
+        spd.code,
+        spd.name,
+        spd.split_a,
+        spd.no_per_unit,
+        spd.is_lossy,
+        spd.failure_repair_mode,
+        spd.design_service_life,
+        spd.life_unit
+    </sql>
+
+    <!-- 查询所有物料参数设计管理 -->
+    <select id="getAllVos" resultMap="paramDesign" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_param_design spd
+        LEFT JOIN sys_supplier ss ON spd.supplier_id = ss.supplier_id
+        LEFT JOIN sys_user su ON su.id = ss.user_id
+        <where>
+            <if test="supplierName != null and supplierName != ''">
+                su.real_name = #{supplierName}
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND su.username = #{supplierCode}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取物料参数设计管理 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="paramDesign">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_param_design spd
+        LEFT JOIN sys_supplier ss ON spd.supplier_id = ss.supplier_id
+        LEFT JOIN sys_user su ON su.id = ss.user_id
+        WHERE spd.id = #{id}
+    </select>
+
+    <!-- 添加一个物料参数设计管理 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.Aggregat">
+        INSERT INTO syn_param_design(supplier_id,written_by,phone,email,status,document_no,code,name,split_a,no_per_unit,
+        is_lossy,failure_repair_mode,design_service_life,life_unit)
+        VALUES(#{supplierId}, #{writtenBy}, #{phone}, #{email}, #{status}, #{documentNo}, #{code},
+        #{name}, #{splitA}, #{noPerUnit}, #{isLossy}, #{failureRepairMode}, #{designServiceLife}, #{lifeUnit})
+    </insert>
+
+    <!-- 修改物料参数设计管理 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.Aggregat">
+        UPDATE syn_param_design
+        SET
+        <trim suffixOverrides=",">
+            <if test="supplierId != null ">supplier_id = #{supplierId},</if>
+            <if test="writtenBy != null and writtenBy != ''">written_by = #{writtenBy},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="documentNo != null ">document_no = #{documentNo},</if>
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="splitA != null and splitA != ''">split_a = #{splitA},</if>
+            <if test="noPerUnit != null ">no_per_unit = #{noPerUnit},</if>
+            <if test="isLossy != null ">is_lossy = #{isLossy},</if>
+            <if test="failureRepairMode != null">failure_repair_mode = #{failureRepairMode},</if>
+            <if test="designServiceLife != null ">design_service_life = #{designServiceLife},</if>
+            <if test="lifeUnit != null">life_unit = #{lifeUnit},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个物料参数设计管理 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM syn_param_design WHERE id = #{id}
+    </delete>
+
+</mapper>

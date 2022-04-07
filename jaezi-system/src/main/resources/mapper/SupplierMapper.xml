@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.SupplierDao">
+
+    <resultMap id="supplier" type="com.jaezi.system.model.Supplier">
+        <id column="supplier_id" jdbcType="INTEGER" property="supplierId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="examine_status" jdbcType="VARCHAR" property="examineStatus"/>
+        <result column="problem" jdbcType="INTEGER" property="problem"/>
+        <result column="answer" jdbcType="BIGINT" property="answer"/>
+        <result column="company_name" jdbcType="INTEGER" property="companyName"/>
+        <result column="company_address" jdbcType="BIGINT" property="companyAddress"/>
+        <result column="company_website" jdbcType="INTEGER" property="companyWebsite"/>
+        <result column="company_fax" jdbcType="INTEGER" property="companyFax"/>
+        <result column="technical_director" jdbcType="INTEGER" property="technicalDirector"/>
+        <result column="technical_director_phone" jdbcType="INTEGER" property="technicalDirectorPhone"/>
+        <result column="finance_director" jdbcType="INTEGER" property="financeDirector"/>
+        <result column="finance_director_phone" jdbcType="INTEGER" property="financeDirectorPhone"/>
+        <result column="sale_director" jdbcType="INTEGER" property="saleDirector"/>
+        <result column="sale_director_phone" jdbcType="INTEGER" property="saleDirectorPhone"/>
+        <result column="industry_experience" jdbcType="INTEGER" property="industryExperience"/>
+        <result column="main_materials" jdbcType="INTEGER" property="mainMaterials"/>
+        <result column="other_main_materials" jdbcType="VARCHAR" property="otherMainMaterials"/>
+        <result column="proposed_supplies" jdbcType="INTEGER" property="proposedSupplies"/>
+        <result column="other_proposed_supplies" jdbcType="VARCHAR" property="otherProposedSupplies"/>
+        <result column="current_quality_system" jdbcType="INTEGER" property="currentQualitySystem"/>
+        <result column="main_competitors" jdbcType="VARCHAR" property="mainCompetitors"/>
+        <result column="now_company_main_customers" jdbcType="VARCHAR" property="nowCompanyMainCustomers"/>
+        <result column="certificate_url" jdbcType="VARCHAR" property="certificateUrl"/>
+        <result column="top_six" jdbcType="VARCHAR" property="topSix"/>
+        <result column="company_email" jdbcType="VARCHAR" property="companyEmail"/>
+        <result column="proposed_supplies_top" jdbcType="VARCHAR" property="proposedSuppliesTop"/>
+        <result column="supplier_haul_cycle" jdbcType="VARCHAR" property="supplierHaulCycle"/>
+    </resultMap>
+
+    <resultMap id="supplierVo" type="com.jaezi.system.vo.SupplierVo">
+        <id column="supplier_id" jdbcType="INTEGER" property="supplierId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="examine_status" jdbcType="VARCHAR" property="examineStatus"/>
+        <result column="problem" jdbcType="INTEGER" property="problem"/>
+        <result column="answer" jdbcType="BIGINT" property="answer"/>
+        <result column="company_name" jdbcType="INTEGER" property="companyName"/>
+        <result column="company_address" jdbcType="BIGINT" property="companyAddress"/>
+        <result column="company_website" jdbcType="INTEGER" property="companyWebsite"/>
+        <result column="company_fax" jdbcType="INTEGER" property="companyFax"/>
+        <result column="technical_director" jdbcType="INTEGER" property="technicalDirector"/>
+        <result column="technical_director_phone" jdbcType="INTEGER" property="technicalDirectorPhone"/>
+        <result column="finance_director" jdbcType="INTEGER" property="financeDirector"/>
+        <result column="finance_director_phone" jdbcType="INTEGER" property="financeDirectorPhone"/>
+        <result column="sale_director" jdbcType="INTEGER" property="saleDirector"/>
+        <result column="sale_director_phone" jdbcType="INTEGER" property="saleDirectorPhone"/>
+        <result column="industry_experience" jdbcType="INTEGER" property="industryExperience"/>
+        <result column="main_materials" jdbcType="INTEGER" property="mainMaterials"/>
+        <result column="other_main_materials" jdbcType="VARCHAR" property="otherMainMaterials"/>
+        <result column="proposed_supplies" jdbcType="INTEGER" property="proposedSupplies"/>
+        <result column="other_proposed_supplies" jdbcType="VARCHAR" property="otherProposedSupplies"/>
+        <result column="current_quality_system" jdbcType="INTEGER" property="currentQualitySystem"/>
+        <result column="main_competitors" jdbcType="VARCHAR" property="mainCompetitors"/>
+        <result column="now_company_main_customers" jdbcType="VARCHAR" property="nowCompanyMainCustomers"/>
+        <result column="certificate_url" jdbcType="VARCHAR" property="certificateUrl"/>
+        <result column="top_six" jdbcType="VARCHAR" property="topSix"/>
+        <result column="company_email" jdbcType="VARCHAR" property="companyEmail"/>
+        <result column="proposed_supplies_top" jdbcType="VARCHAR" property="proposedSuppliesTop"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="quota" jdbcType="VARCHAR" property="quota"/>
+        <result column="supplier_haul_cycle" jdbcType="VARCHAR" property="supplierHaulCycle"/>
+    </resultMap>
+
+    <sql id="base_column">
+        supplier_id, user_id, examine_status, problem, answer, company_name, company_address,company_email, company_website,company_phone,
+        company_fax, technical_director, technical_director_phone, finance_director, finance_director_phone,
+        sale_director, sale_director_phone, industry_experience,proposed_supplies_top, main_materials, other_main_materials, proposed_supplies,
+        other_proposed_supplies, current_quality_system, main_competitors, now_company_main_customers, certificate_url,
+        top_six, phone, su.username, su.quota,supplier_haul_cycle
+    </sql>
+
+    <sql id="s_column">
+        supplier_id as supplierId, company_name as companyName, username, user_id as userId
+    </sql>
+
+    <!--根据用户ID 获取供应商信息-->
+    <select id="getOneById" resultMap="supplierVo" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_supplier ss
+        inner join sys_user su on ss.user_id = su.id
+        WHERE su.id = #{id}
+    </select>
+
+    <!--获取供应商信息-->
+    <select id="getAllVos" resultMap="supplierVo">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_supplier ss
+        inner join sys_user su on ss.user_id = su.id
+        <where>
+            <if test="username != null and username != ''">
+                and su.username like CONCAT('%',#{username},'%')
+            </if>
+            <if test="examineStatus != null and examineStatus != ''">
+                and ss.examine_status = #{examineStatus}
+            </if>
+            and ss.examine_status in(0,2)
+        </where>
+    </select>
+
+    <select id="getAllSupplier" resultType="java.util.Map">
+        SELECT
+        <include refid="s_column"></include>
+        FROM sys_supplier ss
+        inner join sys_user su on ss.user_id = su.id
+        <where>
+            <if test="type == 'claim'">
+                <if test="userType == 0">
+                    <!-- 企业用户看绑定供应商的数据 -->
+                    and su.username in (
+                    SELECT supplier_code from sys_material_supplier where material_number in (SELECT material_number from sys_material where buyer_number = #{realName})
+                    )
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <!--添加一个供应商-->
+    <insert id="add" parameterType="com.jaezi.system.model.User">
+        INSERT INTO sys_supplier(user_id, examine_status, problem, answer, company_name, company_address, company_website,
+        company_fax, technical_director, technical_director_phone, finance_director, finance_director_phone,
+        sale_director, sale_director_phone, industry_experience, main_materials, other_main_materials, proposed_supplies,
+        other_proposed_supplies, current_quality_system, main_competitors, now_company_main_customers, certificate_url, top_six,
+        company_email, proposed_supplies_top,supplier_haul_cycle
+        )
+        VALUES( #{userId}, #{examineStatus}, #{problem}, #{answer}, #{companyName}, #{companyAddress}, #{companyWebsite},
+        #{companyFax},#{technicalDirector}, #{technicalDirectorPhone}, #{financeDirector}, #{financeDirector},
+        #{saleDirector}, #{saleDirectorPhone}, #{industryExperience}, #{mainMaterials}, #{otherMainMaterials}, #{proposedSupplies},
+        #{otherProposedSupplies}, #{currentQualitySystem}, #{mainCompetitors}, #{nowCompanyMainCustomers}, #{certificateUrl}, #{topSix},
+        #{companyEmail}, #{proposedSuppliesTop},#{supplierHaulCycle}
+        )
+    </insert>
+
+    <insert id="bathAdd" useGeneratedKeys="true">
+        insert IGNORE sys_supplier(user_id, examine_status, problem, answer, company_name, company_address, company_website,
+        company_fax, technical_director, technical_director_phone, finance_director, finance_director_phone,
+        sale_director, sale_director_phone, industry_experience, main_materials, other_main_materials, proposed_supplies,
+        other_proposed_supplies, current_quality_system, main_competitors, now_company_main_customers, certificate_url, top_six,
+        company_email, proposed_supplies_top,supplier_haul_cycle
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.userId}, #{item.examineStatus}, #{item.problem}, #{item.answer}, #{item.companyName}, #{item.companyAddress}, #{item.companyWebsite},
+            #{item.companyFax},#{item.technicalDirector}, #{item.technicalDirectorPhone}, #{item.financeDirector}, #{item.financeDirector},
+            #{item.saleDirector}, #{item.saleDirectorPhone}, #{item.industryExperience}, #{item.mainMaterials}, #{item.otherMainMaterials}, #{item.proposedSupplies},
+            #{item.otherProposedSupplies}, #{item.currentQualitySystem}, #{item.mainCompetitors}, #{item.nowCompanyMainCustomers}, #{item.certificateUrl}, #{item.topSix},
+            #{item.companyEmail}, #{item.proposedSuppliesTop},#{#{item.supplierHaulCycle}}
+            )
+        </foreach>
+    </insert>
+
+    <!--修改供应商-->
+    <update id="update" parameterType="com.jaezi.system.model.User">
+        UPDATE sys_supplier
+        SET
+        <trim suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="examineStatus != null and examineStatus != ''">examine_status = #{examineStatus},</if>
+            <if test="problem != null and problem != ''">problem = #{problem},</if>
+            <if test="answer != null and answer != ''">answer = #{answer},</if>
+            <if test="companyName != null and companyName != ''">company_name = #{companyName},</if>
+            <if test="companyAddress != null and companyAddress != ''">company_address = #{companyAddress},</if>
+            <if test="companyWebsite != null and companyWebsite != ''">company_website = #{companyWebsite},</if>
+            <if test="companyFax != null and companyFax != ''">company_fax = #{companyFax},</if>
+            <if test="technicalDirector != null and technicalDirector != ''">technical_director =
+                #{technicalDirector},
+            </if>
+            <if test="technicalDirectorPhone != null and technicalDirectorPhone != ''">technical_director_phone =
+                #{technicalDirectorPhone},
+            </if>
+            <if test="financeDirector != null and financeDirector != ''">finance_director = #{financeDirector},</if>
+            <if test="financeDirectorPhone != null and financeDirectorPhone != ''">finance_director_phone =
+                #{financeDirectorPhone},
+            </if>
+            <if test="saleDirector != null and saleDirector != ''">sale_director = #{saleDirector},</if>
+            <if test="saleDirectorPhone != null and saleDirectorPhone != ''">sale_director_phone =
+                #{saleDirectorPhone},
+            </if>
+            <if test="industryExperience != null and industryExperience != ''">industry_experience =
+                #{industryExperience},
+            </if>
+            <if test="mainMaterials != null and mainMaterials != ''">main_materials = #{mainMaterials},</if>
+            <if test="otherMainMaterials != null and otherMainMaterials != ''">other_main_materials =
+                #{otherMainMaterials},
+            </if>
+            <if test="proposedSupplies != null and proposedSupplies != ''">proposed_supplies = #{proposedSupplies},</if>
+            <if test="otherProposedSupplies != null and otherProposedSupplies != ''">other_proposed_supplies =
+                #{otherProposedSupplies},
+            </if>
+            <if test="currentQualitySystem != null and currentQualitySystem != ''">current_quality_system =
+                #{currentQualitySystem},
+            </if>
+            <if test="mainCompetitors != null and mainCompetitors != ''">main_competitors = #{mainCompetitors},</if>
+            <if test="nowCompanyMainCustomers != null and nowCompanyMainCustomers != ''">now_company_main_customers =
+                #{nowCompanyMainCustomers},
+            </if>
+            <if test="certificateUrl != null and certificateUrl != ''">certificate_url = #{certificateUrl},</if>
+            <if test="topSix != null and topSix != ''">top_six = #{topSix},</if>
+            <if test="companyEmail != null and companyEmail != ''">company_email = #{companyEmail},</if>
+            <if test="supplierHaulCycle != null and supplierHaulCycle != ''">supplier_haul_cycle = #{supplierHaulCycle},</if>
+            <if test="proposedSuppliesTop != null and proposedSuppliesTop != ''">proposed_supplies_top =
+                #{proposedSuppliesTop},
+            </if>
+        </trim>
+        WHERE supplier_id = #{supplierId}
+    </update>
+
+    <update id="updateSupplierPhoneByUserId">
+        update sys_user SET phone = #{phone} where id = #{userId}
+    </update>
+
+    <!--删除供应商-->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_supplier WHERE supplier_id = #{id}
+    </delete>
+
+</mapper>

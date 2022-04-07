@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.srminterface.dao.InterfaceServerDao">
+
+    <!-- 动态表写入数据 -->
+    <insert id="saveTable">
+        INSERT IGNORE ${table} (
+        <foreach collection="filedNameList" item="key" index="index" separator=",">
+            ${key}
+        </foreach>
+        )
+        VALUES
+        <foreach collection="mapList" item="map" separator=",">
+            (
+            <foreach collection="map" index="key" item="value" separator=",">
+                #{value}
+            </foreach>
+            )
+        </foreach>
+    </insert>
+
+    <!-- 动态创建表 -->
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS ${table} (
+        <foreach collection="tableConfigList" item="item" index="index" separator=",">
+            ${item.filedName} ${item.dataType}
+            <if test="item.isNull != null and item.isNull != ''">
+                NOT NULL
+            </if>
+            <if test="item.defaultValues != null and item.defaultValues != ''">
+                DEFAULT ${item.defaultValues}
+            </if>
+            <if test="item.comments != null and item.comments != ''">
+                COMMENT ${item.comments}
+            </if>
+        </foreach>
+        <if test="isPk != '' and isPk != null">
+            ,PRIMARY KEY (
+            <foreach collection="tableConfigList" item="item" index="index" separator=",">
+                <if test="item.isPk != '' and item.isPk != null">
+                    ${item.filedName}
+                </if>
+            </foreach>
+            ) USING BTREE
+        </if>
+        ) ENGINE = INNODB COMMENT = ${tableComment};
+    </update>
+
+    <!-- 添加列名 -->
+    <update id="alterFiled">
+        ALTER TABLE ${table}
+        ADD COLUMN ${tableConfig.filedName} ${tableConfig.dataType}
+        <if test="tableConfig.isNull == null or tableConfig.isNull == ''">
+            NOT NULL
+        </if>
+        <if test="tableConfig.defaultValues != null and tableConfig.defaultValues != ''">
+            DEFAULT ${tableConfig.defaultValues}
+        </if>
+        <if test="tableConfig.isPk != '' and tableConfig.isPk != null">
+            primary key
+        </if>
+        <if test="tableConfig.comments != null and tableConfig.comments != ''">
+            COMMENT ${tableConfig.comments}
+        </if>
+    </update>
+
+    <update id="updateTable">
+        UPDATE ${table} SET
+        <foreach collection="tableConfigList" item="tableConfig">
+            <foreach collection="tableConfig" index="key" item="item" separator=",">
+                <if test="item.isPk == '' or item.isPk == null">
+                    #{item.filedName} = #{item.value}
+                </if>
+            </foreach>
+        </foreach>
+        <if test="isPk != '' and isPk != null">
+            <where>
+                <foreach collection="tableConfigList" item="tableConfig">
+                    <foreach collection="tableConfig" index="key" item="item" separator="and">
+                        <if test="item.isPk != '' and item.isPk != null">
+                            #{item.filedName} = #{item.value}
+                        </if>
+                    </foreach>
+                </foreach>
+            </where>
+        </if>
+    </update>
+
+    <!-- 删除供需差异数据 -->
+    <delete id="deleteSupplyDiff">
+        TRUNCATE bus_supply_diff
+    </delete>
+
+    <!-- 根据表名称获取表列名 -->
+    <select id="getTableFiledByTableName" resultType="java.lang.String">
+        SELECT column_name
+        FROM information_schema.COLUMNS
+        WHERE TABLE_NAME = ${table};
+    </select>
+
+    <!--根据用户名获取用户-->
+    <select id="getUserByUsername" resultType="java.lang.Object" parameterType="java.lang.String">
+        SELECT
+        *
+        FROM sys_user
+        WHERE username = #{username}
+    </select>
+
+    <!-- 获取采购订单最大ID -->
+    <select id="getPurchaseMaxId" resultType="java.lang.Integer">
+        SELECT ifnull(max(id),0) FROM bus_purchase
+    </select>
+
+    <!-- 获取标准物资开票最大ID -->
+    <select id="getStandardInvoiceOutMaxId" resultType="java.lang.Integer">
+        SELECT IFNULL(max(id),0) FROM bus_standard_invoice_out
+    </select>
+
+    <!-- 据用户ID获取供应商表的用户ID -->
+    <select id="getSupplierByUserId" resultType="java.lang.Integer">
+        SELECT user_id FROM sys_supplier WHERE user_id = #{userId}
+    </select>
+
+    <!-- 获取物料供需数据 -->
+    <select id="getMaterialSupplyData" resultType="com.jaezi.srminterface.model.MaterialSupplyDemand">
+        ${sql}
+    </select>
+
+    <!-- 批量添加用户 -->
+    <insert id="saveUserBath" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT IGNORE sys_user (username, password, role_id, create_time, user_type, real_name, quota, phone)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.username},#{item.password},#{item.roleId},
+            #{item.createTime},#{item.userType},#{item.realName},#{item.quota},
+            #{item.phone})
+        </foreach>
+    </insert>
+
+    <!-- 批量添加物料 -->
+    <insert id="saveMaterialBath">
+        INSERT IGNORE sys_material (material_number,
+        material_name,
+        material_description,
+        buyer_number,
+        unit,
+        specification,
+        traffic_stability_classification,
+        traffic_classification,
+        risk_classification,
+        plant,
+        minimal_package,
+        minimum_quantity,
+        delivery_frequency,
+        purchase_day,
+        procurement_type,
+        category,
+        social_generality_classification,
+        supply_mode,
+        purchase_group,
+        price,
+        utf1,
+        utf2,
+        utf3,
+        utf4,
+        utf5,
+        utf6,
+        utf7,
+        utf8,
+        utf9,
+        utf10)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.materialNumber},#{item.materialName},#{item.materialDescription},
+            #{item.buyerNumber},#{item.unit},#{item.specification},#{item.trafficStabilityClassification},
+            #{item.trafficClassification},#{item.riskClassification},#{item.plant},
+            #{item.minimalPackage},#{item.minimumQuantity},#{item.deliveryFrequency},#{item.purchaseDay},
+            #{item.procurementType},#{item.category},#{item.socialGeneralityClassification},
+            #{item.supplyMode},#{item.purchaseGroup},#{item.price},#{item.utf1},
+            #{item.utf2},#{item.utf3},#{item.utf4},
+            #{item.utf5},#{item.utf6},#{item.utf7},#{item.utf8},
+            #{item.utf9},#{item.utf10})
+        </foreach>
+    </insert>
+
+    <!-- 批量添加供应商 -->
+    <insert id="saveSupplierBath" useGeneratedKeys="true">
+        INSERT IGNORE sys_supplier(user_id, examine_status, problem, answer, company_name, company_address, company_website,
+        company_fax, technical_director, technical_director_phone, finance_director, finance_director_phone,
+        sale_director, sale_director_phone, industry_experience, main_materials, other_main_materials, proposed_supplies,
+        other_proposed_supplies, current_quality_system, main_competitors, now_company_main_customers, certificate_url, top_six,
+        company_email, proposed_supplies_top
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.userId}, #{item.examineStatus}, #{item.problem}, #{item.answer}, #{item.companyName}, #{item.companyAddress}, #{item.companyWebsite},
+            #{item.companyFax},#{item.technicalDirector}, #{item.technicalDirectorPhone}, #{item.financeDirector}, #{item.financeDirector},
+            #{item.saleDirector}, #{item.saleDirectorPhone}, #{item.industryExperience}, #{item.mainMaterials}, #{item.otherMainMaterials}, #{item.proposedSupplies},
+            #{item.otherProposedSupplies}, #{item.currentQualitySystem}, #{item.mainCompetitors}, #{item.nowCompanyMainCustomers}, #{item.certificateUrl}, #{item.topSix},
+            #{item.companyEmail}, #{item.proposedSuppliesTop}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量添加采购 -->
+    <insert id="savePurchaseBath">
+        INSERT IGNORE bus_purchase (id, `type`, status, un_description, urgent, plant, release_reason, p_order, project,
+        material_number, component_identity, version, identity_information,
+        qty, unit, delivery_date, create_date, order_reason, price,
+        supplier_code,
+        rescheduled_date,
+        order_qty,
+        delivered_qty,
+        def_qty,
+        is_satisfy,
+        qty1,
+        delivery_date1,
+        qty2,
+        delivery_date2,
+        qty3,
+        delivery_date3,
+        remark,
+        loading_shipment_date,
+        receiving_number,
+        al_loading_shipment_number,
+        inventory_matching,
+        storage_location,
+        dimension_size,
+        purchase_group,
+        supplier_material,
+        purchase_person,
+        contact_information,
+        company_address,adjust_type,qm_status,unqualified_qty,purchase_credentials)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.type},#{item.status},#{item.unDescription},
+            #{item.urgent},#{item.plant},#{item.releaseReason},#{item.pOrder},
+            #{item.project},#{item.materialNumber},
+            #{item.componentIdentity},#{item.version},#{item.identityInformation},#{item.qty},
+            #{item.unit},#{item.deliveryDate},#{item.createDate},
+            #{item.orderReason},#{item.price},#{item.supplierCode},
+            #{item.rescheduledDate},#{item.orderQty},#{item.deliveredQty},
+            #{item.defQty},#{item.isSatisfy},#{item.qty1},#{item.deliveryDate1},
+            #{item.qty2},#{item.deliveryDate2},#{item.qty3},
+            #{item.deliveryDate3},#{item.remark},#{item.loadingShipmentDate},#{item.receivingNumber},
+            #{item.alLoadingShipmentNumber},#{item.inventoryMatching},#{item.storageLocation},
+            #{item.dimensionSize},#{item.purchaseGroup},#{item.supplierMaterial},#{item.purchasePerson},
+            #{item.contactInformation},#{item.companyAddress},#{item.adjustType},#{item.qmStatus},#{item.unqualifiedQty},
+            #{item.purchaseCredentials})
+        </foreach>
+    </insert>
+
+    <!-- 批量添加标准物资开票 -->
+    <insert id="saveStandardInvoiceOutBath">
+        INSERT IGNORE bus_standard_invoice_out (id, plant,`order`,material_voucher,voucher_project,material,supplier_code,
+        hong_project,interim_invoice_number,aggregate_amount,purchase_order,not_out_invoice_number,unit_price,quantity,create_time)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.plant}, #{item.order}, #{item.materialVoucher},#{item.voucherProject},#{item.material},
+            #{item.supplierCode},#{item.hongProject},#{item.interimInvoiceNumber},
+            #{item.aggregateAmount},#{item.purchaseOrder},#{item.notOutInvoiceNumber},#{item.unitPrice},#{item.quantity},
+            #{item.createTime})
+        </foreach>
+    </insert>
+
+    <!-- 批量添加供需差异 -->
+    <insert id="saveSupplyDiffBath">
+        INSERT IGNORE bus_supply_diff(id, plant,material_number,type,past_due,next_day,third_day,four_day,five_day,six_day,
+        seventh_day,eighth_day,ninth_day,ten_day,eleventh_day,twelfth_day,thirteen_day,fourteenth_day,fifteenth_day,sixteenth_day,
+        seventeenth_day,eighteenth_day,nineteenth_day,twenty_day,twenty_one_day,twenty_two_day,twenty_three_day,twenty_four_day,
+        twenty_five_day,twenty_six_day,twenty_seventh_day,twenty_eighth_day,twenty_nine_day,thirty_day,thirty_one_day,thirty_two_day,thirty_three_day,
+        thirty_four_day,thirty_five_day,thirty_six_day,thick_seventh_day,thick_eighth_day,thick_nine_day,forty_day,forty_one_day)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (NULL, #{item.plant}, #{item.materialNumber}, #{item.type},#{item.pastDue},#{item.nextDay},#{item.thirdDay},#{item.fourDay},#{item.fiveDay},#{item.sixDay},
+            #{item.seventhDay},#{item.eighthDay},#{item.ninthDay},#{item.tenDay},#{item.eleventhDay},#{item.twelfthDay},#{item.thirteenDay},#{item.fourteenthDay},#{item.fifteenthDay},#{item.sixteenthDay},
+            #{item.seventeenthDay},#{item.eighteenthDay},#{item.nineteenthDay},#{item.twentyDay},#{item.twentyOneDay},#{item.twentyTwoDay},#{item.twentyThreeDay},#{item.twentyFourDay},
+            #{item.twentyFiveDay},#{item.twentySixDay},#{item.twentySeventhDay},#{item.twentyEighthDay},#{item.twentyNineDay},#{item.thirtyDay},#{item.thirtyOneDay},#{item.thirtyTwoDay},#{item.thirtyThreeDay},
+            #{item.thirtyFourDay},#{item.thirtyFiveDay},#{item.thirtySixDay},#{item.thickSeventhDay},#{item.thickEighthDay},#{item.thickNineDay},#{item.fortyDay},#{item.fortyOneDay})
+        </foreach>
+    </insert>
+
+    <!-- 手动执行sql -->
+    <insert id="sqlManualRun">
+        ${sqlContent}
+    </insert>
+
+</mapper>

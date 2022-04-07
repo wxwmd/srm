@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.MidTechnicalInformationSupplierDao">
+    <resultMap id="midTechnicalInformationSupplier" type="com.jaezi.synergia.model.MidTechnicalInformationSupplier">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="information_id" jdbcType="INTEGER" property="informationId"/>
+        <result column="person_id" jdbcType="INTEGER" property="personId"/>
+    </resultMap>
+
+    <resultMap id="midTechnicalInformationSupplierVo" type="com.jaezi.synergia.vo.MidTechnicalInformationSupplierVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        mtis.id,
+        mtis.information_id,
+        mtis.person_id
+    </sql>
+
+    <!-- 查询所有供应商技术资料信息 -->
+    <select id="getAllVos" resultMap="midTechnicalInformationSupplier" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_information_supplier mtis
+        <where>
+            <if test="personId != null ">
+                mtis.person_id = #{personId}
+            </if>
+            <if test="informationId != null ">
+                mtis.information_id = #{informationId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据技术资料交流id查询技术资料可见性 -->
+    <select id="getListByTechnicalInformationId" resultMap="midTechnicalInformationSupplier" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM mid_technical_information_supplier mtis
+        WHERE mtis.information_id =#{technicalInformationId}
+    </select>
+
+    <!-- 添加一条供应商技术资料信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.MidTechnicalInformationSupplier">
+        INSERT INTO mid_technical_information_supplier(information_id,
+        person_id)
+        VALUES(#{informationId},#{personId})
+    </insert>
+
+    <!-- 修改供应商技术资料信息信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.MidTechnicalInformationSupplier">
+        UPDATE mid_technical_information_supplier
+        SET
+        <trim suffixOverrides=",">
+            <if test="informationId != null ">information_id = #{informationId},</if>
+            <if test="personId != null ">person_id = #{personId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除供应商技术资料信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM mid_technical_information_supplier WHERE id = #{id}
+    </delete>
+
+    <!-- 修改一个人员技术资料信息 -->
+    <delete id="deleteByInformationIds" parameterType="java.util.ArrayList">
+        DELETE FROM mid_technical_information_supplier
+        <where>
+            information_id in (
+            <foreach collection="list"  item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+        </where>
+    </delete>
+
+    <!-- 删除供应商技术资料信息 -->
+    <delete id="deleteByInformationId" parameterType="java.lang.Integer">
+        DELETE FROM mid_technical_information_supplier WHERE information_id = #{informationId}
+    </delete>
+
+</mapper>

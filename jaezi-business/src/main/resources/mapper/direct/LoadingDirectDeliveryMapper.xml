@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.direct.dao.LoadingDirectDeliveryDao">
+    <resultMap id="loadingDirectDelivery" type="com.jaezi.bus.direct.model.LoadingDirectDelivery">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="plant" jdbcType="VARCHAR" property="plant"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="arrival_date" jdbcType="VARCHAR" property="arrivalDate"/>
+        <result column="license_plate_number" jdbcType="VARCHAR" property="licensePlateNumber"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="loading_number" jdbcType="VARCHAR" property="loadingNumber"/>
+        <result column="receiving_window" jdbcType="VARCHAR" property="receivingWindow"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="need_information_publisher" jdbcType="VARCHAR" property="needInformationPublisher"/>
+        <result column="online_service_time" jdbcType="VARCHAR" property="onlineServiceTime"/>
+        <result column="production_line" jdbcType="VARCHAR" property="productionLine"/>
+        <result column="supply_department_contact_person" jdbcType="VARCHAR" property="supplyDepartmentContactPerson"/>
+        <result column="need_information_publisher_phone" jdbcType="VARCHAR" property="needInformationPublisherPhone"/>
+    </resultMap>
+
+    <resultMap id="loadingDirectDeliveryVo" type="com.jaezi.bus.direct.vo.LoadingDirectDeliveryVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="plant" jdbcType="VARCHAR" property="plant"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="arrival_date" jdbcType="VARCHAR" property="arrivalDate"/>
+        <result column="license_plate_number" jdbcType="VARCHAR" property="licensePlateNumber"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="loading_number" jdbcType="VARCHAR" property="loadingNumber"/>
+        <result column="receiving_window" jdbcType="VARCHAR" property="receivingWindow"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="need_information_publisher" jdbcType="VARCHAR" property="needInformationPublisher"/>
+        <result column="online_service_time" jdbcType="VARCHAR" property="onlineServiceTime"/>
+        <result column="production_line" jdbcType="VARCHAR" property="productionLine"/>
+        <result column="supply_department_contact_person" jdbcType="VARCHAR" property="supplyDepartmentContactPerson"/>
+        <result column="need_information_publisher_phone" jdbcType="VARCHAR" property="needInformationPublisherPhone"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bldd.id,
+        bldd.status,
+        bldd.plant,
+        bldd.supplier_code,
+        bldd.arrival_date,
+        bldd.license_plate_number,
+        bldd.phone,
+        bldd.create_date,
+        bldd.loading_number,
+        bldd.receiving_window,
+        bldd.location,
+        bldd.need_information_publisher,
+        bldd.online_service_time,
+        bldd.production_line,
+        bldd.supply_department_contact_person,
+        bldd.need_information_publisher_phone,
+        su.username as supplier_name
+    </sql>
+
+    <!-- 查询所有直送入库信息 -->
+    <select id="getAllVos" resultMap="loadingDirectDeliveryVo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_direct_delivery bldd
+        LEFT JOIN sys_user su ON bldd.supplier_code = su.username
+        <where>
+            <if test="status != null and status != ''">
+                bldd.status = #{status}
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bldd.plant = #{plant}
+            </if>
+            <if test="arrivalDateStartTime != null and arrivalDateStartTime != '' and arrivalDateEndTime !=null and arrivalDateEndTime != '' ">
+                AND bldd.arrival_date BETWEEN #{arrivalDateStartTime} AND #{arrivalDateEndTime}
+            </if>
+            <!--<if test="supplierCode != null and supplierCode != ''">and supplier_code = #{supplierCode}</if>-->
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bldd.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bldd.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                SELECT username FROM sys_user WHERE real_name = #{realName} OR buyer_number = #{realName}
+                )
+            </if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">
+                AND bldd.license_plate_number = #{licensePlateNumber}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND bldd.phone = #{phone}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bldd.create_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--查询所有直送入库信息-->
+    <select id="findAll" resultMap="loadingDirectDeliveryVo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_direct_delivery bldd
+        LEFT JOIN sys_user su ON bldd.supplier_code = su.username
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                bldd.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bldd.supplier_code in (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bldd.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="status != null and status != ''">
+                AND bldd.status = #{status}
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bldd.plant = #{plant}
+            </if>
+            <if test="arrivalDateStartTime != null and arrivalDateStartTime != '' and arrivalDateEndTime !=null and arrivalDateEndTime != '' ">
+                AND bldd.arrival_date BETWEEN #{arrivalDateStartTime} AND #{arrivalDateEndTime}
+            </if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">
+                AND bldd.license_plate_number = #{licensePlateNumber}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND bldd.phone = #{phone}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND bldd.create_date &gt; #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND bldd.create_date &lt; #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取直送入库信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="loadingDirectDeliveryVo">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_direct_delivery bldd
+        LEFT JOIN sys_user su on bldd.supplier_code = su.username
+        WHERE bldd.id = #{id}
+    </select>
+
+    <!-- 添加一个直送入库信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.direct.model.LoadingDirectDelivery">
+        INSERT INTO bus_loading_direct_delivery(status, plant, supplier_code, arrival_date, license_plate_number, phone,
+                                                create_date, loading_number,
+                                                receiving_window,
+                                                location,
+                                                need_information_publisher,
+                                                online_service_time, production_line, supply_department_contact_person,
+                                                needInformationPublisherPhone)
+        VALUES (#{status}, #{plant}, #{supplierCode}, #{arrivalDate}, #{licensePlateNumber}, #{phone}, #{createDate},
+                #{loadingNumber},
+                #{receivingWindow}, #{location}, #{needInformationPublisher}, #{onlineServiceTime}, #{productionLine},
+                #{supplyDepartmentContactPerson}, #{needInformationPublisherPhone})
+    </insert>
+
+    <!-- 修改直送入库信息 -->
+    <update id="update" parameterType="com.jaezi.bus.direct.model.LoadingDirectDelivery">
+        UPDATE bus_loading_direct_delivery
+        SET
+        <trim suffixOverrides=",">
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="plant != null and plant != ''">
+                plant = #{plant},
+            </if>
+            <if test="arrivalDate != null and arrivalDate != '' ">
+                arrival_date = #{arrivalDate},
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                supplier_code = #{supplierCode},
+            </if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">
+                license_plate_number = #{licensePlateNumber},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="loadingNumber != null and loadingNumber != ''">
+                loading_number = #{loadingNumber},
+            </if>
+            <if test="createDate != null and createDate != '' ">
+                create_date = #{createDate},
+            </if>
+            <if test="receivingWindow != null and receivingWindow != '' ">
+                receiving_window = #{receivingWindow},
+            </if>
+            <if test="location != null and location != '' ">
+                location = #{location},
+            </if>
+            <if test="needInformationPublisher != null and needInformationPublisher != '' ">
+                need_information_publisher = #{needInformationPublisher},
+            </if>
+            <if test="onlineServiceTime != null and onlineServiceTime != '' ">
+                online_service_time = #{onlineServiceTime},
+            </if>
+            <if test="productionLine != null and productionLine != '' ">
+                production_line = #{productionLine},
+            </if>
+            <if test="supplyDepartmentContactPerson != null and supplyDepartmentContactPerson != '' ">
+                supply_department_contact_person = #{supplyDepartmentContactPerson},
+            </if>
+            <if test="needInformationPublisherPhone != null and needInformationPublisherPhone != '' ">
+                need_information_publisher_phone = #{needInformationPublisherPhone},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个直送入库信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_loading_direct_delivery
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

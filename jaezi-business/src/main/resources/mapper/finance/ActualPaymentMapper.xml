@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.finance.dao.ActualPaymentDao">
+    <resultMap id="actualPayment" type="com.jaezi.bus.finance.model.ActualPayment">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="accounting_year" jdbcType="VARCHAR" property="accountingYear"/>
+        <result column="month" jdbcType="VARCHAR" property="month"/>
+        <result column="payment_amount" jdbcType="INTEGER" property="paymentAmount"/>
+        <result column="text" jdbcType="VARCHAR" property="text"/>
+    </resultMap>
+
+    <resultMap id="actualPaymentVo" type="com.jaezi.bus.finance.vo.ActualPaymentVo">
+    </resultMap>
+
+    <sql id="base_column">
+        bap.id,
+        bap.company,
+        bap.accounting_year,
+        bap.payment_amount,
+        bap.`month`,
+        bap.text
+    </sql>
+
+    <!-- 查询所有实际付款情况信息 -->
+    <select id="getAllVos" resultMap="actualPayment" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_actual_payment bap
+        <where>
+            <if test="company != null and company != ''">
+                bap.company = #{company},
+            </if>
+            <if test="accountingYear != null and accountingYear != ''">
+                AND bap.accounting_year = #{accountingYear}
+            </if>
+            <if test="month != null and month != ''">
+                AND bap.`month` = #{month}
+            </if>
+            <if test="paymentAmount != null and paymentAmount != ''">
+                AND bap.payment_amount = #{paymentAmount}
+            </if>
+            <if test="text != null and text != ''">
+                AND bap.text = #{text}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取实际付款情况信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="actualPayment">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_actual_payment bap
+        WHERE bap.id = #{id}
+    </select>
+
+    <!-- 添加一个实际付款情况信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.finance.model.ActualPayment">
+        INSERT INTO bus_actual_payment(company, accounting_year, `month`, payment_amount, text)
+        VALUES (#{company}, #{accountingYear}, #{month}, #{paymentAmount}, #{text})
+    </insert>
+
+    <!-- 修改装实际付款情况信息 -->
+    <update id="update" parameterType="com.jaezi.bus.finance.model.ActualPayment">
+        UPDATE bus_actual_payment
+        SET
+        <trim suffixOverrides=",">
+            <if test="company != null and company != ''">company = #{company},</if>
+            <if test="accountingYear != null and accountingYear != ''">accounting_year = #{accountingYear},</if>
+            <if test="month != null and month != ''">`month` = #{month},</if>
+            <if test="paymentAmount != null and paymentAmount != ''">payment_amount = #{paymentAmount},</if>
+            <if test="text != null and text != ''">text = #{text},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个实际付款情况信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_actual_payment
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

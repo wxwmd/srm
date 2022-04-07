@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.SupplierBasicDataDao">
+    <resultMap id="supplierBasicData" type="com.jaezi.bus.purchase.model.SupplierBasicData">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="traffic_stability_classification" property="trafficStabilityClassification"/>
+        <result column="traffic_classification" property="trafficClassification"/>
+        <result column="risk_classification" property="riskClassification"/>
+        <result column="factory" property="factory"/>
+        <result column="round_sys_existing_value" property="roundSysExistingValue"/>
+        <result column="round_supplier_feedback_set_quantity" property="roundSupplierFeedbackSetQuantity"/>
+        <result column="round_enterprise_audit_opinions" property="roundEnterpriseAuditOpinions"/>
+        <result column="round_batch_enterprise_audit_opinions" property="roundBatchEnterpriseAuditOpinions"/>
+        <result column="round_batch_necessity_enterprise_audit_opinions" property="roundBatchNecessityEnterpriseAuditOpinions"/>
+        <result column="advise_enterprise_audit_opinions" property="adviseEnterpriseAuditOpinions"/>
+        <result column="raw_material_period_enterprise_audit_opinions" property="rawMaterialPeriodEnterpriseAuditOpinions"/>
+        <result column="lock_plan_enterprise_audit_opinions" property="lockPlanEnterpriseAuditOpinions"/>
+        <result column="production_enterprise_audit_opinions" property="productionEnterpriseAuditOpinions"/>
+        <result column="transportation_enterprise_audit_opinions" property="transportationEnterpriseAuditOpinions"/>
+        <result column="total_enterprise_audit_opinions" property="totalEnterpriseAuditOpinions"/>
+        <result column="round_enterprise_confirmation_date" property="roundEnterpriseConfirmationDate"/>
+        <result column="mini_quantity_sys_existing_value" property="miniQuantitySysExistingValue"/>
+        <result column="mini_quantity_supplier_feedback_set_quantity" property="miniQuantitySupplierFeedbackSetQuantity"/>
+        <result column="mini_quantity_supplier_set_necessity" property="miniQuantitySupplierSetNecessity"/>
+        <result column="mini_quantity_enterprise_audit_opinions" property="miniQuantityEnterpriseAuditOpinions"/>
+        <result column="mini_quantity_enterprise_feedback_conclusion" property="miniQuantityEnterpriseFeedbackConclusion"/>
+        <result column="mini_quantity_enterprise_confirmation_date" property="miniQuantityEnterpriseConfirmationDate"/>
+        <result column="delivery_frequency" property="deliveryFrequency"/>
+        <result column="key_component_name" property="keyComponentName"/>
+        <result column="key_component_inventory" property="keyComponentInventory"/>
+        <result column="actual_materials_ready_day" property="actualMaterialsReadyDay"/>
+        <result column="actual_plan_lock_day" property="actualPlanLockDay"/>
+        <result column="actual_production_day" property="actualProductionDay"/>
+        <result column="actual_transportation_day" property="actualTransportationDay"/>
+        <result column="actual_total" property="actualTotal"/>
+        <result column="purchase_day" property="purchaseDay"/>
+        <result column="purchase_type" property="purchaseType"/>
+        <result column="category" property="category"/>
+        <result column="social_generality_classification" property="socialGeneralityClassification"/>
+        <result column="supply_mode" property="supplyMode"/>
+        <result column="purchase_group" property="purchaseGroup"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="supplier_code" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="supplierBasicDataVo" type="com.jaezi.bus.purchase.vo.SupplierBasicDataVo">
+        <!--<id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName"/>
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType"/>
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>-->
+    </resultMap>
+
+    <sql id="base_column">
+        bsbd.id,
+        bsbd.material_number,
+        sm.material_description,
+        bsbd.traffic_stability_classification,
+        bsbd.traffic_classification,
+        bsbd.risk_classification,
+        bsbd.factory,
+        bsbd.round_sys_existing_value,
+        bsbd.round_supplier_feedback_set_quantity,
+        bsbd.round_enterprise_audit_opinions,
+        bsbd.round_batch_enterprise_audit_opinions,
+        bsbd.round_batch_necessity_enterprise_audit_opinions,
+        bsbd.advise_enterprise_audit_opinions,
+        bsbd.raw_material_period_enterprise_audit_opinions,
+        bsbd.lock_plan_enterprise_audit_opinions,
+        bsbd.production_enterprise_audit_opinions,
+        bsbd.transportation_enterprise_audit_opinions,
+        bsbd.total_enterprise_audit_opinions,
+        bsbd.round_enterprise_confirmation_date,
+        bsbd.mini_quantity_sys_existing_value,
+        bsbd.mini_quantity_supplier_feedback_set_quantity,
+        bsbd.mini_quantity_supplier_set_necessity,
+        bsbd.mini_quantity_enterprise_audit_opinions,
+        bsbd.mini_quantity_enterprise_feedback_conclusion,
+        bsbd.mini_quantity_enterprise_confirmation_date,
+        bsbd.delivery_frequency,
+        bsbd.key_component_name,
+        bsbd.key_component_inventory,
+        bsbd.actual_materials_ready_day,
+        bsbd.actual_plan_lock_day,
+        bsbd.actual_production_day,
+        bsbd.actual_transportation_day,
+        bsbd.actual_total,
+        bsbd.purchase_day,
+        bsbd.purchase_type,
+        bsbd.category,
+        bsbd.social_generality_classification,
+        bsbd.supply_mode,
+        bsbd.purchase_group,
+        bsbd.update_date,
+        bsbd.supplier_code
+    </sql>
+
+    <!-- 查询所有供应商列表 -->
+    <select id="getAllVos" resultMap="supplierBasicData" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_basic_data bsbd
+        LEFT JOIN sys_material sm ON bsbd.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != '' and supplierCode != null">
+                supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1 or userType == 0">
+                AND bsbd.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName} OR buyer_number = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                AND bsbd.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取供应商列表 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="supplierBasicData">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_basic_data bsbd
+        LEFT JOIN sys_material sm ON bsbd.material_number = sm.material_number
+        WHERE bsbd.id = #{id}
+    </select>
+
+    <!-- 添加供应商基础信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 批量添加供应商基础信息 -->
+    <insert id="save">
+        INSERT INTO bus_supplier_basic_data (id,
+        material_number,
+        traffic_stability_classification,
+        traffic_classification,
+        risk_classification,
+        factory,
+        round_sys_existing_value,
+        round_supplier_feedback_set_quantity,
+        round_enterprise_audit_opinions,
+        round_batch_enterprise_audit_opinions,
+        round_batch_necessity_enterprise_audit_opinions,
+        advise_enterprise_audit_opinions,
+        raw_material_period_enterprise_audit_opinions,
+        lock_plan_enterprise_audit_opinions,
+        production_enterprise_audit_opinions,
+        transportation_enterprise_audit_opinions,
+        total_enterprise_audit_opinions,
+        round_enterprise_confirmation_date,
+        mini_quantity_sys_existing_value,
+        mini_quantity_supplier_feedback_set_quantity,
+        mini_quantity_supplier_set_necessity,
+        mini_quantity_enterprise_audit_opinions,
+        mini_quantity_enterprise_feedback_conclusion,
+        mini_quantity_enterprise_confirmation_date,
+        delivery_frequency,
+        key_component_name,
+        key_component_inventory,
+        actual_materials_ready_day,
+        actual_plan_lock_day,
+        actual_production_day,
+        actual_transportation_day,
+        actual_total,
+        purchase_day,
+        purchase_type,
+        category,
+        social_generality_classification,
+        supply_mode,
+        purchase_group,
+        update_date,
+        supplier_code)
+        VALUES
+        <foreach collection="supplierBasicDataList" item="item" index="index" separator=",">
+            (NULL,#{item.materialNumber},#{item.trafficStabilityClassification},
+            #{item.trafficClassification},#{item.riskClassification},#{item.factory},
+            #{item.roundSysExistingValue},#{item.roundSupplierFeedbackSetQuantity},
+            #{item.roundEnterpriseAuditOpinions},
+            #{item.roundBatchEnterpriseAuditOpinions},
+            #{item.roundBatchNecessityEnterpriseAuditOpinions},
+            #{item.adviseEnterpriseAuditOpinions},
+            #{item.rawMaterialPeriodEnterpriseAuditOpinions},
+            #{item.lockPlanEnterpriseAuditOpinions},
+            #{item.productionEnterpriseAuditOpinions},
+            #{item.transportationEnterpriseAuditOpinions},
+            #{item.totalEnterpriseAuditOpinions},
+            #{item.roundEnterpriseConfirmationDate},
+            #{item.miniQuantitySysExistingValue},#{item.miniQuantitySupplierFeedbackSetQuantity},
+            #{item.miniQuantitySupplierSetNecessity},#{item.miniQuantityEnterpriseAuditOpinions},
+            #{item.miniQuantityEnterpriseFeedbackConclusion},#{item.miniQuantityEnterpriseConfirmationDate},
+            #{item.deliveryFrequency},#{item.keyComponentName},#{item.keyComponentInventory},
+            #{item.actualMaterialsReadyDay},#{item.actualProductionDay},
+            #{item.actualTransportationDay},#{item.actualTransportationDay},
+            #{item.actualTotal},#{item.purchaseDay},
+            #{item.purchaseType},#{item.category},#{item.socialGeneralityClassification},
+            #{item.supplyMode},#{item.purchaseGroup},#{item.updateDate},#{item.supplierCode}))
+        </foreach>
+    </insert>
+
+    <!-- 修改供应商基础信息 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+        UPDATE bus_supplier_basic_data
+        SET
+        <trim suffixOverrides=",">
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="trafficStabilityClassification != null and trafficStabilityClassification != ''">traffic_stability_classification = #{trafficStabilityClassification},</if>
+            <if test="trafficClassification != null and trafficClassification != ''">traffic_classification = #{trafficClassification},</if>
+            <if test="riskClassification != null and riskClassification != ''">risk_classification = #{riskClassification},</if>
+            <if test="factory != null and factory != ''">factory = #{factory},</if>
+            <if test="roundSysExistingValue != null and roundSysExistingValue != ''">round_sys_existing_value = #{roundSysExistingValue},</if>
+            <if test="roundSupplierFeedbackSetQuantity != null and roundSupplierFeedbackSetQuantity != ''">round_supplier_feedback_set_quantity = #{roundSupplierFeedbackSetQuantity},</if>
+            <if test="roundEnterpriseAuditOpinions != null and roundEnterpriseAuditOpinions != ''">round_enterprise_audit_opinions = #{roundEnterpriseAuditOpinions},</if>
+            <if test="roundEnterpriseConfirmationDate != null and roundEnterpriseConfirmationDate != ''">round_enterprise_confirmation_date = #{roundEnterpriseConfirmationDate},</if>
+            <if test="miniQuantitySysExistingValue != null and miniQuantitySysExistingValue != ''">mini_quantity_sys_existing_value = #{miniQuantitySysExistingValue},</if>
+            <if test="miniQuantitySupplierFeedbackSetQuantity != null and miniQuantitySupplierFeedbackSetQuantity != ''">mini_quantity_supplier_feedback_set_quantity = #{miniQuantitySupplierFeedbackSetQuantity},</if>
+            <if test="miniQuantitySupplierSetNecessity != null and miniQuantitySupplierSetNecessity != ''">mini_quantity_supplier_set_necessity = #{miniQuantitySupplierSetNecessity},</if>
+            <if test="miniQuantityEnterpriseAuditOpinions != null and miniQuantityEnterpriseAuditOpinions != ''">mini_quantity_enterprise_audit_opinions = #{miniQuantityEnterpriseAuditOpinions},</if>
+            <if test="miniQuantityEnterpriseFeedbackConclusion != null and miniQuantityEnterpriseFeedbackConclusion != ''">mini_quantity_enterprise_feedback_conclusion = #{miniQuantityEnterpriseFeedbackConclusion},</if>
+            <if test="miniQuantityEnterpriseConfirmationDate != null and miniQuantityEnterpriseConfirmationDate != ''">mini_quantity_enterprise_confirmation_date = #{miniQuantityEnterpriseConfirmationDate},</if>
+            <if test="deliveryFrequency != null and deliveryFrequency != ''">delivery_frequency = #{deliveryFrequency},</if>
+            <if test="keyComponentName != null and keyComponentName != ''">key_component_name = #{keyComponentName},</if>
+            <if test="keyComponentInventory != null and keyComponentInventory != ''">key_component_inventory = #{keyComponentInventory},</if>
+            <if test="actualMaterialsReadyDay != null and actualMaterialsReadyDay != ''">actual_materials_ready_day = #{actualMaterialsReadyDay},</if>
+            <if test="actualProductionDay != null and actualProductionDay != ''">actual_plan_lock_day = #{actualProductionDay},</if>
+            <if test="actualTransportationDay != null and actualTransportationDay != ''">actual_production_day = #{actualTransportationDay},</if>
+            <if test="actualTransportationDay != null and actualTransportationDay != ''">actual_transportation_day = #{actualTransportationDay},</if>
+            <if test="actualTotal != null and actualTotal != ''">actual_total = #{actualTotal},</if>
+            <if test="purchaseDay != null and purchaseDay != ''">purchase_day = #{purchaseDay},</if>
+            <if test="purchaseType != null and purchaseType != ''">purchase_type = #{purchaseType},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="socialGeneralityClassification != null and socialGeneralityClassification != ''">social_generality_classification = #{socialGeneralityClassification},</if>
+            <if test="supplyMode != null and supplyMode != ''">supply_mode = #{supplyMode},</if>
+            <if test="roundBatchEnterpriseAuditOpinions != null and roundBatchEnterpriseAuditOpinions != ''">round_batch_enterprise_audit_opinions = #{roundBatchEnterpriseAuditOpinions},</if>
+            <if test="roundBatchNecessityEnterpriseAuditOpinions != null and roundBatchNecessityEnterpriseAuditOpinions != ''">round_batch_necessity_enterprise_audit_opinions = #{roundBatchNecessityEnterpriseAuditOpinions},</if>
+            <if test="adviseEnterpriseAuditOpinions != null and adviseEnterpriseAuditOpinions != ''">advise_enterprise_audit_opinions = #{adviseEnterpriseAuditOpinions},</if>
+            <if test="rawMaterialPeriodEnterpriseAuditOpinions != null and rawMaterialPeriodEnterpriseAuditOpinions != ''">raw_material_period_enterprise_audit_opinions = #{rawMaterialPeriodEnterpriseAuditOpinions},</if>
+            <if test="lockPlanEnterpriseAuditOpinions != null and lockPlanEnterpriseAuditOpinions != ''">lock_plan_enterprise_audit_opinions = #{lockPlanEnterpriseAuditOpinions},</if>
+            <if test="productionEnterpriseAuditOpinions != null and productionEnterpriseAuditOpinions != ''">production_enterprise_audit_opinions = #{productionEnterpriseAuditOpinions},</if>
+            <if test="transportationEnterpriseAuditOpinions != null and transportationEnterpriseAuditOpinions != ''">transportation_enterprise_audit_opinions = #{transportationEnterpriseAuditOpinions},</if>
+            <if test="totalEnterpriseAuditOpinions != null and totalEnterpriseAuditOpinions != ''">total_enterprise_audit_opinions = #{totalEnterpriseAuditOpinions},</if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">purchase_group = #{purchaseGroup},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个供应商基础信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+
+
+
+</mapper>

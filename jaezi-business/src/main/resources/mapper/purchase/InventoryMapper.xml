@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.InventoryDao">
+    <resultMap id="inventory" type="com.jaezi.bus.purchase.model.Inventory">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="purchase" jdbcType="VARCHAR" property="purchase"/>
+        <result column="plant" jdbcType="VARCHAR" property="plant"/>
+        <result column="p_order" jdbcType="INTEGER" property="pOrder"/>
+        <result column="project" jdbcType="INTEGER" property="project"/>
+        <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="delivery_date" jdbcType="VARCHAR" property="deliveryDate"/>
+        <result column="rescheduled_date" jdbcType="VARCHAR" property="rescheduledDate"/>
+        <result column="supplier_entry_date" jdbcType="VARCHAR" property="supplierEntryDate"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="delivered_qty" jdbcType="DECIMAL" property="deliveredQty"/>
+        <result column="def_qty" jdbcType="DECIMAL" property="defQty"/>
+        <result column="order_confirmation" jdbcType="DECIMAL" property="orderConfirmation"/>
+        <result column="inventory_matching" jdbcType="DECIMAL" property="inventoryMatching"/>
+        <result column="installed_qty" jdbcType="DECIMAL" property="installedQty"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="inventoryVo" type="com.jaezi.bus.purchase.vo.InventoryVo">
+    </resultMap>
+
+    <sql id="base_column">
+        bi.id,
+        bi.status,
+        bi.purchase,
+        bi.plant,
+        bi.p_order,
+        bi.project,
+        bi.material_number,
+        sm.material_name,
+        bi.create_date,
+        bi.delivery_date,
+        bi.rescheduled_date,
+        bi.supplier_entry_date,
+        bi.order_qty,
+        bi.delivered_qty,
+        bi.def_qty,
+        bi.order_confirmation,
+        bi.inventory_matching,
+        bi.installed_qty,
+        bi.`type`,
+        bi.unit,
+        bi.supplier_code
+    </sql>
+
+    <!-- 查询所有消息列表 -->
+    <select id="getAllVos" resultMap="inventory" parameterType="java.util.Map">
+        SELECT distinct
+        <include refid="base_column"></include>
+        FROM bus_inventory bi
+        LEFT JOIN sys_material sm ON bi.material_number = sm.material_number
+        LEFT JOIN bus_loading_record blr ON bi.p_order = blr.purchase_order AND bi.project = blr.line_item
+        LEFT JOIN bus_loading_document bld ON bld.id = blr.loading_document_id
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                bi.material_number = #{materialNumber}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND sm.material_name = #{materialName}
+            </if>
+            <if test="pOrder != null and pOrder != ''">
+                AND bi.p_order = #{pOrder}
+            </if>
+            <if test="deliveryDate != null and deliveryDate != ''">
+                AND bi.delivery_date = #{deliveryDate}
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bi.plant = #{plant}
+            </if>
+            <if test="status != null and status != ''">
+                AND bi.status = #{status}
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND bi.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bi.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bi.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                AND bi.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="colorStatus == 1">
+                AND SUBDATE(CURDATE(), 1) = blr.loading_shipment_date AND blr.material_number IN (SELECT
+                bii.material_number
+                FROM bus_inventory_import bii WHERE bii.supplier_inventory &lt; (SELECT SUM(blr.loading_shipment_number)
+                FROM bus_loading_record blr
+                WHERE blr.material_number = bii.material_number GROUP BY blr.material_number))
+            </if>
+            <if test="colorStatus == 2">
+                AND CURDATE() &gt;= blr.loading_shipment_date AND blr.material_number IN (SELECT bii.material_number
+                FROM
+                bus_inventory_import bii WHERE bii.supplier_inventory &lt; (SELECT SUM(blr.loading_shipment_number) FROM
+                bus_loading_record blr
+                WHERE blr.material_number = bii.material_number GROUP BY blr.material_number))
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取供应商库存 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="inventory">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_inventory bi
+        LEFT JOIN sys_material sm ON bi.material_number = sm.material_number
+        WHERE bi.id = #{id}
+    </select>
+
+    <select id="getInventoryOrderBy" resultMap="inventory">
+        select id, def_qty, material_number
+        from bus_inventory
+        order by delivery_date, id;
+    </select>
+
+    <!-- 添加一个供应商库存 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 修改供应商库存 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+        UPDATE bus_inventory
+        SET
+        <trim suffixOverrides=",">
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="purchase != null and purchase != ''">purchase = #{purchase},</if>
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="pOrder != null and pOrder != '' ">p_order = #{pOrder},</if>
+            <if test="project != null and project != ''  ">project = #{project},</if>
+            <if test="materialNumber!= null and materialNumber != '' ">material_number = #{materialNumber},</if>
+            <if test="createDate != null and createDate != ''">create_date = #{createDate},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">delivery_date = #{deliveryDate},</if>
+            <if test="rescheduledDate != null and rescheduledDate != ''">rescheduled_date = #{rescheduledDate},</if>
+            <if test="supplierEntryDate != null and supplierEntryDate != ''">supplier_entry_date =
+                #{supplierEntryDate},
+            </if>
+            <if test="orderQty != null">order_qty = #{orderQty},</if>
+            <if test="deliveredQty != null">delivered_qty = #{deliveredQty},</if>
+            <if test="defQty != null">def_qty = #{defQty},</if>
+            <if test="orderConfirmation != null and orderConfirmation != ''">order_confirmation =
+                #{orderConfirmation},
+            </if>
+            <if test="inventoryMatching != null">inventory_matching = #{inventoryMatching},</if>
+            <if test="installedQty != null">installed_qty = #{installedQty},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新库存匹配 -->
+    <update id="updateInventory">
+        INSERT
+        IGNORE bus_inventory (
+        id,
+        purchase,
+        `status`,
+        plant,
+        p_order,
+        project,
+        material_number,
+        create_date,
+        delivery_date,
+        rescheduled_date,
+        supplier_entry_date,
+        order_qty,
+        delivered_qty,
+        def_qty,
+        order_confirmation,
+        installed_qty,
+        `type`,
+        unit,
+        supplier_code
+        )
+        SELECT bp.id,
+               bp.purchase_group                    AS purchase,
+               'yellow',
+               bp.plant,
+               bp.p_order,
+               bp.project,
+               bp.material_number,
+               bp.create_date,
+               bp.delivery_date,
+               bp.rescheduled_date,
+               bii.update_time                      AS supplier_entry_date,
+               bp.qty                               AS order_qty,
+               bp.delivered_qty,
+               IFNULL(bp.qty - blr.loading_shipment_number,0) AS def_qty,
+               bp.`status`                          AS order_confirmation,
+               blr.loading_shipment_number          AS installed_qty,
+               bp.type,
+               bp.unit,
+               bp.supplier_code
+        FROM bus_purchase bp
+                 LEFT JOIN bus_inventory_import bii ON bp.material_number = bii.material_number
+                 LEFT JOIN (
+            SELECT SUM(blr.loading_shipment_number) AS loading_shipment_number,
+                   blr.purchase_order,
+                   blr.line_item
+            FROM bus_loading_record blr
+            GROUP BY blr.purchase_order,
+                     blr.line_item
+        ) blr ON bp.p_order = blr.purchase_order
+            AND bp.project = blr.line_item
+    </update>
+
+    <!-- 删除一个供应商库存 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+    <!-- 删除全表库存匹配数据 -->
+    <delete id="truncateInventory">
+        TRUNCATE TABLE bus_inventory;
+    </delete>
+
+    <!-- 批量添加供应商库存 -->
+    <insert id="save">
+        INSERT INTO bus_inventory (id,
+        status,
+        purchase,
+        plant,
+        p_order,
+        project,
+        material_number,
+        create_date,
+        delivery_date,
+        rescheduled_date,
+        supplier_entry_date,
+        order_qty,
+        delivered_qty,
+        def_qty,
+        order_confirmation,
+        inventory_matching,
+        installed_qty,
+        type,
+        unit,
+        supplier_code)
+        VALUES
+        <foreach collection="inventoryList" item="item" index="index" separator=",">
+            (NULL,#{item.status},#{item.purchase},#{item.plant},#{item.pOrder},#{item.project},#{item.materialNumber},
+            #{item.createDate},#{item.deliveryDate},#{item.rescheduledDate},#{item.plant},
+            #{item.supplierEntryDate},#{item.orderQty},
+            #{item.deliveredQty},#{item.defQty},#{item.orderConfirmation},#{item.inventoryMatching},#{item.installedQty},
+            #{item.installedQty},#{item.type},#{item.unit},#{item.supplierCode})
+        </foreach>
+    </insert>
+
+</mapper>

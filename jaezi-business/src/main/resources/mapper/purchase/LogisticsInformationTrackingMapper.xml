@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.LogisticsInformationTrackingDao">
+    <resultMap id="logisticsInformationTracking" type="com.jaezi.bus.purchase.model.LogisticsInformationTracking">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="loading_number" property="loadingNumber"/>
+        <result column="send_the_awb" property="sendTheAwb"/>
+        <result column="p_order_number" property="pOrderNumber"/>
+        <result column="supplier_number" property="supplierNumber"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="cargo_name" property="cargoName"/>
+        <result column="qty" property="qty"/>
+        <result column="weight" property="weight"/>
+        <result column="place_of_arrival" property="deliveryDate"/>
+        <result column="consignee" property="consignee"/>
+        <result column="loading_date" property="loadingDate"/>
+        <result column="scheduled_arrival_date" property="scheduledArrivalDate"/>
+        <result column="ship_date" property="shipDate"/>
+        <result column="shipment_time" property="shipmentTime"/>
+        <result column="extract_qty" property="extractQty"/>
+        <result column="cargo_weight" property="cargoWeight"/>
+        <result column="plate_number" property="plateNumber"/>
+        <result column="driver_name" property="driverName"/>
+        <result column="contact_way" property="contactWay"/>
+        <result column="day_one_morning" property="dayOneMorning"/>
+        <result column="day_one_afternoon" property="dayOneAfternoon"/>
+        <result column="day_two_morning" property="dayTwoMorning"/>
+        <result column="day_two_afternoon" property="dayTwoAfternoon"/>
+        <result column="day_three_morning" property="dayThreeMorning"/>
+        <result column="day_three_afternoon" property="dayThreeAfternoon"/>
+        <result column="day_four_morning" property="dayFourMorning"/>
+        <result column="day_four_afternoon" property="dayFourAfternoon"/>
+        <result column="delivery_date" property="deliveryDate"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="reasons_for_late_delivery" property="reasonsForLateDelivery"/>
+        <result column="def_number" property="defNumber"/>
+        <result column="signer" property="signer"/>
+        <result column="kpi" property="kpi"/>
+    </resultMap>
+
+    <resultMap id="logisticsInformationTrackingVo" type="com.jaezi.bus.purchase.vo.LogisticsInformationTrackingVo">
+        <!--<id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName"/>
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType"/>
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>-->
+    </resultMap>
+
+    <sql id="base_column">
+        blit.id,
+        blit.loading_number,
+        blit.send_the_awb,
+        blit.p_order_number,
+        blit.supplier_number,
+        blit.supplier_name,
+        blit.cargo_name,
+        blit.qty,
+        blit.weight,
+        blit.place_of_arrival,
+        blit.consignee,
+        blit.loading_date,
+        blit.scheduled_arrival_date,
+        blit.ship_date,
+        blit.shipment_time,
+        blit.extract_qty,
+        blit.cargo_weight,
+        blit.plate_number,
+        blit.driver_name,
+        blit.contact_way,
+        blit.day_one_morning,
+        blit.day_one_afternoon,
+        blit.day_two_morning,
+        blit.day_two_afternoon,
+        blit.day_three_morning,
+        blit.day_three_afternoon,
+        blit.day_four_morning,
+        blit.day_four_afternoon,
+        blit.delivery_date,
+        blit.delivery_time,
+        blit.reasons_for_late_delivery,
+        blit.def_number,
+        blit.signer,
+        blit.kpi
+    </sql>
+
+    <!-- 查询所有物料信息跟踪 -->
+    <select id="getAllVos" resultMap="logisticsInformationTracking" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_logistics_information_tracking blit
+    </select>
+
+    <!-- 根据ID 获取物料信息跟踪 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="logisticsInformationTracking">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_logistics_information_tracking blit WHERE blit.id = #{id}
+    </select>
+
+    <!-- 添加一个物料信息跟踪 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 修改物料信息跟踪 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+        UPDATE bus_logistics_information_tracking
+        SET
+        <trim suffixOverrides=",">
+            <if test="loadingNumber != null and loadingNumber != ''">loading_number = #{loadingNumber},</if>
+            <if test="sendTheAwb != null and sendTheAwb != ''">send_the_awb = #{sendTheAwb},</if>
+            <if test="pOrderNumber != null and pOrderNumber != ''">p_order_number = #{pOrderNumber},</if>
+            <if test="supplierNumber != null and supplierNumber != ''">supplier_number = #{supplierNumber},</if>
+            <if test="supplierName != null and supplierName != ''">supplier_name = #{supplierName},</if>
+            <if test="cargoName != null and cargoName != ''">cargo_name = #{cargoName},</if>
+            <if test="qty != null and qty != ''">qty = #{qty},</if>
+            <if test="weight != null and weight != ''">weight = #{weight},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">place_of_arrival = #{deliveryDate},</if>
+            <if test="consignee != null and consignee != ''">consignee = #{consignee},</if>
+            <if test="loadingDate != null and loadingDate != ''">loading_date = #{loadingDate},</if>
+            <if test="scheduledArrivalDate != null and scheduledArrivalDate != ''">scheduled_arrival_date = #{scheduledArrivalDate},</if>
+            <if test="shipDate != null and shipDate != ''">ship_date = #{shipDate},</if>
+            <if test="shipmentTime != null and shipmentTime != ''">shipment_time = #{shipmentTime},</if>
+            <if test="extractQty != null and extractQty != ''">extract_qty = #{extractQty},</if>
+            <if test="cargoWeight != null and cargoWeight != ''">cargo_weight = #{cargoWeight},</if>
+            <if test="plateNumber != null and plateNumber != ''">plate_number = #{plateNumber},</if>
+            <if test="driverName != null and driverName != ''">driver_name = #{driverName},</if>
+            <if test="contactWay != null and contactWay != ''">contact_way = #{contactWay},</if>
+            <if test="dayOneMorning != null and dayOneMorning != ''">day_one_morning = #{dayOneMorning},</if>
+            <if test="dayOneAfternoon != null and dayOneAfternoon != ''">day_one_afternoon = #{dayOneAfternoon},</if>
+            <if test="dayTwoMorning != null and dayTwoMorning != ''">day_two_morning = #{dayTwoMorning},</if>
+            <if test="dayTwoAfternoon != null and dayTwoAfternoon != ''">day_two_afternoon = #{dayTwoAfternoon},</if>
+            <if test="dayThreeMorning != null and dayThreeMorning != ''">day_three_morning = #{dayThreeMorning},</if>
+            <if test="dayThreeAfternoon != null and dayThreeAfternoon != ''">day_three_afternoon = #{dayThreeAfternoon},</if>
+            <if test="dayFourMorning != null and dayFourMorning != ''">day_four_morning = #{dayFourMorning},</if>
+            <if test="dayFourAfternoon != null and dayFourAfternoon != ''">day_four_afternoon = #{dayFourAfternoon},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">delivery_date = #{deliveryDate},</if>
+            <if test="deliveryTime != null and deliveryTime != ''">delivery_time = #{deliveryTime},</if>
+            <if test="reasonsForLateDelivery != null and reasonsForLateDelivery != ''">reasons_for_late_delivery = #{reasonsForLateDelivery},</if>
+            <if test="defNumber != null and defNumber != ''">def_number = #{defNumber},</if>
+            <if test="signer != null and signer != ''">signer = #{signer},</if>
+            <if test="kpi != null and kpi != ''">kpi = #{kpi},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个物料信息跟踪 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+    <delete id="save">
+        INSERT INTO bus_logistics_information_tracking (<include refid="base_column"/>)
+        VALUES
+        <foreach collection="logisticsInformationTrackingList" item="item" index="index" separator=",">
+            (NULL,#{item.loadingNumber},#{item.sendTheAwb},#{item.pOrderNumber},#{item.supplierNumber},#{item.supplierName},#{item.cargoName},
+            #{item.qty},#{item.weight},#{item.deliveryDate},#{item.consignee},#{item.scheduledArrivalDate},
+            #{item.shipDate},#{item.shipmentTime},
+            #{item.extractQty},#{item.cargoWeight},#{item.plateNumber},#{item.driverName},#{item.contactWay},
+            #{item.dayOneMorning},#{item.dayOneAfternoon},#{item.dayTwoMorning},
+            #{item.dayOneAfternoon},#{item.dayTwoMorning},#{item.dayTwoAfternoon}
+            #{item.dayThreeMorning},#{item.dayThreeAfternoon},#{item.dayFourMorning}
+            #{item.dayFourAfternoon},#{item.deliveryDate},#{item.deliveryTime}
+            #{item.reasonsForLateDelivery},#{item.defNumber},#{item.signer}
+            #{item.kpi}
+            )
+        </foreach>
+
+    </delete>
+
+</mapper>

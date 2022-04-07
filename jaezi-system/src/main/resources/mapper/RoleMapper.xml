@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.RoleDao">
+    <resultMap id="role" type="com.jaezi.system.model.Role">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="role_type" jdbcType="VARCHAR" property="roleType" />
+    </resultMap>
+
+    <resultMap id="roleVo" type="com.jaezi.system.vo.RoleVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="role_type" jdbcType="VARCHAR" property="roleType" />
+    </resultMap>
+
+    <sql id="base_column">
+        id,
+        role_name,
+        remark,
+        create_time,
+        status,
+        role_type
+    </sql>
+
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="role">
+        SELECT  <include refid="base_column"></include>
+        FROM sys_role WHERE id = #{id}
+    </select>
+
+    <select id="getAllVos" resultMap="roleVo">
+        SELECT <include refid="base_column"></include>
+        FROM sys_role
+    </select>
+
+    <select id="getRoleByName" parameterType="java.lang.String" resultMap="role">
+        SELECT  <include refid="base_column"></include>
+        FROM sys_role WHERE role_name = #{name}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.system.model.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_role(role_name, remark, create_time, status, role_type)
+        VALUES(#{roleName}, #{remark}, #{createTime}, #{status}, #{roleType})
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.system.model.Role">
+        UPDATE sys_role
+        SET
+        <trim suffixOverrides=",">
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="status != null and status &gt; -1">status = #{status},</if>
+            <if test="roleType != null and roleType != ''">role_type = #{roleType},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_role
+        WHERE id = #{id}
+    </delete>
+    
+    <select id="getRoleNameByUserId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select sr.role_name as roleName
+        from sys_user su
+        left join sys_role sr on su.role_id = sr.id
+        where su.id = #{userId}
+    </select>
+
+    <insert id="addPermission" parameterType="com.jaezi.common.bean.MiddleObject">
+        INSERT INTO sys_role_permission(role_id, permission_id)
+        VALUES
+        <foreach item="middle" collection="list" separator=",">
+            (#{middle.leftId}, #{middle.rightId})
+        </foreach>
+    </insert>
+
+    <delete id="deletePermissionByRoleId" parameterType="java.lang.Integer">
+        DELETE FROM sys_role_permission
+        WHERE role_id = #{id}
+    </delete>
+
+</mapper>

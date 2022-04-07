@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.srminterface.dao.SqlConfigDao">
+
+    <resultMap id="sqlConfig" type="com.jaezi.srminterface.model.SqlConfig">
+        <id property="id" column="id"/>
+        <result property="functionName" column="function_name"/>
+        <result property="sqlContent" column="sql_content"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap id="sqlConfigVo" type="com.jaezi.srminterface.vo.SqlConfigVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        ssc.id,
+	    ssc.function_name,
+	    ssc.sql_content,
+	    ssc.remark
+    </sql>
+
+    <!-- 查询所有自定义sql配置 -->
+    <select id="getAllVos" resultMap="sqlConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_sql_config ssc
+        <where>
+            <if test="functionName != null and functionName != ''">
+                ssc.function_name = #{functionName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有自定义sql配置 -->
+    <select id="getAll" resultMap="sqlConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_sql_config
+    </select>
+
+    <!-- 根据ID查询自定义sql配置 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="sqlConfig">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_sql_config
+    </select>
+
+    <!-- 添加自定义sql配置 -->
+    <insert id="add" parameterType="com.jaezi.srminterface.model.TableConfig">
+        INSERT INTO sys_sql_config(function_name,
+                                     sql_content,
+                                     remark)
+        VALUES (#{functionName}, #{sqlContent}, #{remark})
+    </insert>
+
+    <!-- 更新自定义sql配置 -->
+    <update id="update" parameterType="com.jaezi.srminterface.model.TableConfig">
+        UPDATE sys_sql_config
+        SET
+        <trim suffixOverrides=",">
+            <if test="functionName != null and functionName != ''">function_name = #{functionName},</if>
+            <if test="sqlContent != null and sqlContent != ''">sql_content = #{sqlContent},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除自定义sql配置 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_sql_config
+        WHERE id = #{id}
+    </delete>
+</mapper>

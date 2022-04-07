@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.info.dao.InfoDao">
+    <resultMap id="info" type="com.jaezi.info.model.Info">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="reply_id" jdbcType="INTEGER" property="replyId"/>
+        <result column="sender" jdbcType="VARCHAR" property="sender"/>
+        <result column="recipient" jdbcType="VARCHAR" property="recipient"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="sender_status" jdbcType="INTEGER" property="senderStatus"/>
+        <result column="sender_read_status" jdbcType="INTEGER" property="senderReadStatus"/>
+        <result column="recipient_status" jdbcType="INTEGER" property="recipientStatus"/>
+        <result column="recipient_read_status" jdbcType="INTEGER" property="recipientReadStatus"/>
+        <result column="accessory_collection" jdbcType="VARCHAR" property="accessoryCollection"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="audit_status" jdbcType="BIGINT" property="auditStatus"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="infoVo" type="com.jaezi.info.vo.InfoVo">
+        <!--<id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName"/>
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType"/>
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>-->
+    </resultMap>
+
+    <sql id="base_column">
+        si.id,
+        si.reply_id,
+        si.sender,
+        si.recipient,
+        si.title,
+        si.`type`,
+        si.content,
+        si.sender_status,
+        si.sender_read_status,
+        si.recipient_status,
+        si.recipient_read_status,
+        si.accessory_collection,
+        si.create_user,
+        si.create_time,
+        si.remark,
+        si.document_url,
+        si.document_name
+    </sql>
+
+    <sql id="all_column">
+        si.id,
+        si.reply_id,
+        si.sender,
+        si.recipient,
+        si.title,
+        si.`type`,
+        CAST(si.content AS CHAR) AS content,
+        si.sender_status,
+        si.sender_read_status,
+        si.recipient_status,
+        CASE
+        WHEN
+            si.`type` = 2
+        THEN
+            si.recipient_read_status
+        ELSE
+            CASE
+            WHEN
+            si.sender
+            =
+            #{realName}
+            THEN
+            si.sender_read_status
+            WHEN
+            si.recipient
+            =
+            #{realName}
+            THEN
+            si.recipient_read_status
+            END
+        END
+        AS recipient_read_status,
+        si.accessory_collection,
+        si.create_user,
+        si.create_time,
+        si.audit_status,
+        si.remark
+    </sql>
+
+    <!-- 查询所有信息交流列表 -->
+    <select id="getAllVos" resultMap="info" parameterType="java.util.Map">
+        SELECT
+        <include refid="all_column"></include>
+        FROM sys_info si
+        <where>
+            (CASE WHEN si.sender = #{realName} THEN si.sender_status
+            WHEN si.recipient = #{realName} THEN si.recipient_status
+            END) = 1
+            <if test="infoStateType == 1">
+                <if test="realName != null and realName != ''">
+                    AND si.recipient = #{realName} AND recipient_read_status = 2
+                </if>
+            </if>
+            <if test="infoStateType == 2">
+                <if test="realName != null and realName != ''">
+                    AND (si.sender = #{realName} OR si.recipient = #{realName})
+                </if>
+            </if>
+            <if test="title != null and title != ''">
+                AND si.title LIKE CONCAT('%',#{title},'%')
+            </if>
+            <if test="type != null and type != ''">
+                AND si.`type` = #{type}
+            </if>
+            <if test="sender != null and sender != ''">
+                AND si.sender LIKE CONCAT('%',#{sender},'%')
+            </if>
+        </where>
+        ORDER BY si.create_time DESC
+    </select>
+
+    <!-- 根据ID 获取信息交流 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="info">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_info si WHERE si.id = #{id}
+    </select>
+
+    <!-- 添加一个信息交流 -->
+    <insert id="add" parameterType="com.jaezi.info.model.Info" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO sys_info(reply_id, sender, recipient, title, type, content, sender_status, sender_read_status,
+                             recipient_status, recipient_read_status, create_time, accessory_collection, create_user,remark,document_url,document_name)
+        VALUES (#{replyId}, #{sender}, #{recipient}, #{title}, #{type}, #{content}, #{senderStatus},
+                #{senderReadStatus},
+                #{recipientStatus}, #{recipientReadStatus}, #{createTime}, #{accessoryCollection}, #{createUser},#{remark},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改信息交流 -->
+    <update id="update" parameterType="com.jaezi.info.model.Info">
+        UPDATE sys_info
+        SET
+        <trim suffixOverrides=",">
+            <if test="replyId != null and replyId != ''">reply_id = #{replyId},</if>
+            <if test="sender != null and sender != ''">sender = #{sender},</if>
+            <if test="recipient != null and recipient != ''">recipient = #{recipient},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="senderStatus != null and senderStatus != ''">sender_status = #{senderStatus},</if>
+            <if test="senderReadStatus != null and senderReadStatus != ''">sender_read_status = #{senderReadStatus},
+            </if>
+            <if test="recipientStatus != null and recipientStatus != ''">recipient_status = #{recipientStatus},</if>
+            <if test="recipientReadStatus != null and recipientReadStatus != ''">recipient_read_status =
+                #{recipientReadStatus},
+            </if>
+            <if test="accessoryCollection != null and accessoryCollection != ''">accessory_collection =
+                #{accessoryCollection},
+            </if>
+            <if test="createUser != null and createUser != ''">create_user = #{createUser},</if>
+            <if test="auditStatus != null and auditStatus != ''">audit_status = #{auditStatus},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新未读状态 -->
+    <update id="updateReadStatus">
+        UPDATE sys_info
+        SET recipient_read_status = 1
+        WHERE id = #{id}
+          AND recipient_read_status = 2
+          AND recipient = #{realName}
+    </update>
+
+    <!-- 更新索赔信息 -->
+    <update id="updateClaim">
+        UPDATE syn_claim_note
+        SET info_id = #{infoId}
+        WHERE id = #{claimId}
+    </update>
+
+    <!-- 更新删除状态 -->
+    <update id="updateStatus">
+        UPDATE sys_info
+        SET sender_status    = CASE
+                                   WHEN sender = #{realName} THEN 2
+                                   ELSE sender_status END,
+            recipient_status = CASE
+                                   WHEN recipient = #{realName} THEN 2
+                                   ELSE recipient_status END
+        WHERE id = #{info.id}
+    </update>
+
+    <!-- 删除一个信息交流 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_info
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

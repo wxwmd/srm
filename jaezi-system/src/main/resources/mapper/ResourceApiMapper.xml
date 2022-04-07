@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.ResourceApiDao">
+    <resultMap id="api" type="com.jaezi.system.model.ResourceApi">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+        <result column="api_path" jdbcType="VARCHAR" property="apiPath" />
+        <result column="request_method" jdbcType="VARCHAR" property="requestMethod" />
+        <result column="path_regex" jdbcType="INTEGER" property="pathRegex" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+    </resultMap>
+
+    <resultMap id="apiVo" type="com.jaezi.system.vo.ResourceApiVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+        <result column="api_path" jdbcType="VARCHAR" property="apiPath" />
+        <result column="request_method" jdbcType="VARCHAR" property="requestMethod" />
+        <result column="path_regex" jdbcType="INTEGER" property="pathRegex" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+            <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    </resultMap>
+
+    <sql id="base_column">
+        sa.id,
+        sa.api_name,
+        sa.permission_id,
+        sa.api_path,
+        sa.request_method,
+        sa.path_regex,
+        sa.create_time,
+        sa.status
+    </sql>
+
+    <select id="getAllVos" resultMap="apiVo">
+        SELECT <include refid="base_column"></include>,sp.permission_name
+        FROM sys_api sa
+        LEFT JOIN sys_permission sp ON sp.id = sa.permission_id
+    </select>
+
+    <select id="getOneById" parameterType="java.lang.Integer" resultType="com.jaezi.system.model.ResourceApi">
+        SELECT <include refid="base_column"></include>
+        FROM sys_api sa
+        WHERE sa.id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.system.model.ResourceApi">
+         INSERT INTO sys_api(api_name, permission_id, api_path, request_method, path_regex, create_time, status)
+        VALUES(#{apiName}, #{permissionId}, #{apiPath}, #{requestMethod}, #{pathRegex}, #{createTime}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.system.model.ResourceApi">
+        UPDATE sys_api
+        SET
+        <trim suffixOverrides=",">
+            <if test="apiName != null and apiName != ''">api_name = #{apiName},</if>
+            <if test="permissionId != null and permissionId &gt; -1">permission_id = #{permissionId},</if>
+            <if test="apiPath != null and apiPath != ''">api_path = #{apiPath},</if>
+            <if test="requestMethod != null and requestMethod != ''">request_method = #{requestMethod},</if>
+            <if test="pathRegex != null and pathRegex != ''">path_regex = #{pathRegex},</if>
+            <if test="status != null and status &gt; -1">status = #{status},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_api WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.InventoryImportDao">
+    <resultMap id="inventoryImport" type="com.jaezi.bus.purchase.model.InventoryImport">
+        <id column="id" property="id"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="supplier_inventory" property="supplierInventory"/>
+        <result column="order_qty" property="orderQty"/>
+        <result column="inventory_diff" property="inventoryDiff"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="host_factory_inventory" property="hostFactoryInventory"/>
+        <result column="not_truck_loading_total" property="notTruckLoadingTotal"/>
+        <result column="supplier_code" property="supplierCode"/>
+    </resultMap>
+
+    <resultMap id="inventoryImportVo" type="com.jaezi.bus.purchase.vo.InventoryImportVo">
+        <id column="id" property="id"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="supplier_inventory" property="supplierInventory"/>
+        <result column="order_qty" property="orderQty"/>
+        <result column="inventory_diff" property="inventoryDiff"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="host_factory_inventory" property="hostFactoryInventory"/>
+        <result column="not_truck_loading_total" property="notTruckLoadingTotal"/>
+        <result column="supplier_code" property="supplierCode"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bii.id,
+        bii.material_number,
+        sm.material_description,
+        bii.supplier_inventory,
+        bii.order_qty,
+        bii.inventory_diff,
+        bii.update_time,
+        bii.host_factory_inventory,
+        bii.not_truck_loading_total,
+        bii.supplier_code
+    </sql>
+
+    <!-- 查询所有消息列表 -->
+    <select id="getAllVos" resultMap="inventoryImportVo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_inventory_import bii
+        LEFT JOIN sys_material sm ON bii.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bii.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bii.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bii.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bii.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description LIKE CONCAT('%',#{materialDescription},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取库存导入信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="inventoryImport">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_inventory_import bii
+        LEFT JOIN sys_material sm ON bii.material_number = sm.material_number
+        WHERE bii.id = #{id}
+    </select>
+
+    <!-- 验证数据库是否有数据 -->
+    <select id="getInventoryByMatNumsAndSuppCodes" resultType="java.lang.String">
+        SELECT id
+        FROM bus_inventory_import WHERE
+        <if test="materialNumberList != null and materialNumberList != '' and materialNumberList.size() != 0">
+            material_number IN
+            <foreach item="item" collection="materialNumberList" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+        <if test="supplierCodeList != null and supplierCodeList != '' and supplierCodeList.size() != 0">
+            AND supplier_code IN
+            <foreach item="item" collection="supplierCodeList" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 添加一个库存导入 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 批量添加库存导入 -->
+    <insert id="saveBath">
+        INSERT INTO bus_production_plan_import (id,
+        material_number,
+        supplier_inventory,
+        order_qty,
+        inventory_diff,
+        update_time)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (NULL,#{item.materialNumber},#{item.supplierInventory},
+            #{item.orderQty},#{item.inventoryDiff},#{item.updateTime},#{item.supplierCode})
+        </foreach>
+    </insert>
+
+    <!-- 修改库存导入 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+
+    </update>
+
+    <!-- 批量修改库存导入 -->
+    <update id="updateBath" parameterType="java.util.List">
+        update bus_inventory_import
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="supplier_inventory = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when material_number = #{item.materialNumber} and supplier_code = #{item.supplierCode}
+                    then #{item.supplierInventory}
+                </foreach>
+            </trim>
+            <trim prefix="update_time = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when material_number = #{item.materialNumber} and supplier_code = #{item.supplierCode}
+                    then #{item.updateTime}
+                </foreach>
+            </trim>
+            <trim prefix="order_qty = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when material_number = #{item.materialNumber} and supplier_code = #{item.supplierCode}
+                    then (SELECT SUM(bp.qty) from bus_purchase bp where bp.material_number = material_number)
+                </foreach>
+            </trim>
+            <trim prefix="inventory_diff = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when material_number = #{item.materialNumber} and supplier_code = #{item.supplierCode}
+                    then host_factory_inventory - #{item.supplierInventory}
+                </foreach>
+            </trim>
+            <trim prefix="not_truck_loading_total = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when material_number = #{item.materialNumber} and supplier_code = #{item.supplierCode}
+                    then (SELECT COUNT(1) from bus_loading_record blr where blr.material_number = material_number)
+                </foreach>
+            </trim>
+        </trim>
+        where material_number in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.materialNumber}
+        </foreach>
+        and supplier_code in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.supplierCode}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+
+</mapper>

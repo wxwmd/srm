@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaezi.bus.purchase.dao.ScheduleConfirmationDao">
+
+    <resultMap id="purchase" type="com.jaezi.bus.purchase.model.ScheduleConfirmation">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="plant" property="plant"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="period" property="period"/>
+        <result column="create_date" property="createDate"/>
+        <result column="rece_date" property="receDate"/>
+        <result column="rescheduled_date" property="rescheduledDate"/>
+        <result column="carry_out_the_date" property="carryOutTheDate"/>
+        <result column="remark" property="remark"/>
+        <result column="delivery_date" property="deliveryDate"/>
+        <result column="p_order" property="pOrder"/>
+        <result column="project" property="project"/>
+        <result column="order_qty" property="orderQty"/>
+        <result column="determine_order_ratio" property="determineOrderRatio"/>
+        <result column="plan_type" property="planType"/>
+        <result column="cancel_status" property="cancelStatus"/>
+        <result column="supplier_code" property="supplierCode"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bsc.id,
+        bsc.plant,
+        bsc.material_number,
+        sm.material_description,
+        bsc.`period`,
+        bsc.create_date,
+        bsc.rece_date,
+        bsc.rescheduled_date,
+        bsc.carry_out_the_date,
+        bsc.remark,
+        bsc.delivery_date,
+        bsc.p_order,
+        bsc.project,
+        bsc.order_qty,
+        bsc.determine_order_ratio,
+        bsc.supplier_code,
+        bsc.plan_type,
+        bsc.cancel_status
+      </sql>
+
+    <!-- 查询所有再计划 -->
+    <select id="getAllVos" resultMap="purchase" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_schedule_confirmation bsc
+        LEFT JOIN sys_material sm ON bsc.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND bsc.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bsc.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bsc.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bsc.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="materialNumber != '' and materialNumber != null">
+                AND bsc.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description LIKE CONCAT('%',#{materialDescription},'%')
+            </if>
+            <if test="planType != null and planType != ''">
+                AND bsc.plan_type = #{planType}
+            </if>
+            <if test="cancelStatus != null and cancelStatus != ''">
+                AND bsc.cancel_status = #{cancelStatus}
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取一条再计划 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="purchase">
+        SELECT
+        <include refid="base_column"/>
+        FROM bus_schedule_confirmation bsc
+        LEFT JOIN sys_material sm ON bsc.material_number = sm.material_number
+        WHERE bsc.id = #{id}
+    </select>
+
+    <!-- 删除再计划 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+    <!-- 添加再计划 -->
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Purchase">
+
+    </insert>
+
+    <!-- 批量添加再计划 -->
+    <insert id="save">
+        INSERT INTO bus_schedule_confirmation (id,
+        plant,
+        material_number,
+        period,
+        create_date,
+        rece_date,
+        rescheduled_date,
+        carry_out_the_date,
+        remark,
+        delivery_date,
+        p_order,
+        project,
+        order_qty,
+        determine_order_ratio,
+        supplier_code,
+        plan_type,
+        cancel_status
+        )
+        VALUES
+        <foreach collection="supplierBasicDataList" item="item" index="index" separator=",">
+            (NULL,#{item.plant},#{item.materialNumber},
+            #{item.period},#{item.createDate},
+            #{item.receDate},#{item.rescheduledDate},
+            #{item.carryOutTheDate},#{item.remark},
+            #{item.deliveryDate},#{item.pOrder},
+            #{item.project},#{item.orderQty},
+            #{item.determineOrderRatio},#{item.supplierCode},#{item.planType},#{item.cancelStatus})
+        </foreach>
+    </insert>
+
+    <!-- 更新再计划-->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Purchase">
+        UPDATE bus_schedule_confirmation
+        SET
+        <trim suffixOverrides=",">
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="period != null and period != ''">period = #{period},</if>
+            <if test="createDate != null and createDate != ''">create_date = #{createDate},</if>
+            <if test="receDate != null and receDate != ''">rece_date = #{receDate},</if>
+            <if test="rescheduledDate != null and rescheduledDate != ''">rescheduled_date = #{rescheduledDate},</if>
+            <if test="carryOutTheDate != null and carryOutTheDate != ''">carry_out_the_date = #{carryOutTheDate},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="deliveryDate != null and deliveryDate != ''">delivery_date = #{deliveryDate},</if>
+            <if test="pOrder != null and pOrder != ''">p_order = #{pOrder},</if>
+            <if test="project != null and project != ''">project = #{project},</if>
+            <if test="orderQty != null and orderQty != ''">order_qty = #{orderQty},</if>
+            <if test="determineOrderRatio != null and determineOrderRatio != ''">determine_order_ratio = #{determineOrderRatio},</if>
+            <if test="planType != null and planType != ''">plan_type = #{planType},</if>
+            <if test="cancelStatus != null and cancelStatus != ''">cancel_status = #{cancelStatus},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+</mapper>

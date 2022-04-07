@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.info.dao.InfoStaffDao">
+    <resultMap id="info" type="com.jaezi.info.model.InfoStaff">
+        <result column="staff" jdbcType="INTEGER" property="staff"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="read_status" jdbcType="VARCHAR" property="readStatus"/>
+    </resultMap>
+
+    <resultMap id="infoVo" type="com.jaezi.info.vo.InfoVo">
+        <!--<id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode"/>
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName"/>
+        <result column="permission_type" jdbcType="VARCHAR" property="permissionType"/>
+        <result column="is_leaf" jdbcType="INTEGER" property="isLeaf"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>-->
+    </resultMap>
+
+    <sql id="base_column">
+        sis.info_id,
+        sis.staff,
+        sis.status,
+        sis.read_status
+    </sql>
+
+    <!-- 查询所有信息交流抄送人 -->
+    <select id="getAllVos" resultMap="info" parameterType="java.util.Map">
+
+    </select>
+
+    <!-- 根据ID 获取信息交流抄送人 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="info">
+
+    </select>
+
+    <!-- 添加一个信息交流抄送人 -->
+    <insert id="add" parameterType="com.jaezi.info.model.Info">
+
+    </insert>
+
+    <!-- 批量添加消息抄送人信息 -->
+    <insert id="addBath">
+        INSERT INTO sys_info_staff(info_id,staff,status,read_status)
+        values
+        <foreach collection="infoStaffList" item="infoStaff" index="index" separator=",">
+            (#{infoStaff.infoId}, #{infoStaff.staff},
+            #{infoStaff.status},#{infoStaff.readStatus})
+        </foreach>
+    </insert>
+
+    <!-- 修改信息交流抄送人资料 -->
+    <update id="update" parameterType="com.jaezi.info.model.Info">
+
+    </update>
+
+    <!-- 删除一个信息交流抄送人 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_info_staff WHERE info_id = #{id}
+    </delete>
+
+</mapper>

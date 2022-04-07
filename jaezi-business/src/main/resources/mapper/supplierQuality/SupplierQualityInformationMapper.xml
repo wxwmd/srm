@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.supplierQuality.dao.SupplierQualityInformationDao">
+    <resultMap id="supplierQualityInformation" type="com.jaezi.bus.supplierQuality.model.SupplierQualityInformation">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="report_name" jdbcType="VARCHAR" property="reportName"/>
+        <result column="report_description" jdbcType="VARCHAR" property="reportDescription"/>
+        <result column="update_date" jdbcType="VARCHAR" property="updateDate"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+    </resultMap>
+
+    <resultMap id="supplierQualityInformationVo" type="com.jaezi.bus.supplierQuality.vo.SupplierQualityInformationVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bsqi.id,
+        bsqi.report_name,
+        bsqi.report_description,
+        bsqi.update_date,
+        bsqi.url,
+        bsqi.visible
+    </sql>
+
+    <!-- 查询所有供应商质量信息 -->
+    <select id="getAllVos" resultMap="supplierQualityInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_quality_information bsqi
+        <where>
+            <if test="reportName != null and reportName != ''">
+                bsqi.report_name LIKE CONCAT('%',#{reportName},'%')
+            </if>
+            <if test="visible != null and visible != ''">
+                AND bsqi.visible = #{visible}
+            </if>
+            <if test="reportDescription != null and reportDescription != ''">
+                AND bsqi.report_description = #{reportDescription}
+            </if>
+            <if test="url != null and url != ''">
+                AND bsqi.url = #{url}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bsqi.update_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY update_date DESC
+    </select>
+
+    <!--查询所有供应商质量信息-->
+    <select id="findAll" resultMap="supplierQualityInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_quality_information bsqi
+        <where>
+            <if test="reportName != null and reportName != ''">
+                bsqi.report_name LIKE CONCAT('%',#{reportName},'%')
+            </if>
+            <if test="visible != null and visible != ''">
+                AND bsqi.visible = #{visible}
+            </if>
+            <if test="reportDescription != null and reportDescription != ''">
+                AND bsqi.report_description = #{reportDescription}
+            </if>
+            <if test="url != null and url != ''">
+                AND bsqi.url = #{url}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bsqi.update_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY update_date DESC
+    </select>
+
+    <!--查询所有供应商质量信息-->
+    <select id="findByVisible" resultMap="supplierQualityInformation" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_quality_information bsqi
+        WHERE
+        bsqi.visible = 1
+        <if test="reportName != null and reportName != ''">
+            AND bsqi.report_name LIKE CONCAT('%',#{reportName},'%')
+        </if>
+        <if test="reportDescription != null and reportDescription != ''">
+            AND bsqi.report_description = #{reportDescription}
+        </if>
+        <if test="url != null and url != ''">
+            AND bsqi.url = #{url}
+        </if>
+        <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+            AND bsqi.update_date BETWEEN #{startTime} AND #{endTime}
+        </if>
+        OR bsqi.id IN
+        (SELECT supplier_quality_information_id FROM mid_supplier_quality_information_person WHERE person_id =
+        #{userId})
+        ORDER BY bsqi.update_date DESC
+    </select>
+
+    <!-- 根据ID 获取供应商质量信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="supplierQualityInformation">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_supplier_quality_information bsqi
+        WHERE bsqi.id = #{id}
+    </select>
+
+    <!-- 添加一个供应商质量信息 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.jaezi.bus.supplierQuality.model.SupplierQualityInformation">
+        INSERT INTO bus_supplier_quality_information(report_name, report_description, url, update_date, visible)
+        VALUES (#{reportName}, #{reportDescription}, #{url}, #{updateDate}, #{visible})
+    </insert>
+
+    <!-- 修改供应商质量信息 -->
+    <update id="update" parameterType="com.jaezi.bus.supplierQuality.model.SupplierQualityInformation">
+        UPDATE bus_supplier_quality_information
+        SET
+        <trim suffixOverrides=",">
+            <if test="reportName != null and reportName != ''">report_name = #{reportName},</if>
+            <if test="reportDescription != null and reportDescription != ''">report_description =
+                #{reportDescription},
+            </if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="updateDate != null and updateDate != ''">update_date = #{updateDate},</if>
+            <if test="visible != null">visible = #{visible},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个供应商质量信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_supplier_quality_information
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

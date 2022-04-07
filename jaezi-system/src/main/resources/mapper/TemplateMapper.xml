@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.TemplateDao">
+    <resultMap id="template" type="com.jaezi.system.model.Template">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="template_name" jdbcType="VARCHAR" property="templateName"/>
+        <result column="template_describe" jdbcType="VARCHAR" property="templateDescribe"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+    </resultMap>
+
+    <resultMap id="templateVo" type="com.jaezi.system.vo.TemplateVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        id,
+        template_name,
+        template_describe,
+        create_time,
+        create_user,
+        url
+    </sql>
+
+    <!-- 查询所有索赔信息 -->
+    <select id="getAllVos" resultMap="template" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_template
+        <where>
+            <if test="templateName != null and templateName != ''">
+                template_name like CONCAT('%',#{templateName},'%')
+            </if>
+            <if test="templateDescribe != null and templateDescribe != ''">
+                and template_describe like CONCAT('%',#{templateDescribe},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取模板信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="template">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_template
+        WHERE id = #{id}
+    </select>
+
+    <!-- 添加一个模板信息 -->
+    <insert id="add" parameterType="com.jaezi.system.model.Template">
+        INSERT INTO sys_template (template_name, template_describe, url, create_time, create_user)
+        VALUES (#{templateName}, #{templateDescribe}, #{url}, #{createTime}, #{createUser})
+    </insert>
+
+    <!-- 修改模板信息 -->
+    <update id="update" parameterType="com.jaezi.system.model.Template">
+        UPDATE sys_template
+        SET
+        <trim suffixOverrides=",">
+            <if test="templateName != null and templateName != ''">template_name = #{templateName},</if>
+            <if test="templateDescribe != null and templateDescribe != ''">template_describe = #{templateDescribe},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个模板信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_template
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.ResourceMenuDao">
+    <resultMap id="menu" type="com.jaezi.system.model.ResourceMenu">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+        <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+        <result column="menu_path" jdbcType="VARCHAR" property="menuPath" />
+        <result column="menu_icon" jdbcType="VARCHAR" property="menuIcon" />
+        <result column="menu_order" jdbcType="INTEGER" property="menuOrder" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+    </resultMap>
+
+    <resultMap id="menuVo" type="com.jaezi.system.vo.ResourceMenuVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+        <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+        <result column="menu_path" jdbcType="VARCHAR" property="menuPath" />
+        <result column="menu_icon" jdbcType="VARCHAR" property="menuIcon" />
+        <result column="menu_order" jdbcType="INTEGER" property="menuOrder" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+            <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    </resultMap>
+
+    <sql id="base_column">
+        sm.id,
+        sm.pid,
+        sm.menu_name,
+        sm.permission_id,
+        sm.menu_path,
+        sm.menu_icon,
+        sm.menu_order,
+        sm.create_time,
+        sm.status
+    </sql>
+
+    <select id="getAllVos" resultMap="menuVo">
+        SELECT <include refid="base_column"></include>,sp.permission_name
+        FROM sys_menu sm
+        LEFT JOIN sys_permission sp ON sp.id = sm.permission_id
+    </select>
+
+    <select id="getOneById" parameterType="java.lang.Integer" resultType="com.jaezi.system.model.ResourceMenu">
+        SELECT <include refid="base_column"></include>
+        FROM sys_menu sm
+        WHERE sm.id = #{id}
+    </select>
+
+    <!--查询某个角色对应的菜单列表-->
+    <select id="getMenusByRoleId" parameterType="java.lang.Integer" resultMap="menuVo">
+        SELECT <include refid="base_column"></include>
+        FROM sys_menu sm
+        LEFT JOIN sys_role_permission srp ON srp.permission_id = sm.permission_id
+        WHERE srp.role_id = #{roleId}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.system.model.ResourceMenu">
+         INSERT INTO sys_menu(menu_name, pid, permission_id, menu_path, menu_icon, menu_order, create_time, status)
+        VALUES(#{menuName}, #{pid}, #{permissionId}, #{menuPath}, #{menuIcon}, #{menuOrder}, #{createTime}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.system.model.ResourceMenu">
+        UPDATE sys_menu
+        SET
+        <trim suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
+            <if test="permissionId != null and permissionId &gt; -1">permission_id = #{permissionId},</if>
+            <if test="pid != null and pid &gt; -1">pid = #{pid},</if>
+            <if test="menuPath != null and menuPath != ''">menu_path = #{menuPath},</if>
+            <if test="menuIcon != null and menuIcon != ''">menu_icon = #{menuIcon},</if>
+            <if test="menuOrder != null and menuOrder != ''">menu_order = #{menuOrder},</if>
+            <if test="status != null and status &gt; -1">status = #{status},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_menu WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteMenuByMid">
+       DELETE sys_role_permission FROM sys_role_permission inner join sys_menu ON sys_role_permission.permission_id
+       = sys_menu.permission_id where sys_menu.id = #{id}
+    </delete>
+
+    <select id="getMenuByPermissionId" resultMap="menu" parameterType="java.lang.Integer">
+        SELECT <include refid="base_column"></include>
+        FROM sys_menu sm
+        WHERE sm.permission_id = #{permissionId}
+    </select>
+
+    <select id="getMenuByName" resultMap="menu" parameterType="java.lang.String">
+        SELECT <include refid="base_column"></include>
+        FROM sys_menu sm
+        WHERE sm.menu_name = #{menuName}
+    </select>
+
+</mapper>

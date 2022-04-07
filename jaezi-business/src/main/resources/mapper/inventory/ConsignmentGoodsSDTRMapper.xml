@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.inventory.dao.ConsignmentGoodsSDTRDao">
+    <resultMap id="consignmentGoodsSDTR" type="com.jaezi.bus.inventory.model.ConsignmentGoodsSDTR">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="first_term" jdbcType="DECIMAL" property="firstTerm"/>
+        <result column="income" jdbcType="DECIMAL" property="income"/>
+        <result column="emit" jdbcType="DECIMAL" property="emit"/>
+        <result column="last_term" jdbcType="DECIMAL" property="lastTerm"/>
+        <result column="after_tax" jdbcType="DECIMAL" property="afterTax"/>
+        <result column="outstanding" jdbcType="DECIMAL" property="outstanding"/>
+        <result column="clsd" jdbcType="DECIMAL" property="clsd"/>
+        <result column="line" jdbcType="INTEGER" property="line"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="material_number" jdbcType="INTEGER" property="materialNumber"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+    </resultMap>
+
+    <resultMap id="consignmentGoodsSDTRVo" type="com.jaezi.bus.inventory.vo.ConsignmentGoodsSDTRVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bcgs.id,
+        sm.material_name,
+        bcgs.first_term,
+        bcgs.income,
+        bcgs.emit,
+        bcgs.last_term,
+        bcgs.after_tax,
+        bcgs.outstanding,
+        bcgs.clsd,
+        bcgs.line,
+        bcgs.supplier_code,
+        bcgs.material_number,
+        bcgs.factory
+    </sql>
+
+    <!-- 查询所有寄售物资结收发存 -->
+    <select id="getAllVos" resultMap="consignmentGoodsSDTR" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr bcgs
+        LEFT JOIN sys_material sm ON bcgs.material_number = sm.material_number
+        <where>
+            <if test="materialName != null and materialName != ''">sm.material_name = #{materialName}</if>
+            <if test="firstTerm != null and firstTerm != ''">AND bcgs.first_term = #{firstTerm}</if>
+            <if test="income != null and income != ''">AND bcgs.income = #{income}</if>
+            <if test="emit != null and emit != ''">AND bcgs.emit = #{emit}</if>
+            <if test="lastTerm != null and lastTerm != ''">AND bcgs.last_term = #{lastTerm}</if>
+            <if test="afterTax != null and afterTax != ''">AND bcgs.after_tax = #{afterTax}</if>
+            <if test="outstanding != null and outstanding != ''">AND bcgs.outstanding = #{outstanding}</if>
+            <if test="clsd != null and clsd != ''">AND bcgs.clsd = #{clsd}</if>
+            <if test="line != null and line != ''">AND bcgs.line = #{line}</if>
+            <if test="materialNumber != null and materialNumber != ''">AND bcgs.material_number = #{materialNumber}</if>
+            <if test="factory != null and factory != ''">AND bcgs.factory = #{factory}</if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bcgs.booked_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcgs.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcgs.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcgs.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!--查询所有寄售物资结收发存-->
+    <select id="findAll" resultMap="consignmentGoodsSDTR" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr bcgs
+        LEFT JOIN sys_material sm ON bcgs.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND bcgs.supplier_code = #{supplierCode}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND sm.material_name = #{materialName}
+            </if>
+            <if test="firstTerm != null and firstTerm != ''">
+                AND bcgs.first_term = #{firstTerm}
+            </if>
+            <if test="income != null and income != ''">
+                AND bcgs.income = #{income}
+            </if>
+            <if test="emit != null and emit != ''">
+                AND bcgs.emit = #{emit}
+            </if>
+            <if test="lastTerm != null and lastTerm != ''">
+                AND bcgs.last_term = #{lastTerm}
+            </if>
+            <if test="afterTax != null and afterTax != ''">
+                AND bcgs.after_tax = #{afterTax}
+            </if>
+            <if test="outstanding != null and outstanding != ''">
+                AND bcgs.outstanding = #{outstanding}
+            </if>
+            <if test="clsd != null and clsd != ''">
+                AND bcgs.clsd = #{clsd}
+            </if>
+            <if test="line != null and line != ''">
+                AND bcgs.line = #{line}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcgs.material_number = #{materialNumber}
+            </if>
+            <if test="factory != null and factory != ''">
+                AND bcgs.factory = #{factory}
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != ''">
+                AND bcgs.booked_date BETWEEN #{startTime} AND #{entTime}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bcgs.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bcgs.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bcgs.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取寄售物资结收发存及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentGoodsSDTR">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_consignment_goods_sdtr bcgs
+        LEFT JOIN sys_material sm ON bcgs.material_number = sm.material_number
+        WHERE bcgs.id = #{id}
+    </select>
+
+    <!-- 添加一个寄售物资结收发存 -->
+    <insert id="add" parameterType="com.jaezi.bus.inventory.model.ConsignmentGoodsSDTR">
+        INSERT INTO bus_consignment_goods_sdtr(first_term, income, emit, last_term, after_tax,
+                                               outstanding, clsd, line, material_number, factory,
+                                               supplier_code)
+        VALUES (#{firstTerm}, #{income}, #{emit}, #{lastTerm}, #{afterTax}, #{outstanding}, #{clsd},
+                #{line}, #{materialNumber}, #{factory},
+                #{supplierCode})
+    </insert>
+
+    <!-- 修改寄售物资结收发存-->
+    <update id="update" parameterType="com.jaezi.bus.inventory.model.ConsignmentGoodsSDTR">
+        UPDATE bus_consignment_goods_sdtr
+        SET
+        <trim suffixOverrides=",">
+            <if test="firstTerm != null and firstTerm != ''">first_term = #{firstTerm},</if>
+            <if test="income != null and income != ''">income = #{income},</if>
+            <if test="emit != null and emit != ''">emit = #{emit},</if>
+            <if test="lastTerm != null and lastTerm != ''">last_term = #{lastTerm},</if>
+            <if test="afterTax != null and afterTax != ''">after_tax = #{afterTax},</if>
+            <if test="outstanding != null and outstanding != ''">outstanding = #{outstanding},</if>
+            <if test="clsd != null and clsd != ''">clsd = #{clsd},</if>
+            <if test="line != null and line != ''">line = #{line},</if>
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="factory != null and factory != ''">factory = #{factory},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个寄售物资结收发存 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_consignment_goods_sdtr
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.finance.dao.RateRedInvoiceDao">
+    <resultMap id="rateRedInvoice" type="com.jaezi.bus.finance.model.RateRedInvoice">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="invoice_code" jdbcType="VARCHAR" property="invoiceCode"/>
+        <result column="invoice_number" jdbcType="VARCHAR" property="invoiceNumber"/>
+        <result column="tax_exclusive_price" jdbcType="DECIMAL" property="taxExclusivePrice"/>
+        <result column="invoice_date" jdbcType="VARCHAR" property="invoiceDate"/>
+        <result column="tax_rate" jdbcType="DECIMAL" property="taxRate"/>
+        <result column="tax_amount" jdbcType="DECIMAL" property="taxAmount"/>
+        <result column="tax_price_total" jdbcType="DECIMAL" property="taxPriceTotal"/>
+        <result column="discount_reason" jdbcType="VARCHAR" property="discountReason"/>
+        <result column="red_invoice_information_code" jdbcType="VARCHAR" property="redInvoiceInformationCode"/>
+        <result column="spa_code" jdbcType="VARCHAR" property="sPACode"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="accounting_year" jdbcType="VARCHAR" property="accountingYear"/>
+        <result column="month" jdbcType="VARCHAR" property="month"/>
+        <result column="payment_date" jdbcType="VARCHAR" property="paymentDate"/>
+        <result column="money" jdbcType="INTEGER" property="money"/>
+        <result column="accounting_mode" jdbcType="VARCHAR" property="accountingMode"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="bank_name" jdbcType="VARCHAR" property="bankName"/>
+        <result column="plant" jdbcType="INTEGER" property="plant"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="is_discount" jdbcType="INTEGER" property="isDiscount"/>
+    </resultMap>
+
+    <resultMap id="rateRedInvoiceVo" type="com.jaezi.bus.finance.vo.RateRedInvoiceVo">
+    </resultMap>
+
+    <sql id="base_column">
+        brri.id,
+        brri.invoice_code,
+        brri.invoice_number,
+        brri.tax_exclusive_price,
+        brri.invoice_date,
+        brri.tax_rate,
+        brri.tax_amount,
+        brri.tax_price_total,
+        brri.discount_reason,
+        brri.red_invoice_information_code,
+        brri.spa_code,
+        brri.company,
+        brri.accounting_year,
+        brri.`month`,
+        brri.payment_date,
+        brri.money,
+        brri.accounting_mode,
+        brri.account,
+        brri.bank_name,
+        brri.supplier_code,
+        brri.is_discount,
+        brri.plant
+    </sql>
+
+    <!-- 查询所有返利红字发票信息 -->
+    <select id="getAllVos" resultMap="rateRedInvoice" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_rebate_red_invoice brri
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                brri.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND brri.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND brri.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="isDiscount != null ">
+                AND brri.is_discount = #{isDiscount}
+            </if>
+            <if test="invoiceCode != null ">
+                AND brri.invoice_code = #{invoiceCode}
+            </if>
+            <if test="invoiceNumber != null ">
+                AND brri.invoice_number = #{invoiceNumber}
+            </if>
+            <if test="taxExclusivePrice != null ">
+                AND brri.tax_exclusive_price = #{taxExclusivePrice}
+            </if>
+            <if test="invoiceDate != null and invoiceDate != ''">
+                AND brri.invoice_date = #{invoiceDate}
+            </if>
+            <if test="taxRate != null">
+                AND brri.tax_rate = #{taxRate}
+            </if>
+            <if test="taxAmount != null ">
+                AND brri.tax_amount = #{taxAmount}
+            </if>
+            <if test="taxPriceTotal != null ">
+                AND brri.tax_price_total = #{taxPriceTotal}
+            </if>
+            <if test="discountReason != null and discountReason != ''">
+                AND brri.discount_reason = #{discountReason}
+            </if>
+            <if test="redInvoiceInformationCode != null and redInvoiceInformationCode != ''">
+                AND brri.red_invoice_information_code = #{redInvoiceInformationCode}
+            </if>
+            <if test="sPACode != null and sPACode != ''">
+                AND brri.spa_code = #{sPACode}
+            </if>
+            <if test="company != null and company != ''">
+                AND brri.company = #{company}
+            </if>
+            <if test="accountingYear != null and accountingYear != ''">
+                AND brri.accounting_year = #{accountingYear}
+            </if>
+            <if test="month != null ">
+                AND brri.`month` = #{month}
+            </if>
+            <if test="paymentDate != null and paymentDate != ''">
+                AND brri.payment_date = #{paymentDate}
+            </if>
+            <if test="money != null and money != ''">
+                AND brri.money = #{money}
+            </if>
+            <if test="accountingMode != null and accountingMode != ''">
+                AND brri.accounting_mode = #{accountingMode}
+            </if>
+            <if test="account != null and account != ''">
+                AND brri.account = #{account}
+            </if>
+            <if test="bankName != null and bankName != ''">
+                AND brri.bank_name = #{bankName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取返利红字发票信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="rateRedInvoice">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_rebate_red_invoice brri
+        WHERE brri.id = #{id}
+    </select>
+
+    <!-- 添加一个返利红字发票信息 -->
+    <insert id="add" parameterType="com.jaezi.bus.finance.model.RateRedInvoice">
+        INSERT INTO bus_rebate_red_invoice
+        (invoice_code,
+         invoice_number,
+         tax_exclusive_price,
+         invoice_date,
+         tax_rate,
+         tax_amount,
+         tax_price_total,
+         discount_reason,
+         red_invoice_information_code,
+         spa_code,
+         company,
+         accounting_year,
+         `month`,
+         payment_date,
+         money,
+         accounting_mode,
+         account,
+         bank_name,
+         supplier_code,
+         is_discount,
+         plant)
+        VALUES (#{invoiceCode},
+                #{invoiceNumber},
+                #{taxExclusivePrice},
+                #{invoiceDate},
+                #{taxRate},
+                #{taxAmount},
+                #{taxPriceTotal},
+                #{discountReason},
+                #{redInvoiceInformationCode},
+                #{sPACode},
+                #{company},
+                #{accountingYear},
+                #{month},
+                #{paymentDate},
+                #{money},
+                #{accountingMode},
+                #{account},
+                #{bankName},
+                #{supplierCode},
+                #{isDiscount},
+                #{plant})
+    </insert>
+
+    <!-- 修改装实际付款情况信息 -->
+    <update id="update" parameterType="com.jaezi.bus.finance.model.RateRedInvoice">
+        UPDATE bus_rebate_red_invoice
+        SET
+        <trim suffixOverrides=",">
+            <if test="invoiceCode != null ">invoice_code = #{invoiceCode},</if>
+            <if test="invoiceNumber != null ">invoice_number = #{invoiceNumber},</if>
+            <if test="taxExclusivePrice != null ">tax_exclusive_price =
+                #{taxExclusivePrice},
+            </if>
+            <if test="invoiceDate != null and invoiceDate != ''">invoice_date = #{invoiceDate},</if>
+            <if test="taxRate != null ">tax_rate = #{taxRate},</if>
+            <if test="taxAmount != null ">tax_amount = #{taxAmount},</if>
+            <if test="taxPriceTotal != null ">tax_price_total = #{taxPriceTotal},</if>
+            <if test="discountReason != null and discountReason != ''">discount_reason = #{discountReason},</if>
+            <if test="redInvoiceInformationCode != null and redInvoiceInformationCode != ''">
+                red_invoice_information_code = #{redInvoiceInformationCode},
+            </if>
+            <if test="isDiscount != null ">is_discount = #{isDiscount},</if>
+            <if test="sPACode != null and sPACode != ''">spa_code = #{sPACode},</if>
+            <if test="company != null and company != ''">company = #{company},</if>
+            <if test="accountingYear != null and accountingYear != ''">accounting_year = #{accountingYear},</if>
+            <if test="month != null ">`month` = #{month},</if>
+            <if test="paymentDate != null and paymentDate != ''">payment_date = #{paymentDate},</if>
+            <if test="money != null and money != ''">money = #{money},</if>
+            <if test="accountingMode != null and accountingMode != ''">accounting_mode = #{accountingMode},</if>
+            <if test="account != null and account != ''">account = #{account},</if>
+            <if test="bankName != null and bankName != ''">bank_name = #{bankName},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个实际付款情况信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_rebate_red_invoice
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

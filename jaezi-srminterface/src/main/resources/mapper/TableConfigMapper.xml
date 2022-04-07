@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.srminterface.dao.TableConfigDao">
+
+    <resultMap id="tableConfig" type="com.jaezi.srminterface.model.TableConfig">
+        <id property="id" column="id"/>
+        <result property="tableName" column="table_name"/>
+        <result property="tableComments" column="table_comments"/>
+    </resultMap>
+
+    <resultMap id="tableConfigVo" type="com.jaezi.srminterface.vo.TableConfigVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        stc.id,
+	    stc.`table_name`,
+	    stc.table_comments
+    </sql>
+
+    <!-- 查询所有数据表配置 -->
+    <select id="getAllVos" resultMap="tableConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_table_config stc
+        <where>
+            <if test="tableName != null and tableName != ''">
+                stc.table_name = #{tableName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有数据表配置 -->
+    <select id="getAll" resultMap="tableConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_table_config stc
+        <where>
+            <if test="tableName != null and tableName != ''">
+                stc.table_name = #{tableName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID查询数据表配置 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="tableConfig">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_table_config stc WHERE stc.id = #{id}
+    </select>
+
+    <!-- 根据表名获取表注释 -->
+    <select id="getCommentsByTableName" resultType="java.lang.String">
+        SELECT table_comments
+        FROM sys_table_config
+        WHERE table_name = #{tableName}
+    </select>
+
+    <!-- 获取配置文件夹路径 -->
+    <select id="getPath" resultType="java.util.Map">
+        SELECT id,
+               config
+        FROM sys_resource_config
+        WHERE id = 2
+    </select>
+
+    <!-- 添加数据表配置 -->
+    <insert id="add" parameterType="com.jaezi.srminterface.model.TableConfig">
+        INSERT INTO sys_table_config(table_name,
+                                     table_comments)
+        VALUES (#{tableName}, #{tableComments})
+    </insert>
+
+    <!-- 更新数据表配置 -->
+    <update id="update" parameterType="com.jaezi.srminterface.model.TableConfig">
+        UPDATE sys_table_config
+        SET
+        <trim suffixOverrides=",">
+            <if test="tableName != null and tableName != ''">table_name = #{tableName},</if>
+            <if test="tableComments != null and tableComments != ''">table_comments = #{tableComments},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除数据表配置 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_table_config
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据表名删除表 -->
+    <delete id="dropTable" parameterType="java.lang.Integer">
+        DROP TABLE if EXISTS ${tableName}
+    </delete>
+
+</mapper>

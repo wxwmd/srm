@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.purchase.dao.LoadingDocumentDao">
+    <resultMap id="loadingDocument" type="com.jaezi.bus.purchase.model.LoadingDocument">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="loading_number" jdbcType="INTEGER" property="loadingNumber"/>
+        <result column="loading_document_date" jdbcType="VARCHAR" property="loadingDocumentDate"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="loading_way" jdbcType="INTEGER" property="loadingWay"/>
+        <result column="receiving_window" jdbcType="VARCHAR" property="receivingWindow"/>
+        <result column="shipping_explain" jdbcType="VARCHAR" property="shippingExplain"/>
+        <result column="loading_date" jdbcType="VARCHAR" property="loadingDate"/>
+        <result column="plan_delivery_date" jdbcType="VARCHAR" property="planDeliveryDate"/>
+        <result column="logistics_contact_information" jdbcType="VARCHAR" property="logisticsContactInformation"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="license_plate_number" jdbcType="VARCHAR" property="licensePlateNumber"/>
+        <result column="procurement_unit" jdbcType="VARCHAR" property="procurementUnit"/>
+        <result column="procurement_unit_address" jdbcType="VARCHAR" property="procurementUnitAddress"/>
+    </resultMap>
+
+    <resultMap type="com.jaezi.bus.purchase.vo.LoadingDocumentVo" id="loadingDocumentVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="loading_number" jdbcType="INTEGER" property="loadingNumber"/>
+        <result column="loading_document_date" jdbcType="VARCHAR" property="loadingDocumentDate"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="loading_way" jdbcType="INTEGER" property="loadingWay"/>
+        <result column="receiving_window" jdbcType="VARCHAR" property="receivingWindow"/>
+        <result column="shipping_explain" jdbcType="VARCHAR" property="shippingExplain"/>
+        <result column="loading_date" jdbcType="VARCHAR" property="loadingDate"/>
+        <result column="plan_delivery_date" jdbcType="VARCHAR" property="planDeliveryDate"/>
+        <result column="logistics_contact_information" jdbcType="VARCHAR" property="logisticsContactInformation"/>
+        <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="license_plate_number" jdbcType="VARCHAR" property="licensePlateNumber"/>
+        <result column="purchase_phone" jdbcType="VARCHAR" property="purchasePhone"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+        <result column="procurement_unit" jdbcType="VARCHAR" property="procurementUnit"/>
+        <result column="procurement_unit_address" jdbcType="VARCHAR" property="procurementUnitAddress"/>
+        <collection property="records" ofType="com.jaezi.bus.purchase.model.LoadingRecord">
+            <id column="r_id" property="id"/>
+            <result column="purchase_order" jdbcType="VARCHAR" property="purchaseOrder"/>
+            <result column="line_item" jdbcType="INTEGER" property="lineItem"/>
+            <result column="type" jdbcType="VARCHAR" property="type"/>
+            <result column="material_number" jdbcType="VARCHAR" property="materialNumber"/>
+            <result column="factory" jdbcType="VARCHAR" property="factory"/>
+            <result column="material_description" jdbcType="VARCHAR" property="materialDescription"/>
+            <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+            <result column="delivery_date" jdbcType="VARCHAR" property="deliveryDate"/>
+            <result column="loading_shipment_date" jdbcType="VARCHAR" property="loadingShipmentDate"/>
+            <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
+            <result column="receiving_number" jdbcType="INTEGER" property="receivingNumber"/>
+            <result column="loading_shipment_number" jdbcType="INTEGER" property="loadingShipmentNumber"/>
+            <result column="loading_document_id" jdbcType="INTEGER" property="loadingDocumentId"/>
+            <result column="inventory_matching" jdbcType="INTEGER" property="inventoryMatching"/>
+            <result column="remaining_quantity" jdbcType="INTEGER" property="remainingQuantity"/>
+            <result column="remaining_date" jdbcType="VARCHAR" property="remainingDate"/>
+            <result column="unit" jdbcType="VARCHAR" property="unit"/>
+            <result column="storage_location" jdbcType="VARCHAR" property="storageLocation"/>
+            <result column="shipping_space" jdbcType="VARCHAR" property="shippingSpace"/>
+            <result column="proposer" jdbcType="VARCHAR" property="proposer"/>
+            <result column="version_number" jdbcType="VARCHAR" property="versionNumber"/>
+            <result column="dimension_size" jdbcType="VARCHAR" property="dimensionSize"/>
+            <result column="purchase_group" jdbcType="VARCHAR" property="purchaseGroup"/>
+            <result column="supplier_material" jdbcType="VARCHAR" property="supplierMaterial"/>
+            <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+            <result column="contact_information" jdbcType="VARCHAR" property="contactInformation"/>
+            <result column="factory_time" jdbcType="VARCHAR" property="factoryTime"/>
+            <result column="remark" jdbcType="VARCHAR" property="remark"/>
+            <result column="purchase_person" jdbcType="VARCHAR" property="purchasePerson"/>
+            <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+            <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        </collection>
+    </resultMap>
+
+    <sql id="base_column">
+        bld.id,
+        bld.factory,
+        bld.loading_shipment_date,
+        bld.logistics_contact_information,
+        bld.license_plate_number,
+        bld.supplier_code,
+        bld.loading_way,
+        bld.receiving_window,
+        bld.shipping_explain,
+        bld.loading_date,
+        bld.plan_delivery_date,
+        bld.loading_document_date,
+        bld.loading_number,
+        bld.procurement_unit,
+        bld.procurement_unit_address
+    </sql>
+
+    <!--查询所有装车单信息-->
+    <select id="getLoadingDocumentDetails" resultMap="loadingDocumentVo">
+        SELECT
+        <include refid="base_column"></include>,
+        blr.r_id,
+        blr.purchase_order,
+        blr.line_item,
+        blr.`type`,
+        blr.material_number,
+        blr.factory,
+        sm.material_description,
+        blr.create_date,
+        blr.delivery_date,
+        blr.loading_shipment_date,
+        blr.order_number,
+        blr.receiving_number,
+        blr.loading_shipment_number,
+        blr.loading_document_id,
+        blr.inventory_matching,
+        blr.remaining_quantity,
+        blr.remaining_date,
+        blr.unit,
+        blr.storage_location,
+        blr.shipping_space,
+        blr.proposer,
+        blr.version_number,
+        blr.dimension_size,
+        blr.purchase_group,
+        blr.supplier_material,
+        blr.purchase_person,
+        blr.company_address,
+        blr.contact_information,
+        blr.factory_time,
+        blr.document_url,
+        blr.document_name,
+        bp.remark,
+        su.real_name AS supplier_name,
+        su1.phone AS purchase_phone
+        FROM bus_loading_document bld
+        LEFT JOIN bus_loading_record blr ON bld.id = blr.loading_document_id
+        left join sys_material sm ON blr.material_number = sm.material_number
+        LEFT JOIN bus_purchase bp ON bp.p_order = blr.purchase_order AND bp.project = blr.line_item
+        LEFT JOIN sys_user su ON bld.supplier_code = su.username
+        LEFT JOIN sys_user su1 ON blr.purchase_person = su1.real_name
+        WHERE bld.id = #{id}
+    </select>
+
+    <!--查询所有装车单信息-->
+    <select id="findAll" resultMap="loadingDocument" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_document bld
+        <where>
+            <if test="purchaseOrder != null and purchaseOrder != ''">
+                blr.purchase_order = #{purchaseOrder}
+            </if>
+            <if test="lineItem != null and lineItem != ''">
+                AND blr.line_item = #{lineItem}
+            </if>
+            <if test="receivingWindow != null and receivingWindow != ''">
+                AND receiving_window = #{receivingWindow}
+            </if>
+            <if test="shippingExplain != null and shippingExplain != ''">
+                AND shipping_explain = #{shippingExplain}
+            </if>
+            <if test="loadingDate != null and loadingDate != ''">
+                AND loading_date = #{loadingDate}
+            </if>
+            <if test="loadingDocumentDateStartTime != null and loadingDocumentDateStartTime != '' and loadingDocumentDateEndTime !=null and loadingDocumentDateEndTime != '' ">
+                AND loading_document_date BETWEEN #{loadingDocumentDateStartTime} AND #{loadingDocumentDateEndTime}
+            </if>
+            <if test="planDeliveryDate != null and planDeliveryDate != ''">
+                AND plan_delivery_date = #{planDeliveryDate}
+            </if>
+            <if test="loadingNumber != null and loadingNumber != ''">
+                AND loading_number = #{loadingNumber}
+            </if>
+            <if test="loadingWay != null and loadingWay != ''">
+                AND loading_way = #{loadingWay}
+            </if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">
+                AND license_plate_number = #{licensePlateNumber}
+            </if>
+            <if test="factory != null and factory != ''">
+                AND factory = #{factory}
+            </if>
+            <if test="loadingShipmentDateStartTime != null and loadingShipmentDateStartTime != '' and loadingShipmentDateEndTime !=null and loadingShipmentDateEndTime != '' ">
+                AND loading_shipment_date BETWEEN #{loadingShipmentDateStartTime} AND #{loadingShipmentDateEndTime}
+            </if>
+            <if test="logisticsContactInformation != null and logisticsContactInformation != ''">
+                AND logistics_contact_information = #{logisticsContactInformation}
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND bld.supplier_code = #{supplierCode}
+            </if>
+            <if test="loadingDate != null and loadingDate != ''">
+                AND bld.loading_date = #{loadingDate}
+            </if>
+            <if test="planDeliveryDate != null and planDeliveryDate != ''">
+                AND bld.plan_delivery_date = #{planDeliveryDate}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="startTime != null and startTime != '' and entTime != null and entTime != '' ">
+                AND bld.plan_delivery_date BETWEEN #{startTime} AND #{entTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有装车单信息 -->
+    <select id="getAllVos" resultMap="loadingDocument" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_document bld
+        <where>
+            <if test="purchaseOrder != null and purchaseOrder != ''">
+                bld.purchase_order = #{purchaseOrder}
+            </if>
+            <if test="lineItem != null and lineItem != ''">
+                AND bld.line_item = #{lineItem}
+            </if>
+            <if test="receivingWindow != null and receivingWindow != ''">
+                AND bld.receiving_window = #{receivingWindow}
+            </if>
+            <if test="shippingExplain != null and shippingExplain != ''">
+                AND bld.shipping_explain = #{shippingExplain}
+            </if>
+            <if test="loadingDateStartTime != null and loadingDateStartTime != '' and loadingDateEndTime !=null and loadingDateEndTime != '' ">
+                AND bld.loading_date BETWEEN #{loadingDateStartTime} AND #{loadingDateEndTime}
+            </if>
+            <if test="loadingDocumentDateStartTime != null and loadingDocumentDateStartTime != '' and loadingDocumentDateEndTime !=null and loadingDocumentDateEndTime != '' ">
+                AND bld.loading_document_date BETWEEN #{loadingDocumentDateStartTime} AND #{loadingDocumentDateEndTime}
+            </if>
+            <if test="planDeliveryDateStartTime != null and planDeliveryDateStartTime != '' and planDeliveryDateEndTime !=null and planDeliveryDateEndTime != '' ">
+                AND bld.plan_delivery_date BETWEEN #{planDeliveryDateStartTime} AND #{planDeliveryDateEndTime}
+            </if>
+            <if test="loadingNumber != null and loadingNumber != ''">
+                AND loading_number = #{loadingNumber}
+            </if>
+            <if test="loadingWay != null and loadingWay != ''">
+                AND loading_way = #{loadingWay}
+            </if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">
+                AND bld.license_plate_number = #{licensePlateNumber}
+            </if>
+            <if test="factory != null and factory != ''">AND factory = #{factory}</if>
+            <if test="loadingShipmentDateStartTime != null and loadingShipmentDateStartTime != '' and loadingShipmentDateEndTime !=null and loadingShipmentDateEndTime != '' ">
+                AND bld.loading_shipment_date BETWEEN #{loadingShipmentDateStartTime} AND #{loadingShipmentDateEndTime}
+            </if>
+            <if test="logisticsContactInformation != null and logisticsContactInformation != ''">
+                AND bld.logistics_contact_information = #{logisticsContactInformation}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bld.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bld.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取装车单信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="loadingDocument">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_loading_document
+        WHERE id = #{id}
+    </select>
+
+    <!-- 添加一个装车单信息 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.jaezi.bus.purchase.model.LoadingDocument">
+        INSERT INTO bus_loading_document(loading_number,
+                                         loading_document_date,
+                                         supplier_code,
+                                         loading_way,
+                                         receiving_window,
+                                         shipping_explain,
+                                         loading_date,
+                                         plan_delivery_date,
+                                         logistics_contact_information,
+                                         loading_shipment_date,
+                                         factory,
+                                         license_plate_number, procurement_unit, procurement_unit_address)
+        VALUES (#{loadingNumber},
+                #{loadingDocumentDate},
+                #{supplierCode},
+                #{loadingWay},
+                #{receivingWindow},
+                #{shippingExplain},
+                #{loadingDate},
+                #{planDeliveryDate},
+                #{logisticsContactInformation},
+                #{loadingShipmentDate},
+                #{factory},
+                #{licensePlateNumber}, #{procurementUnit}, #{procurementUnitAddress})
+    </insert>
+
+    <!-- 修改装车单信息 -->
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.LoadingDocument">
+        UPDATE bus_loading_document
+        SET
+        <trim suffixOverrides=",">
+            <if test="receivingWindow != null and receivingWindow != ''">receiving_window = #{receivingWindow},</if>
+            <if test="shippingExplain != null and shippingExplain != ''">shipping_explain = #{shippingExplain},</if>
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="loadingDate != null and loadingDate != '' ">
+                loading_date = #{loadingDate},
+            </if>
+            <if test="planDeliveryDate != null and planDeliveryDate != ''  ">
+                plan_delivery_date = #{planDeliveryDate},
+            </if>
+            <if test="loadingDocumentDate!= null and loadingDocumentDate != '' ">
+                loading_document_date = #{loadingDocumentDate},
+            </if>
+            <if test="loadingNumber != null and loadingNumber != ''">loading_number = #{loadingNumber},</if>
+            <if test="loadingWay != null and loadingWay != ''">loading_way = #{loadingWay},</if>
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">license_plate_number =
+                #{licensePlateNumber},
+            </if>
+            <if test="factory != null and factory != ''">factory = #{factory},</if>
+            <if test="loadingShipmentDate != null and loadingShipmentDate != ''  ">
+                loading_shipment_date = #{loadingShipmentDate},
+            </if>
+            <if test="logisticsContactInformation != null and logisticsContactInformation != ''">
+                logistics_contact_information = #{logisticsContactInformation},
+            </if>
+            <if test="procurementUnit != null and procurementUnit != ''">procurement_unit = #{procurementUnit},</if>
+            <if test="procurementUnitAddress != null and procurementUnitAddress != ''">procurement_unit_address =
+                #{procurementUnitAddress},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个装车单信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_loading_document
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

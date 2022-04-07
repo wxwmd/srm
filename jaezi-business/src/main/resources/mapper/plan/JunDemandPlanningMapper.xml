@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.plan.dao.JunDemandPlanningDao">
+    <resultMap id="junDemandPlanning" type="com.jaezi.bus.plan.model.JunDemandPlanning">
+        <id column="id" property="id"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="plant" property="plant"/>
+        <result column="material_type" property="materialType"/>
+        <result column="conversion_unit" property="conversionUnit"/>
+        <result column="unit" property="unit"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="mrp" property="mrp"/>
+        <result column="maintain_type" property="maintainType"/>
+        <result column="zero_material1" property="zeroMaterial1"/>
+        <result column="zero_material2" property="zeroMaterial2"/>
+        <result column="zero_material3" property="zeroMaterial3"/>
+        <result column="zero_sum" property="zeroSum"/>
+        <result column="one_material1" property="oneMaterial1"/>
+        <result column="one_material2" property="oneMaterial2"/>
+        <result column="one_material3" property="oneMaterial3"/>
+        <result column="one_sum" property="oneSum"/>
+        <result column="two_material1" property="twoMaterial1"/>
+        <result column="two_material2" property="twoMaterial2"/>
+        <result column="two_material3" property="twoMaterial3"/>
+        <result column="two_sum" property="twoSum"/>
+        <result column="three_material1" property="threeMaterial1"/>
+        <result column="three_material2" property="threeMaterial2"/>
+        <result column="three_material3" property="threeMaterial3"/>
+        <result column="three_sum" property="threeSum"/>
+        <result column="four_material1" property="fourMaterial1"/>
+        <result column="four_material2" property="fourMaterial2"/>
+        <result column="four_material3" property="fourMaterial3"/>
+        <result column="four_sum" property="fourSum"/>
+        <result column="five_material1" property="fiveMaterial1"/>
+        <result column="five_material2" property="fiveMaterial2"/>
+        <result column="five_material3" property="fiveMaterial3"/>
+        <result column="five_sum" property="fiveSum"/>
+        <result column="six_material1" property="sixMaterial1"/>
+        <result column="six_material2" property="sixMaterial2"/>
+        <result column="six_material3" property="sixMaterial3"/>
+        <result column="six_sum" property="sixSum"/>
+    </resultMap>
+
+    <resultMap id="junDemandPlanningVo" type="com.jaezi.bus.plan.vo.JunDemandPlanningVo">
+        <id column="id" property="id"/>
+        <result column="material_number" property="materialNumber"/>
+        <result column="material_description" property="materialDescription"/>
+        <result column="plant" property="plant"/>
+        <result column="material_type" property="materialType"/>
+        <result column="conversion_unit" property="conversionUnit"/>
+        <result column="unit" property="unit"/>
+        <result column="supplier_code" property="supplierCode"/>
+        <result column="supplier_name" property="supplierName"/>
+        <result column="mrp" property="mrp"/>
+        <result column="maintain_type" property="maintainType"/>
+        <result column="zero_sum" property="zeroSum"/>
+        <result column="one_sum" property="oneSum"/>
+        <result column="two_sum" property="twoSum"/>
+        <result column="three_sum" property="threeSum"/>
+        <result column="four_sum" property="fourSum"/>
+        <result column="five_sum" property="fiveSum"/>
+        <result column="six_sum" property="sixSum"/>
+    </resultMap>
+
+    <resultMap id="junDemandPlanningDto" type="com.jaezi.bus.plan.dto.JunDemandPlanningDto">
+        <result column="zero_material" property="zeroMaterial"/>
+        <result column="one_material" property="oneMaterial"/>
+        <result column="two_material" property="twoMaterial"/>
+        <result column="three_material" property="threeMaterial"/>
+        <result column="four_material" property="fourMaterial"/>
+        <result column="five_material" property="fiveMaterial"/>
+        <result column="six_material" property="sixMaterial"/>
+    </resultMap>
+
+    <sql id="base_column">
+        bjdp.id,
+        bjdp.material_number,
+        sm.material_description,
+        bjdp.plant,
+        bjdp.material_type,
+        bjdp.conversion_unit,
+        bjdp.unit,
+        bjdp.supplier_code,
+        bjdp.supplier_name,
+        bjdp.mrp,
+        bjdp.maintain_type,
+        bjdp.zero_material1,
+        bjdp.zero_material2,
+        bjdp.zero_material3,
+        bjdp.zero_sum,
+        bjdp.one_material1,
+        bjdp.one_material2,
+        bjdp.one_material3,
+        bjdp.one_sum,
+        bjdp.two_material1,
+        bjdp.two_material2,
+        bjdp.two_material3,
+        bjdp.two_sum,
+        bjdp.three_material1,
+        bjdp.three_material2,
+        bjdp.three_material3,
+        bjdp.three_sum,
+        bjdp.four_material1,
+        bjdp.four_material2,
+        bjdp.four_material3,
+        bjdp.four_sum,
+        bjdp.five_material1,
+        bjdp.five_material2,
+        bjdp.five_material3,
+        bjdp.five_sum,
+        bjdp.six_material1,
+        bjdp.six_material2,
+        bjdp.six_material3,
+        bjdp.six_sum
+    </sql>
+
+    <!-- 查询所有六月需求计划 -->
+    <select id="getAllVos" resultMap="junDemandPlanningVo" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_jun_demand_planning bjdp
+        LEFT JOIN sys_material sm ON bjdp.material_number = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                bjdp.supplier_code = #{supplierCode}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bjdp.material_number LIKE CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                AND sm.material_description LIKE CONCAT('%',#{materialDescription},'%')
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bjdp.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bjdp.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bjdp.material_number IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取供需差异 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="junDemandPlanning">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_jun_demand_planning bjdp
+        LEFT JOIN sys_material sm ON bjdp.material_number = sm.material_number
+        WHERE bjdp.id = #{id}
+    </select>
+
+    <!-- 获取产品需求 -->
+    <select id="getMaterialDay" resultMap="junDemandPlanningDto">
+        SELECT
+            bjdp.id,
+            bjdp.zero_material,
+            bjdp.one_material,
+            bjdp.two_material,
+            bjdp.three_material,
+            bjdp.four_material,
+            bjdp.five_material,
+            bjdp.six_material
+        FROM (SELECT
+                  id,
+                  zero_material1 AS zero_material,
+                  one_material1 AS one_material,
+                  two_material1 AS two_material,
+                  three_material1 AS three_material,
+                  four_material1 AS four_material,
+                  five_material1 AS five_material,
+                  six_material1 AS six_material
+              FROM bus_jun_demand_planning
+              UNION ALL
+              SELECT
+                  id,
+                  zero_material2 AS zero_material,
+                  one_material2 AS one_material,
+                  two_material2 AS two_material,
+                  three_material2 AS three_material,
+                  four_material2 AS four_material,
+                  five_material2 AS five_material,
+                  six_material2 AS six_material
+              FROM bus_jun_demand_planning
+              UNION ALL
+              SELECT
+                  id,
+                  zero_material3 AS zero_material,
+                  one_material3 AS one_material,
+                  two_material3 AS two_material,
+                  three_material3 AS three_material,
+                  four_material3 AS four_material,
+                  five_material3 AS five_material,
+                  six_material3 AS six_material
+              FROM bus_jun_demand_planning) bjdp WHERE bjdp.id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.bus.purchase.model.Inventory" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+    </insert>
+
+    <!-- 批量添加六月需求计划 -->
+    <insert id="saveBath">
+        INSERT INTO bus_jun_demand_planning (id,
+        material_number,
+        plant,
+        material_type,
+        conversion_unit,
+        unit,
+        supplier_code,
+        supplier_name,
+        mrp,
+        maintain_type,
+        zero_material1,
+        zero_material2,
+        zero_material3,
+        zero_sum,
+        one_material1,
+        one_material2,
+        one_material3,
+        one_sum,
+        two_material1,
+        two_material2,
+        two_material3,
+        two_sum,
+        three_material1,
+        three_material2,
+        three_material3,
+        three_sum,
+        four_material1,
+        four_material2,
+        four_material3,
+        four_sum,
+        five_material1,
+        five_material2,
+        five_material3,
+        five_sum,
+        six_material1,
+        six_material2,
+        six_material3,
+        six_sum)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (NULL,#{item.materialNumber},#{item.plant},
+            #{item.materialType},#{item.conversionUnit},#{item.unit},#{item.supplierCode},
+            #{item.supplierName},#{item.mrp},#{item.maintainType},
+            #{item.maintainType},#{item.zeroMaterial1},#{item.zeroMaterial2},#{item.zeroMaterial3},
+            #{item.zeroSum},#{item.oneMaterial1},#{item.oneMaterial2},
+            #{item.oneMaterial3},#{item.oneSum},#{item.twoMaterial1},#{item.twoMaterial2},
+            #{item.twoMaterial3},#{item.twoSum},#{item.threeMaterial1},
+            #{item.threeMaterial2},#{item.threeMaterial3},#{item.threeSum},#{item.fourMaterial1},
+            #{item.fourMaterial2},#{item.fourMaterial3},#{item.fourSum},
+            #{item.fiveMaterial1},#{item.fiveMaterial2},#{item.fiveMaterial3},#{item.fiveSum},
+            #{item.sixMaterial1},#{item.sixMaterial2},#{item.sixMaterial3},
+            #{item.sixSum})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.bus.purchase.model.Inventory">
+
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+</mapper>

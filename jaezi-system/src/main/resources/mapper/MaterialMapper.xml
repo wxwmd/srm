@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.MaterialDao">
+
+    <resultMap id="material" type="com.jaezi.system.model.Material">
+        <id property="materialNumber" jdbcType="VARCHAR" column="material_number"/>
+        <result property="materialName" jdbcType="VARCHAR" column="material_name"/>
+        <result property="materialDescription" jdbcType="VARCHAR" column="material_description"/>
+        <result property="buyerNumber" jdbcType="VARCHAR" column="buyer_number"/>
+        <result property="unit" jdbcType="VARCHAR" column="unit"/>
+        <result property="specification" jdbcType="VARCHAR" column="specification"/>
+        <result property="trafficStabilityClassification" jdbcType="VARCHAR" column="traffic_stability_classification"/>
+        <result property="trafficClassification" jdbcType="VARCHAR" column="traffic_classification"/>
+        <result property="riskClassification" jdbcType="VARCHAR" column="risk_classification"/>
+        <result property="plant" jdbcType="VARCHAR" column="plant"/>
+        <result property="minimalPackage" jdbcType="VARCHAR" column="minimal_package"/>
+        <result property="minimumQuantity" jdbcType="VARCHAR" column="minimum_quantity"/>
+        <result property="deliveryFrequency" jdbcType="VARCHAR" column="delivery_frequency"/>
+        <result property="purchaseDay" jdbcType="VARCHAR" column="purchase_day"/>
+        <result property="procurementType" jdbcType="VARCHAR" column="procurement_type"/>
+        <result property="category" jdbcType="VARCHAR" column="category"/>
+        <result property="socialGeneralityClassification" jdbcType="VARCHAR" column="social_generality_classification"/>
+        <result property="supplyMode" jdbcType="VARCHAR" column="supply_mode"/>
+        <result property="purchaseGroup" jdbcType="VARCHAR" column="purchase_group"/>
+        <result property="price" jdbcType="VARCHAR" column="price"/>
+        <result property="utf1" jdbcType="VARCHAR" column="utf1"/>
+        <result property="utf2" jdbcType="VARCHAR" column="utf2"/>
+        <result property="utf3" jdbcType="VARCHAR" column="utf3"/>
+        <result property="utf4" jdbcType="VARCHAR" column="utf4"/>
+        <result property="utf5" jdbcType="VARCHAR" column="utf5"/>
+        <result property="utf6" jdbcType="VARCHAR" column="utf6"/>
+        <result property="utf7" jdbcType="VARCHAR" column="utf7"/>
+        <result property="utf8" jdbcType="VARCHAR" column="utf8"/>
+        <result property="utf9" jdbcType="VARCHAR" column="utf9"/>
+        <result property="utf10" jdbcType="VARCHAR" column="utf10"/>
+    </resultMap>
+
+    <resultMap id="materialVo" type="com.jaezi.system.vo.MaterialVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        material_number
+        ,
+        material_name,
+        material_description,
+        buyer_number,
+        unit,
+        specification,
+        traffic_stability_classification,
+        traffic_classification,
+        risk_classification,
+        plant,
+        minimal_package,
+        minimum_quantity,
+        delivery_frequency,
+        purchase_day,
+        procurement_type,
+        category,
+        social_generality_classification,
+        supply_mode,
+        purchase_group,
+        price,
+        utf1,
+        utf2,
+        utf3,
+        utf4,
+        utf5,
+        utf6,
+        utf7,
+        utf8,
+        utf9,
+        utf10
+    </sql>
+
+    <delete id="delete">
+        DELETE
+        FROM sys_material
+        WHERE material_number = #{id}
+    </delete>
+
+    <select id="getAllVos" resultMap="material" parameterType="java.util.Map">
+        select
+        <include refid="base_column"></include>
+        from sys_material
+        <where>
+            <if test="materialNumber != null and materialNumber != ''">
+                and material_number like CONCAT('%',#{materialNumber},'%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="materialDescription != null and materialDescription != ''">
+                and material_description like CONCAT('%',#{materialDescription},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getOneById" parameterType="java.lang.String" resultMap="material">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_material WHERE material_number = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.jaezi.system.model.Material">
+        INSERT INTO sys_material(material_number,
+                                 material_name,
+                                 material_description,
+                                 buyer_number,
+                                 unit,
+                                 specification,
+                                 traffic_stability_classification,
+                                 traffic_classification,
+                                 risk_classification,
+                                 plant,
+                                 minimal_package,
+                                 minimum_quantity,
+                                 delivery_frequency,
+                                 purchase_day,
+                                 procurement_type,
+                                 category,
+                                 social_generality_classification,
+                                 supply_mode,
+                                 purchase_group,
+                                 price,
+                                 utf1,
+                                 utf2,
+                                 utf3,
+                                 utf4,
+                                 utf5,
+                                 utf6,
+                                 utf7,
+                                 utf8,
+                                 utf9,
+                                 utf10)
+        VALUES (#{materialNumber}, #{materialName}, #{materialDescription}, #{buyerNumber}, #{unit}, #{specification},
+                #{trafficStabilityClassification}, #{trafficClassification}, #{riskClassification}, #{plant},
+                #{minimalPackage}, #{minimumQuantity}, #{deliveryFrequency}, #{purchaseDay}, #{procurementType},
+                #{category},#{socialGeneralityClassification}, #{supplyMode}, #{purchaseGroup}, #{price}, #{utf1}, #{utf2}, #{utf3},
+                #{utf4},#{utf5}, #{utf6}, #{utf7}, #{utf8}, #{utf9}, #{utf10})
+    </insert>
+
+    <insert id="bathSave">
+        insert IGNORE sys_material (<include refid="base_column"/>)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.materialNumber},#{item.materialName},#{item.materialDescription},
+            #{item.buyerNumber},#{item.unit},#{item.specification},#{item.trafficStabilityClassification},
+            #{item.trafficClassification},#{item.riskClassification},#{item.plant},
+            #{item.minimalPackage},#{item.minimumQuantity},#{item.deliveryFrequency},#{item.purchaseDay},
+            #{item.procurementType},#{item.category},#{item.socialGeneralityClassification},
+            #{item.supplyMode},#{item.purchaseGroup},#{item.price},#{item.utf1},
+            #{item.utf2},#{item.utf3},#{item.utf4},
+            #{item.utf5},#{item.utf6},#{item.utf7},#{item.utf8},
+            #{item.utf9},#{item.utf10})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.jaezi.system.model.Material">
+        UPDATE sys_material
+        SET
+        <trim suffixOverrides=",">
+            <if test="materialNumber != null and materialNumber != ''">material_number = #{materialNumber},</if>
+            <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
+            <if test="materialDescription != null and materialDescription != ''">material_description =
+                #{materialDescription},
+            </if>
+            <if test="buyerNumber != null and buyerNumber != ''">buyer_number = #{buyerNumber},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="specification != null and specification != ''">specification = #{specification},</if>
+            <if test="trafficStabilityClassification != null and trafficStabilityClassification != ''">
+                traffic_stability_classification = #{trafficStabilityClassification},
+            </if>
+            <if test="trafficClassification != null and trafficClassification != ''">traffic_classification =
+                #{trafficClassification},
+            </if>
+            <if test="riskClassification != null and riskClassification != ''">risk_classification =
+                #{riskClassification},
+            </if>
+            <if test="plant != null and plant != ''">plant = #{plant},</if>
+            <if test="minimalPackage != null and minimalPackage != ''">minimal_package = #{minimalPackage},</if>
+            <if test="minimumQuantity != null and minimumQuantity != ''">minimum_quantity = #{minimumQuantity},</if>
+            <if test="deliveryFrequency != null and deliveryFrequency != ''">delivery_frequency =
+                #{deliveryFrequency},
+            </if>
+            <if test="purchaseDay != null and purchaseDay != ''">purchase_day = #{purchaseDay},</if>
+            <if test="procurementType != null and procurementType != ''">procurement_type = #{procurementType},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="socialGeneralityClassification != null and socialGeneralityClassification != ''">
+                social_generality_classification = #{socialGeneralityClassification},
+            </if>
+            <if test="supplyMode != null and supplyMode != ''">supply_mode = #{supplyMode},</if>
+            <if test="purchaseGroup != null and purchaseGroup != ''">purchase_group = #{purchaseGroup},</if>
+            <if test="price != null and price != ''">price = #{price},</if>
+            <if test="utf1 != null and utf1 != ''">utf1 = #{utf1},</if>
+            <if test="utf2 != null and utf2 != ''">utf2 = #{utf2},</if>
+            <if test="utf3 != null and utf3 != ''">utf3 = #{utf3},</if>
+            <if test="utf4 != null and utf4 != ''">utf4 = #{utf4},</if>
+            <if test="utf5 != null and utf5 != ''">utf5 = #{utf5},</if>
+            <if test="utf6 != null and utf6 != ''">utf6 = #{utf6},</if>
+            <if test="utf7 != null and utf7 != ''">utf7 = #{utf7},</if>
+            <if test="utf8 != null and utf8 != ''">utf8 = #{utf8},</if>
+            <if test="utf9 != null and utf9 != ''">utf9 = #{utf9},</if>
+            <if test="utf10 != null and utf10 != ''">utf10 = #{utf10},</if>
+        </trim>
+        WHERE material_number = #{materialNumber}
+    </update>
+
+</mapper>

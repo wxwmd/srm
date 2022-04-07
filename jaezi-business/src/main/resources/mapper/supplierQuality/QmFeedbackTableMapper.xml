@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.bus.supplierQuality.dao.QmFeedbackTableDao">
+    <resultMap id="qmFeedbackTable" type="com.jaezi.bus.supplierQuality.model.QmFeedbackTable">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="problem_odd" jdbcType="VARCHAR" property="problemOdd"/>
+        <result column="feedback_theme" jdbcType="VARCHAR" property="feedbackTheme"/>
+        <result column="feedback_people" jdbcType="VARCHAR" property="feedbackPeople"/>
+        <result column="feedback_submit_date" jdbcType="VARCHAR" property="feedbackSubmitDate"/>
+        <result column="feedback_department" jdbcType="VARCHAR" property="feedbackDepartment"/>
+        <result column="receipt_type" jdbcType="VARCHAR" property="receiptType"/>
+        <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+    </resultMap>
+
+    <resultMap id="qmFeedbackTableVo" type="com.jaezi.bus.supplierQuality.vo.QmFeedbackTableVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        bqf.id,
+        bqf.problem_odd,
+        bqf.feedback_theme,
+        bqf.feedback_people,
+        bqf.feedback_submit_date,
+        bqf.feedback_department,
+        bqf.receipt_type,
+        bqf.finished_product_code,
+        bqf.url,
+        bqf.visible
+    </sql>
+
+    <!-- 查询所有未审批和已审批的QM反馈单信息 -->
+    <select id="getAllVos" resultMap="qmFeedbackTable" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_qm_feedbacktable bqf
+        <where>
+            <if test="visible != null and visible != ''">
+                bqf.visible = #{visible}
+            </if>
+            <if test="problemOdd != null and problemOdd != ''">
+                AND bqf.problem_odd LIKE CONCAT('%',#{problemOdd},'%')
+            </if>
+            <if test="feedbackTheme != null and feedbackTheme != ''">
+                AND bqf.feedback_theme LIKE CONCAT('%',#{feedbackTheme},'%')
+            </if>
+            <if test="feedbackPeople != null and feedbackPeople != ''">
+                AND bqf.feedback_people = #{feedbackPeople}
+            </if>
+            <if test="feedbackDepartment != null and feedbackDepartment != ''">
+                AND bqf.feedback_department = #{feedbackDepartment}
+            </if>
+            <if test="receiptType != null and receiptType != ''">
+                AND bqf.receipt_type = #{receiptType}
+            </if>
+            <if test="url != null and url != ''">
+                AND bqf.url = #{url}
+            </if>
+            <if test="finishedProductCode != null and finishedProductCode != ''">
+                AND bqf.finished_product_code = #{finishedProductCode}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bqf.feedback_submit_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY bqf.feedback_submit_date DESC
+    </select>
+
+    <!--查询所有寄售物资结算通知单信息-->
+    <select id="findAll" resultMap="qmFeedbackTable" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_qm_feedbacktable bqf
+        <where>
+            <if test="visible != null and visible != ''">
+                bqf.visible = #{visible}
+            </if>
+            <if test="problemOdd != null and problemOdd != ''">
+                AND bqf.problem_odd LIKE CONCAT('%',#{problemOdd},'%')
+            </if>
+            <if test="feedbackTheme != null and feedbackTheme != ''">
+                AND bqf.feedback_theme LIKE CONCAT('%',#{feedbackTheme},'%')
+            </if>
+            <if test="feedbackPeople != null and feedbackPeople != ''">
+                AND bqf.feedback_people = #{feedbackPeople}
+            </if>
+            <if test="feedbackDepartment != null and feedbackDepartment != ''">
+                AND bqf.feedback_department = #{feedbackDepartment}
+            </if>
+            <if test="receiptType != null and receiptType != ''">
+                AND bqf.receipt_type = #{receiptType}
+            </if>
+            <if test="url != null and url != ''">
+                AND bqf.url = #{url}
+            </if>
+            <if test="finishedProductCode != null and finishedProductCode != ''">
+                AND bqf.finished_product_code = #{finishedProductCode}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+                AND bqf.feedback_submit_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY bqf.feedback_submit_date DESC
+    </select>
+
+    <!--查询所有寄售物资结算通知单信息-->
+    <select id="findByVisible" resultMap="qmFeedbackTable" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_qm_feedbacktable bqf
+        WHERE
+        bqf.visible = 1
+        <if test="problemOdd != null and problemOdd != ''">
+            AND bqf.problem_odd LIKE CONCAT('%',#{problemOdd},'%')
+        </if>
+        <if test="feedbackTheme != null and feedbackTheme != ''">
+            AND bqf.feedback_theme LIKE CONCAT('%',#{feedbackTheme},'%')
+        </if>
+        <if test="feedbackPeople != null and feedbackPeople != ''">
+            AND bqf.feedback_people = #{feedbackPeople}
+        </if>
+        <if test="feedbackDepartment != null and feedbackDepartment != ''">
+            AND bqf.feedback_department = #{feedbackDepartment}
+        </if>
+        <if test="receiptType != null and receiptType != ''">
+            AND bqf.receipt_type = #{receiptType}
+        </if>
+        <if test="url != null and url != ''">
+            AND bqf.url = #{url}
+        </if>
+        <if test="finishedProductCode != null and finishedProductCode != ''">
+            AND bqf.finished_product_code = #{finishedProductCode}
+        </if>
+        <if test="startTime != null and startTime != '' and endTime !=null and endTime != '' ">
+            AND bqf.feedback_submit_date BETWEEN #{startTime} and #{endTime}
+        </if>
+        OR bqf.id IN
+        (SELECT qm_feedbacktable_id FROM mid_qm_feedbacktable_person WHERE person_id = #{userId})
+        ORDER BY bqf.feedback_submit_date DESC
+    </select>
+
+    <!-- 根据ID 获取未审批和已审批的QM反馈单信息及关联消息ID -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="qmFeedbackTable">
+        SELECT
+        <include refid="base_column"></include>
+        FROM bus_qm_feedbacktable bqf
+        WHERE bqf.id = #{id}
+    </select>
+
+    <!-- 添加一个未审批和已审批的QM反馈单信息 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.jaezi.bus.supplierQuality.model.QmFeedbackTable">
+        INSERT INTO bus_qm_feedbacktable(problem_odd, feedback_theme, feedback_people, feedback_submit_date,
+                                         feedback_department, receipt_type, finished_product_code, url, visible)
+        VALUES (#{problemOdd}, #{feedbackTheme}, #{feedbackPeople}, #{feedbackSubmitDate}, #{feedbackDepartment},
+                #{receiptType}, #{finishedProductCode}, #{url}, #{visible})
+    </insert>
+
+    <!-- 修改未审批和已审批的QM反馈单信息 -->
+    <update id="update" parameterType="com.jaezi.bus.supplierQuality.model.QmFeedbackTable">
+        UPDATE bus_qm_feedbacktable
+        SET
+        <trim suffixOverrides=",">
+            <if test="problemOdd != null and problemOdd != ''">problem_odd = #{problemOdd},</if>
+            <if test="feedbackTheme != null and feedbackTheme != ''">feedback_theme = #{feedbackTheme},</if>
+            <if test="feedbackPeople != null and feedbackPeople != ''">feedback_people = #{feedbackPeople},</if>
+            <if test="feedbackDepartment != null and feedbackDepartment != ''">feedback_department =
+                #{feedbackDepartment},
+            </if>
+            <if test="receiptType != null and receiptType != ''">receipt_type = #{receiptType},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="finishedProductCode != null and finishedProductCode != ''">finished_product_code =
+                #{finishedProductCode},
+            </if>
+            <if test="feedbackSubmitDate != null and feedbackSubmitDate != '' ">
+                feedback_submit_date =#{feedbackSubmitDate},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个QM反馈单信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM bus_qm_feedbacktable
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

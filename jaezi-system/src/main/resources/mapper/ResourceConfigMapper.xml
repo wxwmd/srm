@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.ResourceConfigDao">
+    <resultMap id="resourceConfig" type="com.jaezi.system.model.ResourceConfig">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="config" jdbcType="VARCHAR" property="config"/>
+    </resultMap>
+
+    <resultMap id="resourceConfigVo" type="com.jaezi.system.vo.ResourceConfigVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        id,config
+    </sql>
+
+    <!-- 查询所有系统配置信息 -->
+    <select id="getAllVos" resultMap="resourceConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_resource_config
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取系统配置信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="resourceConfig">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_resource_config
+        WHERE id = #{id}
+    </select>
+
+    <!-- 添加一个系统配置信息 -->
+    <insert id="add" parameterType="com.jaezi.system.model.ResourceConfig">
+        INSERT INTO sys_resource_config(config)
+        VALUES(#{config})
+    </insert>
+
+    <!-- 修改系统配置信息 -->
+    <update id="update" parameterType="com.jaezi.system.model.ResourceConfig">
+        UPDATE sys_resource_config
+        SET
+        <trim suffixOverrides=",">
+            <if test="config != null and config != ''">config = #{config},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个系统配置信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_resource_config WHERE id = #{id}
+    </delete>
+
+</mapper>

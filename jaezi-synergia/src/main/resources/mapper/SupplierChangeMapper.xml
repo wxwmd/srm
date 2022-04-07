@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.SupplierChangeDao">
+    <resultMap id="supplierChange" type="com.jaezi.synergia.model.SupplierChange">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="serial_no" jdbcType="VARCHAR" property="serialNo"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="INTEGER" property="createTime"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="supplierChangeVo" type="com.jaezi.synergia.vo.SupplierChangeVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        ssc.id,
+        ssc.serial_no,
+        ssc.supplier_code,
+        ssc.title,
+        ssc.status,
+        ssc.create_time,
+        ssc.document_url,
+        ssc.document_name
+    </sql>
+
+    <!-- 查询所有供应商技术、厂址信息 -->
+    <select id="getAllVos" resultMap="supplierChange" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_supplier_change ssc
+        <where>
+            <if test="serialNo != null and serialNo != ''">
+                AND ssc.serial_no LIKE CONCAT('%',#{serialNo},'%')
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                AND ssc.supplier_code LIKE CONCAT('%',#{supplierCode},'%')
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND ssc.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND ssc.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM
+                sys_material WHERE buyer_number = #{realName})
+                )
+            </if>
+            <if test="stateTime != null and stateTime != ''">
+                AND ssc.create_time &gt;= #{stateTime}
+            </if>
+            <if test="entTime != null and entTime != ''">
+                AND ssc.create_time &lt;= #{stateTime}
+            </if>
+            <if test="status != null and status != ''">
+                AND ssc.status = #{status}
+            </if>
+            <if test="title != null and title != ''">
+                AND ssc.title LIKE CONCAT('%',#{title},'%')
+            </if>
+        </where>
+        ORDER BY ssc.create_time DESC
+    </select>
+
+    <!-- 根据ID 获取供应商技术、厂址信息 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="supplierChange">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_supplier_change ssc
+        WHERE ssc.id = #{id}
+    </select>
+
+    <!-- 添加一个供应商技术、厂址信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.Aggregat">
+        INSERT INTO syn_supplier_change(serial_no,
+                                        supplier_code,
+                                        title,
+                                        status,
+                                        create_time,
+                                        document_url,
+                                        document_name)
+        VALUES (#{serialNo}, #{supplierCode}, #{title}, #{status}, #{createTime},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改供应商技术、厂址信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.Aggregat">
+        UPDATE syn_supplier_change
+        SET
+        <trim suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createTime != null and createTime != ''">create_time = #{createTime},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个供应商技术、厂址信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM syn_supplier_change
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.system.dao.DictTypeDao">
+    <resultMap id="dictType" type="com.jaezi.system.model.DictType">
+        <id property="dictId" jdbcType="INTEGER" column="dict_id"/>
+        <result property="dictName" jdbcType="VARCHAR" column="dict_name"/>
+        <result property="dictType" jdbcType="VARCHAR" column="dict_type"/>
+        <result property="status" jdbcType="CHAR" column="status"/>
+    </resultMap>
+
+    <resultMap id="dictTypeVo" type="com.jaezi.system.vo.DictTypeVo">
+    </resultMap>
+
+    <sql id="base_column">
+        dict_id,
+        dict_name,
+        dict_type,
+        status,
+        remark
+    </sql>
+
+    <!-- 查询所有字典 -->
+    <select id="getAllVos" resultMap="dictType" parameterType="java.util.Map">
+        select
+        <include refid="base_column"></include>
+        from sys_dict_type
+        <where>
+            <if test="dictName != null and dictName != ''">
+                and dict_name like CONCAT('%',#{dictName},'%')
+            </if>
+            <if test="dictType != null and dictType != ''">
+                and dict_type like CONCAT('%',#{dictType},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID 获取字典 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="dictType">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_dict_type
+        WHERE dict_id = #{dictId}
+    </select>
+
+    <!-- 添加字典 -->
+    <insert id="add" parameterType="com.jaezi.system.model.DictData">
+        INSERT INTO sys_dict_type(dict_name, dict_type, status)
+        VALUES(#{dictName}, #{dictType}, #{status})
+    </insert>
+
+    <!-- 更新字典 -->
+    <update id="update" parameterType="com.jaezi.system.model.DictType">
+        UPDATE sys_dict_type
+        SET
+        <trim suffixOverrides=",">
+            <if test="dictName != null and dictName != ''">dict_name = #{dictName},</if>
+            <if test="dictType != null and dictType != ''">dict_type = #{dictType},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+        </trim>
+        WHERE dict_id = #{dictId}
+    </update>
+
+    <!-- 删除字典 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM sys_dict_type WHERE dict_id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.synergia.dao.FrequentlyUsedDataDao">
+    <resultMap id="frequentlyUsed" type="com.jaezi.synergia.model.FrequentlyUsedData">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="visible" jdbcType="INTEGER" property="visible"/>
+        <result column="document_url" jdbcType="VARCHAR" property="documentUrl"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+    </resultMap>
+
+    <resultMap id="frequentlyUsedVo" type="com.jaezi.synergia.vo.FrequentlyUsedDataVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        sfud.id,
+        sfud.`name`,
+        sfud.description,
+        sfud.update_time,
+        sfud.url,
+        sfud.visible,
+        sfud.document_url,
+        sfud.document_name
+    </sql>
+
+    <!-- 查询所有常用信息Vo -->
+    <select id="getAllVos" resultMap="frequentlyUsed" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_frequently_used_data sfud
+        <where>
+            <if test="name != null and name != ''">
+                sfud.name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="description != null and description != ''">
+                AND sfud.description LIKE CONCAT('%',#{description},'%')
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
+
+    <!-- 查询所有常用资料 -->
+    <select id="findByVisible" resultMap="frequentlyUsed" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_frequently_used_data sfud
+        WHERE
+        sfud.visible = 1
+        <if test="name != null and name != ''">
+            AND sfud.name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="description != null and description != ''">
+            AND sfud.description LIKE CONCAT('%',#{description},'%')
+        </if>
+        OR sfud.id IN
+        (SELECT frequentlyUsedData_id FROM mid_frequently_used_data_person WHERE person_id = #{userId})
+        ORDER BY sfud.update_time DESC
+    </select>
+
+    <!-- 查询所有常用资料信息 -->
+    <select id="findAll" resultMap="frequentlyUsed" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_frequently_used_data sfud
+        <where>
+            <if test="name != null and name != ''">
+                sfud.name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="description != null and description != ''">
+                AND sfud.description LIKE CONCAT('%',#{description},'%')
+            </if>
+        </where>
+        ORDER BY sfud.update_time DESC
+    </select>
+
+    <!-- 根据ID 获取常用资料 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="frequentlyUsed">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_frequently_used_data sfud
+        WHERE sfud.id = #{id}
+    </select>
+
+    <!-- 根据ID集合 获取常用资料信息 -->
+    <select id="findByIds" parameterType="java.util.ArrayList" resultMap="frequentlyUsed">
+        SELECT
+        <include refid="base_column"></include>
+        FROM syn_frequently_used_data sfud
+        <where>
+            sfud.id IN (
+            <foreach collection="list"  item="id" index="index" separator=",">
+                #{id}
+            </foreach>
+            )
+        </where>
+        ORDER BY sfud.update_time DESC
+    </select>
+
+    <!-- 添加一个常用资料信息 -->
+    <insert id="add" parameterType="com.jaezi.synergia.model.FrequentlyUsedData" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO syn_frequently_used_data(`name`,
+        description,
+        url,visible,update_time,document_url,document_name)
+        VALUES(#{name}, #{description}, #{url},#{visible},#{updateTime},#{documentUrl},#{documentName})
+    </insert>
+
+    <!-- 修改常用资料信息 -->
+    <update id="update" parameterType="com.jaezi.synergia.model.FrequentlyUsedData">
+        UPDATE syn_frequently_used_data
+        SET
+        <trim suffixOverrides=",">
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="updateTime != null and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="documentUrl != null and documentUrl != ''">document_url = #{documentUrl},</if>
+            <if test="documentName != null and documentName != ''">document_name = #{documentName},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除一个常用资料信息 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM syn_frequently_used_data WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "- //mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaezi.srminterface.dao.FiledConfigDao">
+
+    <resultMap id="filedConfig" type="com.jaezi.srminterface.model.FiledConfig">
+        <id property="id" column="id"/>
+        <result property="filedName" column="filed_name"/>
+        <result property="dataType" column="data_type"/>
+        <result property="defaultValues" column="default_values"/>
+        <result property="isNull" column="is_null"/>
+        <result property="isPk" column="is_pk"/>
+        <result property="comments" column="comments"/>
+        <result property="tableId" column="table_id"/>
+    </resultMap>
+
+    <resultMap id="filedConfigVo" type="com.jaezi.srminterface.vo.FiledConfigVo">
+
+    </resultMap>
+
+    <sql id="base_column">
+        sfc.id,
+	    sfc.filed_name,
+	    sfc.data_type,
+	    sfc.default_values,
+	    sfc.is_null,
+	    sfc.is_pk,
+	    sfc.comments,
+        sfc.table_id
+    </sql>
+
+    <sql id="all_column">
+        sfc.id,
+	    sfc.filed_name,
+	    sfc.data_type,
+	    sfc.default_values,
+	    sfc.is_null,
+	    sfc.is_pk,
+	    sfc.comments,
+        sfc.table_id
+    </sql>
+
+    <!-- 查询所有数据列 -->
+    <select id="getAllVos" resultMap="filedConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_filed_config sfc
+        <where>
+            <if test="filedName != null and filedName != ''">
+                sfc.filed_name = #{filedName}
+            </if>
+            <if test="tableId != null and tableId != ''">
+                AND sfc.table_id = #{tableId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有数据列 -->
+    <select id="getAll" resultMap="filedConfig" parameterType="java.util.Map">
+        SELECT
+        <include refid="all_column"></include>
+        FROM sys_filed_config sfc
+        LEFT JOIN sys_table_config stc ON sfc.table_id = stc.id
+        <where>
+            <if test="filedName != null and filedName != ''">
+                sfc.filed_name = #{filedName}
+            </if>
+            <if test="tableName != null and tableName != ''">
+                AND stc.table_name = #{tableName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID获取数据列 -->
+    <select id="getOneById" parameterType="java.lang.Integer" resultMap="filedConfig">
+        SELECT
+        <include refid="base_column"></include>
+        FROM sys_filed_config
+    </select>
+
+    <!-- 添加数据列 -->
+    <insert id="add" parameterType="com.jaezi.srminterface.model.FiledConfig">
+        INSERT INTO sys_filed_config(filed_name,
+                                     data_type,
+                                     default_values,
+                                     is_null,
+                                     is_pk,
+                                     comments,
+                                     table_id)
+        VALUES (#{filedName}, #{dataType}, #{defaultValues}, #{isNull}, #{isPk}, #{comments}, #{tableId})
+    </insert>
+
+    <!-- 更新数据列 -->
+    <update id="update" parameterType="com.jaezi.srminterface.model.FiledConfig">
+        UPDATE sys_filed_config
+        SET
+        <trim suffixOverrides=",">
+            <if test="filedName != null and filedName != ''">filed_name = #{filedName},</if>
+            <if test="dataType != null and dataType != ''">data_type = #{dataType},</if>
+            <if test="defaultValues != null and defaultValues != ''">default_values = #{defaultValues},</if>
+            <if test="isNull != null">is_null = #{isNull},</if>
+            <if test="isPk != null">is_pk = #{isPk},</if>
+            <if test="comments != null and comments != ''">comments = #{comments},</if>
+            <if test="tableId != null and tableId != ''">table_id = #{tableId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除数据列 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_filed_config
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据tableId删除数据列 -->
+    <delete id="deleteByTableId">
+        DELETE
+        FROM sys_filed_config
+        WHERE table_id = #{id}
+    </delete>
+</mapper>
