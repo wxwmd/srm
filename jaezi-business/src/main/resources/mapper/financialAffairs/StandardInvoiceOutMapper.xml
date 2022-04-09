@@ -18,6 +18,8 @@
         <result column="not_out_invoice_number" property="notOutInvoiceNumber" jdbcType="INTEGER"/>
         <result column="unit_price" property="unitPrice" jdbcType="DECIMAL"/>
         <result column="quantity" property="quantity" jdbcType="DECIMAL"/>
+        <result column="freeze_quantity" property="freezeNumber" jdbcType="DECIMAL"/>
+        <result column="material_name" property="materialName" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
     </resultMap>
@@ -26,8 +28,48 @@
         bsio.id,bsio.plant,bsio.`order`,bsio.material_voucher,bsio.voucher_project,bsio.material,
         sm.material_description AS material_describe,bsio.supplier_code,
         bsio.hong_project,bsio.interim_invoice_number,bsio.aggregate_amount,bsio.purchase_order,bsio.not_out_invoice_number,
-        bsio.unit_price,quantity,bsio.create_time,bsio.status
+        bsio.unit_price,quantity,bsio.create_time,bsio.status,bsio.freeze_quantity
       </sql>
+
+    <sql id="base_column_v1">
+        bsio.id,bsio.supplier_code,bsio.material,sm.material_name,
+        bsio.purchase_order,bsio.hong_project,bsio.plant,bsio.material_voucher,bsio.voucher_project,bsio.not_out_invoice_number,bsio.freeze_quantity,
+        bsio.status,bsio.unit_price,bsio.create_time
+    </sql>
+
+    <select id="findAll1" resultMap="standardInvoiceOut" parameterType="java.util.Map">
+        SELECT
+        <include refid="base_column_v1"/>
+        FROM bus_standard_invoice_out bsio
+        LEFT JOIN sys_material sm ON bsio.material = sm.material_number
+        <where>
+            <if test="supplierCode != null and supplierCode != ''">
+                bsio.supplier_code = #{supplierCode}
+            </if>
+            <if test="userType == 1">
+                <!-- 供应商看自己的数据 -->
+                AND bsio.supplier_code IN (
+                SELECT username FROM sys_user WHERE real_name = #{realName}
+                )
+            </if>
+            <if test="userType == 0">
+                <!-- 企业用户看绑定供应商的数据 -->
+                AND bsio.supplier_code IN (
+                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
+                )
+                <!-- 企业用户看绑定物料的数据 -->
+                AND bsio.material IN (
+                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
+                )
+            </if>
+            <if test="plant != null and plant != ''">
+                AND bsio.plant = #{plant}
+            </if>
+            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
+                AND bsio.create_time BETWEEN #{startTime} AND #{entTime}
+            </if>
+        </where>
+    </select>
 
     <!-- 查询标准物资开票-->
     <select id="getAllVos" resultMap="standardInvoiceOut" parameterType="java.util.Map">

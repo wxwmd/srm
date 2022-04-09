@@ -17,20 +17,47 @@ import java.math.BigDecimal;
 public class StandardInvoiceOut extends BaseModel {
 
 
-    @ExcelProperty("序号")
+    @ExcelIgnore
     private Integer id;
+
+    /**
+     * 供应商编码
+     */
+    @ExcelProperty("供应商编码")
+    private String supplierCode;
+
+    @ExcelProperty("供应商名称")
+    private String supplierName;
+
+
+    /**
+     * 物料
+     */
+    @ExcelProperty("物料号")
+    private String material;
+
+    @ExcelProperty("物料名称")
+    private String materialName;
+
+    /**
+     * 采购订单
+     */
+    @ExcelProperty("采购订单")
+    private String purchaseOrder;
+
+
+    /**
+     * 行项目
+     */
+    @ExcelProperty("行项目")
+    private String hongProject;
+
 
     /**
      * 工厂
      */
     @ExcelProperty("工厂")
     private Integer plant;
-
-    /**
-     * 顺序
-     */
-    @ExcelProperty("顺序")
-    private String order;
 
     /**
      * 物料凭证
@@ -45,52 +72,72 @@ public class StandardInvoiceOut extends BaseModel {
     private String voucherProject;
 
     /**
-     * 物料
+     * 未开票数量
      */
-    @ExcelProperty("物料")
-    private String material;
+    @ExcelProperty("未开票数量")
+    private BigDecimal notOutInvoiceNumber;
+
+    /**
+     * 冻结数量
+     */
+    @ExcelProperty("冻结数量")
+    private BigDecimal freezeNumber;
+
+    /**
+     * 顺序
+     */
+    @ExcelIgnore
+    private String order;
+
+
+
 
     /**
      * 物料描述
      */
-    @ExcelProperty("物料描述")
+    @ExcelIgnore
     private String materialDescribe;
 
-    /**
-     * 供应商编码
-     */
-    @ExcelIgnore
-    private String supplierCode;
-
-    /**
-     * 行项目
-     */
-    @ExcelProperty("行项目")
-    private String hongProject;
 
     /**
      * 临时发票号
      */
-    @ExcelProperty("临时发票号")
+    @ExcelIgnore
     private Integer interimInvoiceNumber;
 
     /**
      * 总金额（不含税）
      */
-    @ExcelProperty("总金额（不含税）")
+    @ExcelIgnore
     private BigDecimal aggregateAmount;
 
-    /**
-     * 采购订单
-     */
-    @ExcelProperty("采购订单")
-    private String purchaseOrder;
 
-    /**
-     * 未开票数量
-     */
-    @ExcelProperty("未开票数量")
-    private BigDecimal notOutInvoiceNumber;
+
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
+
+    public BigDecimal getFreezeNumber() {
+        return freezeNumber;
+    }
+
+    public void setFreezeNumber(BigDecimal freezeNumber) {
+        this.freezeNumber = freezeNumber;
+    }
+
 
     /**
      * 单价
@@ -109,6 +156,8 @@ public class StandardInvoiceOut extends BaseModel {
      */
     @ExcelProperty("创建时间")
     private String createTime;
+
+
 
     /**
      * 状态 -1未开票 0已开票

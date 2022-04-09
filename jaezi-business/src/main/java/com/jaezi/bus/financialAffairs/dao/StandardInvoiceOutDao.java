@@ -30,6 +30,16 @@ public interface StandardInvoiceOutDao extends BaseDao<StandardInvoiceOut, Stand
     List<StandardInvoiceOut> findAll(Map<String, String> filter);
 
     /**
+     * 查询所有标准物资开票v1
+     *
+     * @param filter plant 工厂
+     *               startTime 开始时间
+     *               entTime 结束时间
+     * @return StandardInvoiceOut>
+     */
+    List<StandardInvoiceOut> findAll1(Map<String, String> filter);
+
+    /**
      * 根据采购订单查询标准物资开票对象
      *
      * @param purchaseOrder 标准物资开票对象
