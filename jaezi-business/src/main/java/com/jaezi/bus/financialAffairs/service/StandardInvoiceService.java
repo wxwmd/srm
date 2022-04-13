@@ -77,7 +77,6 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
                         }
                         standardInvoiceOutData.setNotOutInvoiceNumber(standardInvoiceOutData.getNotOutInvoiceNumber().add(standardInvoiceOutInfo.getQuantity()));
                         //设置开票单状态为未开票
-                        standardInvoiceOutData.setStatus(-1);
                         standardInvoiceOutDao.update(standardInvoiceOutData);
                         standardInvoiceOutInfoDao.deleteByInterimInvoiceNumber(oneById.getInterimInvoiceNumber());
                         return standardInvoiceDao.delete(id);
@@ -97,8 +96,8 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
      * @param standardInvoice 标准物资发票信息
      * @return int 修改条数
      * 标准物资发票维护完成之后即为已提交状态，其erp导入的信息表中的那条数据也修改为已提交状态
-     * @author yx
-     * @date 2021年8月19日09:24:19
+     * @author wxw
+     * @date 2022年04月13日
      * @since 1.0
      */
     @Override
@@ -108,7 +107,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
             LocalDate nowTime = LocalDate.now();
             standardInvoice.setOnAccountDate(String.valueOf(nowTime));
-            standardInvoice.setInvoiceStatus(2);
+            standardInvoice.setInvoiceStatus(1);
             return standardInvoiceDao.update(standardInvoice);
         } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
             return standardInvoiceDao.update(standardInvoice);
@@ -187,14 +186,13 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             standardInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
             BigDecimal quantity = standardInvoice.getNotOutInvoiceNumber();
             BigDecimal multiply = quantity.multiply(unitPriceData);
-            standardInvoice.setAggregateAmount(multiply);
+            standardInvoice.setWithoutTaxAmount(multiply);
             //生成临时发票号 202108251722221530
             Integer interimInvoiceNumber = IDUtil.getId();
             standardInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
             standardInvoice.setSupplierCode(standardInvoiceOut.getSupplierCode());
             LocalDate nowTime = LocalDate.now();
             standardInvoice.setOutInvoiceDate(String.valueOf(nowTime));
-            standardInvoice.setAuditStatus(0);
             standardInvoice.setInvoiceType(0);
             standardInvoiceDao.add(standardInvoice);
             StandardInvoiceOutInfo standardInvoiceOutInfo = new StandardInvoiceOutInfo();
@@ -224,39 +222,54 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
      */
     public List<StandardInvoice> addMerge(List<StandardInvoice> standardInvoices, Integer quota, String username) {
         BigDecimal quotaData = new BigDecimal(String.valueOf(quota));
-        BigDecimal aggregateMoney = new BigDecimal("0.00");
+        BigDecimal withoutTaxAmountSum = new BigDecimal("0.00");
+        BigDecimal taxAmountSum=new BigDecimal("0.00");
+        BigDecimal totalAmountSum=new BigDecimal("0.00");
         List<StandardInvoice> standardInvoiceList = new ArrayList<>();
         List<StandardInvoiceOut> standardInvoiceOutList = new ArrayList<>();
         for (StandardInvoice standardInvoice : standardInvoices) {
+
             StandardInvoiceOut byPurchaseOrder = standardInvoiceOutDao.getStandardByPOrderAndMat(standardInvoice.getPurchaseOrder(), standardInvoice.getMaterial());
             if (byPurchaseOrder == null) {
                 return standardInvoiceList;
             }
             standardInvoiceOutList.add(byPurchaseOrder);
+
+            // 看看数据
+            System.out.println(byPurchaseOrder.toString());
             // 单价
             BigDecimal unitPrice = byPurchaseOrder.getUnitPrice();
             BigDecimal moneyData = unitPrice.multiply(byPurchaseOrder.getNotOutInvoiceNumber());
-            aggregateMoney = aggregateMoney.add(moneyData);
-            //判断每个合并的金额是不是前端填写的金额
-            if (moneyData.compareTo(standardInvoice.getAggregateAmount()) != 0) {
+
+
+            //判断填写的不含税金额书否正确
+            if (moneyData.compareTo(standardInvoice.getWithoutTaxAmount()) != 0) {
                 if (standardInvoices.size() == 1){
                     return standardInvoiceList;
                 }
                 standardInvoiceList.add(standardInvoice);
                 return standardInvoiceList;
             }
+            withoutTaxAmountSum=withoutTaxAmountSum.add(standardInvoice.getWithoutTaxAmount());
+            taxAmountSum=taxAmountSum.add(standardInvoice.getTaxAmount());
+            totalAmountSum=totalAmountSum.add(standardInvoice.getTotalAmount());
             standardInvoiceList.add(standardInvoice);
         }
-        //判断总金额是否小于等于限额
-        if (aggregateMoney.compareTo(quotaData) > 0) {
-            standardInvoiceList.clear();
-            return standardInvoiceList;
-        }
 
+        //判断总金额是否小于等于限额
+//        if (aggregateMoney.compareTo(quotaData) > 0) {
+//            standardInvoiceList.clear();
+//            return standardInvoiceList;
+//        }
+
+        // 生成临时发票
         StandardInvoice standardInvoice = new StandardInvoice();
+        standardInvoice.setInvoiceStatus(0);
         //生成临时发票号
         Integer interimInvoiceNumber = IDUtil.getId();
-        standardInvoice.setAggregateAmount(aggregateMoney);
+        standardInvoice.setWithoutTaxAmount(withoutTaxAmountSum);
+        standardInvoice.setTaxAmount(taxAmountSum);
+        standardInvoice.setTotalAmount(totalAmountSum);
         //生成发票创建时间
         standardInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
         LocalDate nowTime = LocalDate.now();
@@ -266,7 +279,6 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         standardInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
         //设置发票状态为已暂存
         standardInvoice.setInvoiceStatus(0);
-        standardInvoice.setAuditStatus(0);
         standardInvoice.setInvoiceType(0);
         standardInvoiceDao.add(standardInvoice);
         //生成发票开票信息
@@ -286,8 +298,8 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         }
         for (StandardInvoiceOut standardInvoiceOut : standardInvoiceOutList) {
             //设置开票单状态为已开票
-            standardInvoiceOut.setStatus(0);
             standardInvoiceOut.setNotOutInvoiceNumber(new BigDecimal("0.00"));
+            standardInvoiceOut.setStatus(0);
             standardInvoiceOutDao.update(standardInvoiceOut);
         }
         return standardInvoiceList;
@@ -300,11 +312,9 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         if (oneById != null) {
             //设置状态
             if (auditStatus == 2) {
-                oneById.setAuditStatus(auditStatus);
                 oneById.setInvoiceStatus(invoiceStatus);
                 return standardInvoiceDao.update(oneById);
             } else {
-                oneById.setAuditStatus(auditStatus);
                 return standardInvoiceDao.update(oneById);
             }
         }

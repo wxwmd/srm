@@ -90,8 +90,6 @@ public class StandardInvoiceOut extends BaseModel {
     private String order;
 
 
-
-
     /**
      * 物料描述
      */
@@ -109,9 +107,46 @@ public class StandardInvoiceOut extends BaseModel {
      * 总金额（不含税）
      */
     @ExcelIgnore
-    private BigDecimal aggregateAmount;
+    private BigDecimal withoutTaxAmount;
+
+    /*
+    * 税额
+    * */
+    @ExcelIgnore
+    private BigDecimal taxAmount;
+
+    /*
+    * 价税合计
+    * */
+    @ExcelIgnore
+    private BigDecimal totalAmount;
+
+    /**
+     * 单价
+     */
+    @ExcelIgnore
+    private BigDecimal unitPrice;
+
+    /**
+     * 数量
+     */
+    @ExcelProperty("数量")
+    private BigDecimal quantity;
+
+    /**
+     * 创建时间
+     */
+    @ExcelProperty("创建时间")
+    private String createTime;
 
 
+    /*
+    * 是否可以开票
+    * -1 :ok
+    * 否则：不行
+    * */
+    @ExcelIgnore()
+    private Integer status;
 
 
     public String getMaterialName() {
@@ -139,31 +174,21 @@ public class StandardInvoiceOut extends BaseModel {
     }
 
 
-    /**
-     * 单价
-     */
-    @ExcelIgnore
-    private BigDecimal unitPrice;
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
 
-    /**
-     * 数量
-     */
-    @ExcelProperty("数量")
-    private BigDecimal quantity;
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
 
-    /**
-     * 创建时间
-     */
-    @ExcelProperty("创建时间")
-    private String createTime;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 
-
-
-    /**
-     * 状态 -1未开票 0已开票
-     */
-    @ExcelIgnore
-    private Integer status;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
     public Integer getId() {
         return id;
@@ -253,12 +278,12 @@ public class StandardInvoiceOut extends BaseModel {
         this.interimInvoiceNumber = interimInvoiceNumber;
     }
 
-    public BigDecimal getAggregateAmount() {
-        return aggregateAmount;
+    public BigDecimal getWithoutTaxAmount() {
+        return withoutTaxAmount;
     }
 
-    public void setAggregateAmount(BigDecimal aggregateAmount) {
-        this.aggregateAmount = aggregateAmount;
+    public void setWithoutTaxAmount(BigDecimal withoutTaxAmount) {
+        this.withoutTaxAmount = withoutTaxAmount;
     }
 
     public BigDecimal getNotOutInvoiceNumber() {
@@ -299,5 +324,33 @@ public class StandardInvoiceOut extends BaseModel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "StandardInvoiceOut{" +
+                "id=" + id +
+                ", supplierCode='" + supplierCode + '\'' +
+                ", supplierName='" + supplierName + '\'' +
+                ", material='" + material + '\'' +
+                ", materialName='" + materialName + '\'' +
+                ", purchaseOrder='" + purchaseOrder + '\'' +
+                ", hongProject='" + hongProject + '\'' +
+                ", plant=" + plant +
+                ", materialVoucher='" + materialVoucher + '\'' +
+                ", voucherProject='" + voucherProject + '\'' +
+                ", notOutInvoiceNumber=" + notOutInvoiceNumber +
+                ", freezeNumber=" + freezeNumber +
+                ", order='" + order + '\'' +
+                ", materialDescribe='" + materialDescribe + '\'' +
+                ", interimInvoiceNumber=" + interimInvoiceNumber +
+                ", withoutTaxAmount=" + withoutTaxAmount +
+                ", taxAmount=" + taxAmount +
+                ", totalAmount=" + totalAmount +
+                ", unitPrice=" + unitPrice +
+                ", quantity=" + quantity +
+                ", createTime='" + createTime + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

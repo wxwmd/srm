@@ -5,10 +5,10 @@ import com.jaezi.common.base.BaseModel;
 import java.math.BigDecimal;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/17  16:04:30
+ * @date 2022/04/13
  * @description 标准物资发票
  */
 public class StandardInvoice extends BaseModel {
@@ -51,6 +51,11 @@ public class StandardInvoice extends BaseModel {
     private String supplierCode;
 
     /**
+     * 供应商名称
+     */
+    private String supplierName;
+
+    /**
      * 行项目
      */
     private String hongProject;
@@ -60,10 +65,7 @@ public class StandardInvoice extends BaseModel {
      */
     private Integer interimInvoiceNumber;
 
-    /**
-     * 总金额（不含税）
-     */
-    private BigDecimal aggregateAmount;
+
 
     /**
      * 采购订单
@@ -86,7 +88,10 @@ public class StandardInvoice extends BaseModel {
     private String createTime;
 
     /**
-     * 发票状态 0暂存 1已提交 2已维护 3已挂账
+     * 发票状态
+     * 0 已暂存
+     * 1 已提交
+     * 2 已挂账
      */
     private Integer invoiceStatus;
 
@@ -105,20 +110,7 @@ public class StandardInvoice extends BaseModel {
      */
     private Integer serialNumber;
 
-    /**
-     * 不含税金额
-     */
-    private BigDecimal amount;
 
-    /**
-     * 税价
-     */
-    private BigDecimal taxPrice;
-
-    /**
-     * 当前状态
-     */
-    private String status;
 
     /**
      * 挂账日期
@@ -136,6 +128,17 @@ public class StandardInvoice extends BaseModel {
     private String outInvoiceDate;
 
     /**
+     * 不含税金额
+     */
+    private BigDecimal withoutTaxAmount;
+
+    /**
+     * 税价
+     */
+    private BigDecimal taxAmount;
+
+
+    /**
      * 税率
      */
     private BigDecimal taxRate;
@@ -143,17 +146,20 @@ public class StandardInvoice extends BaseModel {
     /**
      * 税价合计
      */
-    private BigDecimal taxPriceTotal;
+    private BigDecimal totalAmount;
 
     /**
      * 折扣原因
      */
     private String discountCause;
 
-    /**
-     * 审核状态 0未审核 1审核不通过，请废弃此发票 2审核通过
-     */
-    private Integer auditStatus;
+//    /**
+//     * 审核状态 0未审核 1审核不通过，请废弃此发票 2审核通过
+//     */
+//    private Integer auditStatus;
+
+
+
 
     /**
      * 发票类型 0 标准物资发票  1返利红字发票
@@ -190,6 +196,14 @@ public class StandardInvoice extends BaseModel {
 
     public void setOrder(String order) {
         this.order = order;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public String getMaterialVoucher() {
@@ -256,13 +270,6 @@ public class StandardInvoice extends BaseModel {
         this.interimInvoiceNumber = interimInvoiceNumber;
     }
 
-    public BigDecimal getAggregateAmount() {
-        return aggregateAmount;
-    }
-
-    public void setAggregateAmount(BigDecimal aggregateAmount) {
-        this.aggregateAmount = aggregateAmount;
-    }
 
     public BigDecimal getUnitPrice() {
         return unitPrice;
@@ -286,10 +293,6 @@ public class StandardInvoice extends BaseModel {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getInvoiceStatus() {
-        return invoiceStatus;
     }
 
     public void setInvoiceStatus(Integer invoiceStatus) {
@@ -320,28 +323,24 @@ public class StandardInvoice extends BaseModel {
         this.serialNumber = serialNumber;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getWithoutTaxAmount() {
+        return withoutTaxAmount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setWithoutTaxAmount(BigDecimal withoutTaxAmount) {
+        this.withoutTaxAmount = withoutTaxAmount;
     }
 
-    public BigDecimal getTaxPrice() {
-        return taxPrice;
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
     }
 
-    public void setTaxPrice(BigDecimal taxPrice) {
-        this.taxPrice = taxPrice;
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public Integer getInvoiceStatus() {
+        return invoiceStatus;
     }
 
     public String getOnAccountDate() {
@@ -376,12 +375,12 @@ public class StandardInvoice extends BaseModel {
         this.taxRate = taxRate;
     }
 
-    public BigDecimal getTaxPriceTotal() {
-        return taxPriceTotal;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTaxPriceTotal(BigDecimal taxPriceTotal) {
-        this.taxPriceTotal = taxPriceTotal;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getDiscountCause() {
@@ -392,11 +391,38 @@ public class StandardInvoice extends BaseModel {
         this.discountCause = discountCause;
     }
 
-    public Integer getAuditStatus() {
-        return auditStatus;
-    }
-
-    public void setAuditStatus(Integer auditStatus) {
-        this.auditStatus = auditStatus;
+    @Override
+    public String toString() {
+        return "StandardInvoice{" +
+                "id=" + id +
+                ", plant=" + plant +
+                ", order='" + order + '\'' +
+                ", materialVoucher='" + materialVoucher + '\'' +
+                ", voucherProject='" + voucherProject + '\'' +
+                ", material='" + material + '\'' +
+                ", materialDescribe='" + materialDescribe + '\'' +
+                ", supplierCode='" + supplierCode + '\'' +
+                ", supplierName='" + supplierName + '\'' +
+                ", hongProject='" + hongProject + '\'' +
+                ", interimInvoiceNumber=" + interimInvoiceNumber +
+                ", withoutTaxAmount=" + withoutTaxAmount +
+                ", purchaseOrder='" + purchaseOrder + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", notOutInvoiceNumber=" + notOutInvoiceNumber +
+                ", createTime='" + createTime + '\'' +
+                ", invoiceStatus=" + invoiceStatus +
+                ", invoiceNumber='" + invoiceNumber + '\'' +
+                ", invoiceDate='" + invoiceDate + '\'' +
+                ", serialNumber=" + serialNumber +
+                ", onAccountDate='" + onAccountDate + '\'' +
+                ", invoiceCode='" + invoiceCode + '\'' +
+                ", outInvoiceDate='" + outInvoiceDate + '\'' +
+                ", amount=" + withoutTaxAmount +
+                ", taxAmount=" + taxAmount +
+                ", taxRate=" + taxRate +
+                ", totalAmount=" + totalAmount +
+                ", discountCause='" + discountCause + '\'' +
+                ", invoiceType=" + invoiceType +
+                '}';
     }
 }

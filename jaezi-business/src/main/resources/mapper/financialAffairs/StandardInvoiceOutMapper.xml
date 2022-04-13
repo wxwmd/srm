@@ -11,9 +11,10 @@
         <result column="material" property="material" jdbcType="INTEGER"/>
         <result column="material_describe" property="materialDescribe" jdbcType="VARCHAR"/>
         <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="real_name" property="supplierName" jdbcType="VARCHAR"/>
         <result column="hong_project" property="hongProject" jdbcType="INTEGER"/>
         <result column="interim_invoice_number" property="interimInvoiceNumber" jdbcType="INTEGER"/>
-        <result column="aggregate_amount" property="aggregateAmount" jdbcType="DECIMAL"/>
+        <result column="aggregate_amount" property="withoutTaxAmount" jdbcType="DECIMAL"/>
         <result column="purchase_order" property="purchaseOrder" jdbcType="INTEGER"/>
         <result column="not_out_invoice_number" property="notOutInvoiceNumber" jdbcType="INTEGER"/>
         <result column="unit_price" property="unitPrice" jdbcType="DECIMAL"/>
@@ -32,7 +33,7 @@
       </sql>
 
     <sql id="base_column_v1">
-        bsio.id,bsio.supplier_code,bsio.material,sm.material_name,
+        bsio.id,bsio.supplier_code,su.real_name,bsio.material,sm.material_name,
         bsio.purchase_order,bsio.hong_project,bsio.plant,bsio.material_voucher,bsio.voucher_project,bsio.not_out_invoice_number,bsio.freeze_quantity,
         bsio.status,bsio.unit_price,bsio.create_time
     </sql>
@@ -42,6 +43,7 @@
         <include refid="base_column_v1"/>
         FROM bus_standard_invoice_out bsio
         LEFT JOIN sys_material sm ON bsio.material = sm.material_number
+        LEFT JOIN sys_user su on bsio.supplier_code=su.username
         <where>
             <if test="supplierCode != null and supplierCode != ''">
                 bsio.supplier_code = #{supplierCode}
@@ -186,7 +188,7 @@
         INSERT INTO bus_standard_invoice_out(plant,`order`,material_voucher,voucher_project,material,supplier_code,
         hong_project,interim_invoice_number,aggregate_amount,purchase_order,not_out_invoice_number,unit_price,quantity,create_time,status)
         VALUES(#{plant}, #{order}, #{materialVoucher},#{voucherProject},#{material},#{supplierCode},
-        #{hongProject},#{interimInvoiceNumber},#{aggregateAmount},#{purchaseOrder},#{notOutInvoiceNumber},#{unitPrice},#{quantity},#{createTime},#{status})
+        #{hongProject},#{interimInvoiceNumber},#{withoutTaxAmount},#{purchaseOrder},#{notOutInvoiceNumber},#{unitPrice},#{quantity},#{createTime},#{status})
     </insert>
 
     <!-- 批量添加标准物资开票 -->
@@ -197,7 +199,7 @@
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.id}, #{item.plant}, #{item.order}, #{item.materialVoucher},#{item.voucherProject},#{item.material},
             #{item.supplierCode},#{item.hongProject},#{item.interimInvoiceNumber},
-            #{item.aggregateAmount},#{item.purchaseOrder},#{item.notOutInvoiceNumber},#{item.unitPrice},#{item.quantity},
+            #{item.withoutTaxAmount},#{item.purchaseOrder},#{item.notOutInvoiceNumber},#{item.unitPrice},#{item.quantity},
             #{item.createTime})
         </foreach>
     </insert>
@@ -215,7 +217,7 @@
             <if test="supplierCode != null and supplierCode != ''">supplier_code = #{supplierCode},</if>
             <if test="hongProject != null and hongProject != ''">hong_project = #{hongProject},</if>
             <if test="interimInvoiceNumber != null and interimInvoiceNumber != ''">interim_invoice_number = #{interimInvoiceNumber},</if>
-            <if test="aggregateAmount != null and aggregateAmount != ''">aggregate_amount = #{aggregateAmount},</if>
+            <if test="withoutTaxAmount != null and withoutTaxAmount != ''">aggregate_amount = #{withoutTaxAmount},</if>
             <if test="purchaseOrder != null and purchaseOrder != ''">purchase_order = #{purchaseOrder},</if>
             <if test="notOutInvoiceNumber != null ">not_out_invoice_number = #{notOutInvoiceNumber},</if>
             <if test="unitPrice != null and unitPrice != ''">unit_price = #{unitPrice},</if>

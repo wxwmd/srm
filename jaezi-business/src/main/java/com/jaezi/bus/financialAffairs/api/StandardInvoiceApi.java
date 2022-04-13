@@ -134,7 +134,6 @@ public class StandardInvoiceApi extends BaseApi {
                     return new JsonResult(ResponseEnum.ORDER_INFO_BLANK);
                 }
                 //设置主发票的状态为已开票
-                byPurchaseOrder.setStatus(0);
                 //未开票数量设置为0
                 byPurchaseOrder.setNotOutInvoiceNumber(new BigDecimal("0.00"));
                 if (standardInvoiceOutService.update(byPurchaseOrder) != 0) {
@@ -155,11 +154,16 @@ public class StandardInvoiceApi extends BaseApi {
      */
     @PostMapping("/merge")
     public JsonResult addMerge(@RequestBody List<StandardInvoice> standardInvoices, HttpServletRequest request) {
+        for (StandardInvoice standardInvoice:standardInvoices){
+            System.out.println("前端传来的参数："+standardInvoice.toString());
+        }
+
         String token = request.getHeader("Credential");
         Integer quota = JwtUtil.getQuota(token);
         String username = JwtUtil.getUsername(token);
         if (standardInvoices.size() != 0) {
             List<StandardInvoice> standardInvoiceList = standardInvoiceService.addMerge(standardInvoices, quota, username);
+
             if (standardInvoiceList.size() == standardInvoices.size()) {
                 return JsonResult.SUCCESS;
             } else if (standardInvoiceList.size() == 0) {

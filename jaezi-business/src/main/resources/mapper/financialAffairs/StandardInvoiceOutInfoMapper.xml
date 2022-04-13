@@ -20,6 +20,11 @@
         bsioi.supplier_code,bsioi.hong_project,bsioi.interim_invoice_number,bsioi.purchase_order,bsioi.quantity
       </sql>
 
+    <sql id="base_column1">
+        bsioi.id,bsioi.material_voucher,bsioi.voucher_project,bsioi.material,sm.material_description as material_describe,
+        bsioi.supplier_code,bsioi.hong_project,bsioi.interim_invoice_number,bsioi.purchase_order,bsioi.quantity
+    </sql>
+
     <!-- 查询标准物资开票信息-->
     <select id="findAll" resultMap="standardInvoiceOutInfo" parameterType="java.util.Map">
         SELECT

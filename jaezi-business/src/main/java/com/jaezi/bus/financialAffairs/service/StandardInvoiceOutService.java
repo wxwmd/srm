@@ -129,15 +129,13 @@ public class StandardInvoiceOutService extends BaseService<StandardInvoiceOut, S
                     standardInvoice.setSupplierCode(oneById.getSupplierCode());
                     standardInvoice.setMaterialDescribe(oneById.getMaterialDescribe());
                     standardInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
-                    standardInvoice.setAggregateAmount(money);
+                    standardInvoice.setWithoutTaxAmount(money);
                     //设置发票状态为已暂存
                     standardInvoice.setInvoiceStatus(0);
-                    standardInvoice.setAuditStatus(0);
                     standardInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
                     //通过验证就将erp导入数据表中的此条订单状态设置为已开票
                     if (standardInvoiceDao.add(standardInvoice) != 0) {
                         //设置开票订单状态为已开票
-                        oneById.setStatus(0);
                         //将未开票个数设置为0
                         oneById.setNotOutInvoiceNumber(new BigDecimal("0.00"));
                         standardInvoiceOutDao.update(oneById);
