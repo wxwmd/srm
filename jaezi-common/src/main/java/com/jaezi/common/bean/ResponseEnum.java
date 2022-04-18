@@ -55,7 +55,7 @@ public enum ResponseEnum {
     TECHNICAL_INFORMATION_FAILURE(474,"文件上传成功"),
     REPORT_NOT_HAVE_VISIBLE(475,"请设置报告可见性！"),
     ORDER_SUM_ERROR(501,"订单金额或数量错误！"),
-    MERGE_ORDER_AGGREGATE_AMOUNT_ERROR(503,"合并总金额已超过限额或填写金额与订单实际金额不符！"),
+    MERGE_ORDER_AGGREGATE_AMOUNT_ERROR(503,"填写金额与订单实际金额不符！"),
     ORDER_AGGREGATE_AMOUNT_ERROR(504,"请与相关人员线下沟通！"),
     NO_QUOTA(507,"未设置限额，请设置限额再进行操作！"),
     AGGREGATE_AMOUNT_ERROR(505,"总金额已超过限额或不存在该订单！"),

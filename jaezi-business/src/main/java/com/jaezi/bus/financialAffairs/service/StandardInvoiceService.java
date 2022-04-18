@@ -106,7 +106,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         //如果是供应商可设置发票状态为已维护
         if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
             LocalDate nowTime = LocalDate.now();
-            standardInvoice.setOnAccountDate(String.valueOf(nowTime));
+            //standardInvoice.setOnAccountDate(String.valueOf(nowTime));
             standardInvoice.setInvoiceStatus(1);
             return standardInvoiceDao.update(standardInvoice);
         } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
@@ -212,13 +212,13 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
     }
 
     /**
-     * 订单合并
+     * 标准物资开票
      *
      * @param standardInvoices 合并的
-     * @return StandardInvoice>
-     * @author yx
-     * @date 2021年8月26日11:32:27
-     * @since 1.0
+     * @return StandardInvoice
+     * @author wxw
+     * @date 2022年4月18日
+     * @since 2.0
      */
     public List<StandardInvoice> addMerge(List<StandardInvoice> standardInvoices, Integer quota, String username) {
         BigDecimal quotaData = new BigDecimal(String.valueOf(quota));
@@ -235,15 +235,19 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             }
             standardInvoiceOutList.add(byPurchaseOrder);
 
-            // 看看数据
-            System.out.println(byPurchaseOrder.toString());
+
             // 单价
             BigDecimal unitPrice = byPurchaseOrder.getUnitPrice();
             BigDecimal moneyData = unitPrice.multiply(byPurchaseOrder.getNotOutInvoiceNumber());
 
 
-            //判断填写的不含税金额书否正确
-            if (moneyData.compareTo(standardInvoice.getWithoutTaxAmount()) != 0) {
+            /*
+            * 判断填写的不含税金额书否正确
+            * 对每行数据来说有两种情况数据是出错的：
+            * 1. 总金额（不含税）！=单价*数量
+            * 2. 总金额（税价合计）！=总金额（不含税）+税价
+            * */
+            if (moneyData.compareTo(standardInvoice.getWithoutTaxAmount()) != 0 || standardInvoice.getTotalAmount().compareTo(standardInvoice.getWithoutTaxAmount().add(standardInvoice.getTaxAmount()))!=0) {
                 if (standardInvoices.size() == 1){
                     return standardInvoiceList;
                 }

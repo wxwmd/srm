@@ -74,12 +74,12 @@ public class StandardInvoiceOutService extends BaseService<StandardInvoiceOut, S
             filter.put("endTime", DateUtil.timeTranslate(filter.get("endTime")));
         }
         if (filter.get("limit") == null || filter.get("page") == null) {
-            List<StandardInvoiceOut> all = standardInvoiceOutDao.findAll1(filter);
+            List<StandardInvoiceOut> all = standardInvoiceOutDao.findAll(filter);
             dg.setRecords(all);
             return dg;
         }
         Page<StandardInvoiceOut> page = PageHelper.startPage(Integer.parseInt(filter.get("page")), Integer.parseInt(filter.get("limit")));
-        List<StandardInvoiceOut> list = standardInvoiceOutDao.findAll1(filter);
+        List<StandardInvoiceOut> list = standardInvoiceOutDao.findAll(filter);
         dg.setRecords(list);
         dg.setTotal(page.getTotal());
         return dg;
@@ -187,7 +187,7 @@ public class StandardInvoiceOutService extends BaseService<StandardInvoiceOut, S
      * @since 1.0
      */
     public void export(HttpServletResponse response, Map<String, String> filter) throws Exception {
-        List<StandardInvoiceOut> standardInvoiceOutInfo = standardInvoiceOutDao.findAll1(filter);
+        List<StandardInvoiceOut> standardInvoiceOutInfo = standardInvoiceOutDao.findAll(filter);
         if (ObjectUtils.isEmpty(standardInvoiceOutInfo)) {
             return;
         }

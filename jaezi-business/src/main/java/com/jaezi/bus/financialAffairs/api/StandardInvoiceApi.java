@@ -154,10 +154,6 @@ public class StandardInvoiceApi extends BaseApi {
      */
     @PostMapping("/merge")
     public JsonResult addMerge(@RequestBody List<StandardInvoice> standardInvoices, HttpServletRequest request) {
-        for (StandardInvoice standardInvoice:standardInvoices){
-            System.out.println("前端传来的参数："+standardInvoice.toString());
-        }
-
         String token = request.getHeader("Credential");
         Integer quota = JwtUtil.getQuota(token);
         String username = JwtUtil.getUsername(token);

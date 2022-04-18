@@ -38,15 +38,20 @@
         bsio.status,bsio.unit_price,bsio.create_time
     </sql>
 
-    <select id="findAll1" resultMap="standardInvoiceOut" parameterType="java.util.Map">
+    <!-- 查询标准物资开票-->
+    <!--做了一点小修改，只展示未被开票的行项目-->
+    <select id="findAll" resultMap="standardInvoiceOut" parameterType="java.util.Map">
         SELECT
         <include refid="base_column_v1"/>
         FROM bus_standard_invoice_out bsio
         LEFT JOIN sys_material sm ON bsio.material = sm.material_number
         LEFT JOIN sys_user su on bsio.supplier_code=su.username
         <where>
+            <if test="status != null">
+                bsio.status=-1
+            </if>
             <if test="supplierCode != null and supplierCode != ''">
-                bsio.supplier_code = #{supplierCode}
+                AND bsio.supplier_code = #{supplierCode}
             </if>
             <if test="userType == 1">
                 <!-- 供应商看自己的数据 -->
@@ -111,40 +116,40 @@
         </where>
     </select>
 
-    <!-- 查询标准物资开票-->
-    <select id="findAll" resultMap="standardInvoiceOut" parameterType="java.util.Map">
-        SELECT
-        <include refid="base_column"/>
-        FROM bus_standard_invoice_out bsio
-        LEFT JOIN sys_material sm ON bsio.material = sm.material_number
-        <where>
-            <if test="supplierCode != null and supplierCode != ''">
-                bsio.supplier_code = #{supplierCode}
-            </if>
-            <if test="userType == 1">
-                <!-- 供应商看自己的数据 -->
-                AND bsio.supplier_code IN (
-                SELECT username FROM sys_user WHERE real_name = #{realName}
-                )
-            </if>
-            <if test="userType == 0">
-                <!-- 企业用户看绑定供应商的数据 -->
-                AND bsio.supplier_code IN (
-                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})
-                )
-                <!-- 企业用户看绑定物料的数据 -->
-                AND bsio.material IN (
-                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}
-                )
-            </if>
-            <if test="plant != null and plant != ''">
-                AND bsio.plant = #{plant}
-            </if>
-            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
-                AND bsio.create_time BETWEEN #{startTime} AND #{entTime}
-            </if>
-        </where>
-    </select>
+<!--    &lt;!&ndash; 查询标准物资开票&ndash;&gt;-->
+<!--    <select id="findAll" resultMap="standardInvoiceOut" parameterType="java.util.Map">-->
+<!--        SELECT-->
+<!--        <include refid="base_column"/>-->
+<!--        FROM bus_standard_invoice_out bsio-->
+<!--        LEFT JOIN sys_material sm ON bsio.material = sm.material_number-->
+<!--        <where>-->
+<!--            <if test="supplierCode != null and supplierCode != ''">-->
+<!--                bsio.supplier_code = #{supplierCode}-->
+<!--            </if>-->
+<!--            <if test="userType == 1">-->
+<!--                &lt;!&ndash; 供应商看自己的数据 &ndash;&gt;-->
+<!--                AND bsio.supplier_code IN (-->
+<!--                SELECT username FROM sys_user WHERE real_name = #{realName}-->
+<!--                )-->
+<!--            </if>-->
+<!--            <if test="userType == 0">-->
+<!--                &lt;!&ndash; 企业用户看绑定供应商的数据 &ndash;&gt;-->
+<!--                AND bsio.supplier_code IN (-->
+<!--                SELECT supplier_code FROM sys_material_supplier WHERE material_number IN (SELECT material_number FROM sys_material WHERE buyer_number = #{realName})-->
+<!--                )-->
+<!--                &lt;!&ndash; 企业用户看绑定物料的数据 &ndash;&gt;-->
+<!--                AND bsio.material IN (-->
+<!--                SELECT material_number FROM sys_material WHERE buyer_number = #{realName}-->
+<!--                )-->
+<!--            </if>-->
+<!--            <if test="plant != null and plant != ''">-->
+<!--                AND bsio.plant = #{plant}-->
+<!--            </if>-->
+<!--            <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">-->
+<!--                AND bsio.create_time BETWEEN #{startTime} AND #{entTime}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
 
     <!-- 查询一个标准物资开票-->
     <select id="getOneById" parameterType="java.lang.Integer" resultMap="standardInvoiceOut">

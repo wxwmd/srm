@@ -49,6 +49,8 @@ public class StandardInvoiceOutApi extends BaseApi {
         Integer userType = JwtUtil.getUserType(request);
         filter.put("userType", String.valueOf(userType));
         filter.put("realName", JwtUtil.getRealName(request));
+        // 只取那些没有被开票的行项目
+        filter.put("status","-1");
         DataGrid<StandardInvoiceOut> all = standardInvoiceOutService.findAll(filter);
         return returnObjectResult(all);
     }
