@@ -120,6 +120,17 @@ public class ConsignmentSalesInvoiceOut extends BaseModel {
     @ExcelProperty("发票组")
     private String invoiceGroup;
 
+    @ExcelProperty("供应商名称")
+    private String supplierName;
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
+
     /**
      * 税率
      */

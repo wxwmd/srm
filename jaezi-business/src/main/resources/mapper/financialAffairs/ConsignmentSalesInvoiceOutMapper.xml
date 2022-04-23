@@ -13,6 +13,7 @@
         <result column="tax_price_total" property="taxPriceTotal" jdbcType="DECIMAL"/>
         <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
         <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="real_name" property="supplierName" jdbcType="VARCHAR"/>
         <result column="tax_rate" property="taxRate" jdbcType="DECIMAL"/>
         <result column="purchase_order" property="purchaseOrder" jdbcType="INTEGER"/>
         <result column="material" property="material" jdbcType="VARCHAR"/>
@@ -30,6 +31,14 @@
         bcsio.tax_price_total,bcsio.create_time,bcsio.supplier_code,
         bcsio.tax_rate, bcsio.purchase_order,bcsio.material_number AS material,sm.material_description AS material_describe,
         bcsio.not_out_invoice_number,bcsio.unit_price,bcsio.status,bcsio.invoice_group,bcsio.temporal_interval
+    </sql>
+
+    <sql id="base_column1">
+        bcsio.id, bcsio.plant,bcsio.material_number,sm.material_name,bcsio.quantity,bcsio.out_invoice_period,bcsio.amount,
+        bcsio.tax_price_total,bcsio.create_time,bcsio.supplier_code,
+        bcsio.tax_rate, bcsio.purchase_order,bcsio.material_number AS material,sm.material_description AS material_describe,
+        bcsio.not_out_invoice_number,bcsio.unit_price,bcsio.status,bcsio.invoice_group,bcsio.temporal_interval,
+        su.real_name
     </sql>
 
     <!-- 寄售物资发票查询-->
@@ -82,9 +91,10 @@
     <!-- 寄售物资发票查询-->
     <select id="findAll" resultMap="consignmentSalesInvoiceOut" parameterType="java.util.Map">
         SELECT
-        <include refid="base_column"/>
+        <include refid="base_column1"/>
         FROM bus_consignment_sales_invoice_out bcsio
         LEFT JOIN sys_material sm ON bcsio.material_number = sm.material_number
+        LEFT JOIN sys_user su on bcsio.supplier_code=su.username
         <where>
             <if test="supplierCode != '' and supplierCode != null">
                 bcsio.supplier_code = #{supplierCode}
