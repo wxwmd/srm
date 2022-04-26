@@ -142,10 +142,13 @@ public class ConsignmentSalesInvoiceApi extends BaseApi {
     @PostMapping("/merge")
     public JsonResult addMerge(@RequestBody ConsignmentSalesInvoiceDto consignmentSalesInvoiceDto, HttpServletRequest request) {
         String token = request.getHeader("Credential");
-        Integer quota = JwtUtil.getQuota(token);
-        if (quota == null || quota == 0) {
-            return new JsonResult(ResponseEnum.NO_QUOTA);
-        }
+//        Integer quota = JwtUtil.getQuota(token);
+//        未设置限额
+//        if (quota == null || quota == 0) {
+//            return new JsonResult(ResponseEnum.NO_QUOTA);
+//        }
+        //没看到有这个限额的要求，直接给个Integer.MAXVALUE拉到
+        Integer quota=Integer.MAX_VALUE;
         String username = JwtUtil.getUsername(token);
         if (consignmentSalesInvoiceDto != null) {
             int result = consignmentSalesInvoice.addMerge(consignmentSalesInvoiceDto, quota, username);

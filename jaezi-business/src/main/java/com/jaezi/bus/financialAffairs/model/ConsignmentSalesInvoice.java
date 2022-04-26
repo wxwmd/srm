@@ -5,10 +5,10 @@ import com.jaezi.common.base.BaseModel;
 import java.math.BigDecimal;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/11  9:55:13
+ * @date 2022/4/26
  * @description 寄售物资发票
  */
 public class ConsignmentSalesInvoice extends BaseModel {
@@ -59,6 +59,11 @@ public class ConsignmentSalesInvoice extends BaseModel {
      * 供应商编码
      */
     private String supplierCode;
+
+    /**
+    * 供应商名称
+    */
+    private String supplierName;
 
     /**
      * 发票代码
@@ -176,6 +181,14 @@ public class ConsignmentSalesInvoice extends BaseModel {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public BigDecimal getTaxAmount() {

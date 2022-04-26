@@ -13,6 +13,7 @@
         <result column="tax_price_total" property="taxPriceTotal" jdbcType="DECIMAL"/>
         <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
         <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
+        <result column="real_name" property="supplierName" jdbcType="VARCHAR"/>
         <result column="invoice_code" property="invoiceCode" jdbcType="INTEGER"/>
         <result column="invoice_number" property="invoiceNumber" jdbcType="INTEGER"/>
         <result column="out_invoice_date" property="outInvoiceDate" jdbcType="VARCHAR"/>
@@ -35,13 +36,15 @@
         bcsi.invoice_code,bcsi.invoice_number,bcsi.out_invoice_date,bcsi.tax_rate,bcsi.purchase_order,bcsi.hong_project,
         bcsi.material_voucher,bcsi.voucher_project,
         bcsi.invoice_status,sm.material_name AS material,sm.material_description AS material_describe,bcsi.invoice_date,
-        bcsi.interim_invoice_number,bcsi.discount_cause
+        bcsi.interim_invoice_number,bcsi.discount_cause,
+        su.real_name
     </sql>
 
     <select id="getOneById" parameterType="java.lang.Integer" resultMap="consignmentSalesInvoice">
         SELECT <include refid="base_column"/>
         FROM bus_consignment_sales_invoice bcsi
         LEFT JOIN sys_material sm ON bcsi.material_number = sm.material_number
+        LEFT JOIN sys_user su on bcsi.supplier_code=su.username
         WHERE bcsi.id = #{id}
     </select>
 
@@ -51,6 +54,7 @@
         <include refid="base_column"/>
         FROM bus_consignment_sales_invoice bcsi
         LEFT JOIN sys_material sm ON bcsi.material_number = sm.material_number
+        LEFT JOIN sys_user su on bcsi.supplier_code=su.username
         <where>
             <if test="supplierCode != '' and supplierCode != null">
                 bcsi.supplier_code = #{supplierCode}

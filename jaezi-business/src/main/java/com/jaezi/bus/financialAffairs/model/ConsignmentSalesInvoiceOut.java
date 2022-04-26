@@ -7,10 +7,10 @@ import com.jaezi.common.base.BaseModel;
 import java.math.BigDecimal;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/10  16:13:20
+ * @date 2022/4/24
  * @description 寄售物资开票
  */
 public class ConsignmentSalesInvoiceOut extends BaseModel {
@@ -72,6 +72,11 @@ public class ConsignmentSalesInvoiceOut extends BaseModel {
     @ExcelIgnore
     private String supplierCode;
 
+    /*
+    * 供应商名称
+    * */
+    private String supplierName;
+
     /**
      * 采购订单
      */
@@ -120,22 +125,13 @@ public class ConsignmentSalesInvoiceOut extends BaseModel {
     @ExcelProperty("发票组")
     private String invoiceGroup;
 
-    @ExcelProperty("供应商名称")
-    private String supplierName;
-
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
-    }
-
     /**
      * 税率
      */
     @ExcelProperty("时间区间")
     private String temporalInterval;
+
+
 
     public Integer getId() {
         return id;
@@ -151,6 +147,14 @@ public class ConsignmentSalesInvoiceOut extends BaseModel {
 
     public void setPlant(Integer plant) {
         this.plant = plant;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public String getMaterialNumber() {
@@ -288,4 +292,31 @@ public class ConsignmentSalesInvoiceOut extends BaseModel {
     public void setTemporalInterval(String temporalInterval) {
         this.temporalInterval = temporalInterval;
     }
+
+    @Override
+    public String toString() {
+        return "ConsignmentSalesInvoiceOut{" +
+                "id=" + id +
+                ", plant=" + plant +
+                ", materialNumber='" + materialNumber + '\'' +
+                ", materialName='" + materialName + '\'' +
+                ", quantity=" + quantity +
+                ", outInvoicePeriod='" + outInvoicePeriod + '\'' +
+                ", amount=" + amount +
+                ", taxPriceTotal=" + taxPriceTotal +
+                ", createTime='" + createTime + '\'' +
+                ", supplierCode='" + supplierCode + '\'' +
+                ", purchaseOrder='" + purchaseOrder + '\'' +
+                ", material='" + material + '\'' +
+                ", materialDescribe='" + materialDescribe + '\'' +
+                ", notOutInvoiceNumber=" + notOutInvoiceNumber +
+                ", unitPrice=" + unitPrice +
+                ", status=" + status +
+                ", taxRate=" + taxRate +
+                ", invoiceGroup='" + invoiceGroup + '\'' +
+                ", supplierName='" + supplierName + '\'' +
+                ", temporalInterval='" + temporalInterval + '\'' +
+                '}';
+    }
+
 }

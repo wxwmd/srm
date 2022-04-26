@@ -197,9 +197,9 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
 
     /**
      * 寄售物资合票
-     * @since 1.0
-     * @author yx
-     * @date 2021年9月3日18:31:50
+     * @since 2.0
+     * @author wxx
+     * @date 2022年4月24日
      * @param consignmentSalesInvoiceDto consignmentSalesInvoiceDto
      * @param quota 供应商开票限额
      * @param username 用户名
@@ -224,6 +224,9 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             consignmentSalesInvoiceOutMoneyData.add(consignmentSalesInvoiceOutData);
         }
         BigDecimal totalMoney = new BigDecimal("0.00");
+        for (ConsignmentSalesInvoiceOut c:consignmentSalesInvoiceOutMoneyData){
+            System.out.println(c.toString());
+        }
         if (consignmentSalesInvoiceOutMoneyData.size() == 1){
             ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutMoneyData.get(0);
             totalMoney = consignmentSalesInvoiceOut.getAmount();

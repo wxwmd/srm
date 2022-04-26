@@ -72,6 +72,7 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
                 //只计算未开票
                 if (consignmentSalesInvoiceOut.getStatus() == -1) {
                     BigDecimal unitPrice = consignmentSalesInvoiceOut.getUnitPrice();
+
                     BigDecimal amount = unitPrice.multiply(consignmentSalesInvoiceOut.getQuantity()).setScale(2, BigDecimal.ROUND_HALF_UP);
                     BigDecimal taxPrice = amount.multiply(consignmentSalesInvoiceOut.getTaxRate());
                     taxAmount = taxAmount.add(taxPrice);
@@ -217,9 +218,9 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
 
     /**
      * 根据寄售物资id集合查询不含税金额，税额，税价合计
-     * @since 1.0
-     * @author yx
-     * @date 2021年9月2日16:36:25
+     * @since 2.0
+     * @author wxx
+     * @date 2022年4月26日
      * @param ids 寄售物资开票id
      * @return String> 不含税金额，税额，税价合计
      */
