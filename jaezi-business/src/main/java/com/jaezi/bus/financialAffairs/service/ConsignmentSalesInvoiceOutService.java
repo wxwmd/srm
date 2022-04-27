@@ -73,10 +73,19 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
                 if (consignmentSalesInvoiceOut.getStatus() == -1) {
                     BigDecimal unitPrice = consignmentSalesInvoiceOut.getUnitPrice();
 
-                    BigDecimal amount = unitPrice.multiply(consignmentSalesInvoiceOut.getQuantity()).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    BigDecimal taxPrice = amount.multiply(consignmentSalesInvoiceOut.getTaxRate());
-                    taxAmount = taxAmount.add(taxPrice);
-                    aggregateAmount = aggregateAmount.add(amount);
+                    /*
+                    * 如果有不含税金额，直接使用不含税金额
+                    * 如果没有，再使用单价*未开票数量
+                    * */
+                    BigDecimal amount=null;
+                    if (consignmentSalesInvoiceOut.getAmount()!=null){
+                        amount=consignmentSalesInvoiceOut.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
+                    } else {
+                        amount = unitPrice.multiply(consignmentSalesInvoiceOut.getQuantity()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    }
+                    BigDecimal taxPrice = amount.multiply(consignmentSalesInvoiceOut.getTaxRate()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    taxAmount = taxAmount.add(taxPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    aggregateAmount = aggregateAmount.add(amount).setScale(2, BigDecimal.ROUND_HALF_UP);
                 }
             }
             resultList.add(aggregateAmount);
@@ -219,7 +228,7 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
     /**
      * 根据寄售物资id集合查询不含税金额，税额，税价合计
      * @since 2.0
-     * @author wxx
+     * @author wxw
      * @date 2022年4月26日
      * @param ids 寄售物资开票id
      * @return String> 不含税金额，税额，税价合计
@@ -228,6 +237,7 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
         ArrayList<String> resultList = new ArrayList<>();
         BigDecimal aggregateAmount = new BigDecimal("0.00");
         BigDecimal taxAmount = new BigDecimal("0.00");
+        BigDecimal taxRate = new BigDecimal("0.00");
         for (String id : ids) {
             ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutDao.getOneById(Integer.parseInt(id));
             if (consignmentSalesInvoiceOut == null) {
@@ -235,13 +245,19 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
             }
             BigDecimal unitPrice = consignmentSalesInvoiceOut.getUnitPrice();
             BigDecimal amount = unitPrice.multiply(consignmentSalesInvoiceOut.getQuantity()).setScale(2, BigDecimal.ROUND_HALF_UP);
-            BigDecimal taxPrice = amount.multiply(consignmentSalesInvoiceOut.getTaxRate());
-            taxAmount = taxAmount.add(taxPrice);
-            aggregateAmount = aggregateAmount.add(amount);
+            BigDecimal taxPrice = amount.multiply(consignmentSalesInvoiceOut.getTaxRate()).setScale(2, BigDecimal.ROUND_HALF_UP);
+            taxAmount = taxAmount.add(taxPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+            aggregateAmount = aggregateAmount.add(amount).setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         resultList.add(String.valueOf(aggregateAmount));
         resultList.add(String.valueOf(taxAmount));
         resultList.add(String.valueOf(aggregateAmount.add(taxAmount)));
+
+        // 加上税率
+        taxRate=taxAmount.multiply(new BigDecimal(100)).divide(aggregateAmount);
+        taxRate=taxRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        resultList.add(String.valueOf(taxRate));
+
         return resultList;
     }
 
