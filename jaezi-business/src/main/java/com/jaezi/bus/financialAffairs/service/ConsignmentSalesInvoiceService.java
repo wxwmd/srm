@@ -210,8 +210,9 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         int result = 0;
         List<Map<String, String>> combinedData = consignmentSalesInvoiceDto.getCombinedData();
         Map<String, BigDecimal> resultList = consignmentSalesInvoiceDto.getResultList();
-        BigDecimal amount = resultList.get("amount");
+        BigDecimal amount = resultList.get("truthAmount");
 
+        System.out.println(amount);
         if (amount.compareTo(quotaData) > 0) {
             return result;
         }
@@ -239,14 +240,14 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         consignmentSalesInvoice.setPlant(consignmentSalesInvoiceDto.getPlant());
         consignmentSalesInvoice.setOutInvoicePeriod(consignmentSalesInvoiceDto.getOutInvoicePeriod());
         consignmentSalesInvoice.setAmount(totalMoney);
-        consignmentSalesInvoice.setTaxAmount(resultList.get("taxAmount"));
-        consignmentSalesInvoice.setTaxPriceTotal(resultList.get("taxPriceTotal"));
+        consignmentSalesInvoice.setTaxAmount(resultList.get("truthTaxAmount"));
+        consignmentSalesInvoice.setTaxPriceTotal(resultList.get("truthTaxPriceTotal"));
         consignmentSalesInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
         consignmentSalesInvoice.setSupplierCode(username);
         consignmentSalesInvoice.setInvoiceCode(consignmentSalesInvoiceDto.getInvoiceCode());
         consignmentSalesInvoice.setInvoiceNumber(consignmentSalesInvoiceDto.getInvoiceNumber());
         consignmentSalesInvoice.setOutInvoiceDate(consignmentSalesInvoiceDto.getOutInvoiceDate());
-        consignmentSalesInvoice.setTaxRate(resultList.get("taxRate"));
+        consignmentSalesInvoice.setTaxRate(resultList.get("truthTaxRate"));
         consignmentSalesInvoice.setPurchaseOrder(consignmentSalesInvoiceDto.getPurchaseOrder());
         consignmentSalesInvoice.setInvoiceDate(consignmentSalesInvoiceDto.getInvoiceDate());
         Integer interimInvoiceNumber = IDUtil.getId();
@@ -278,6 +279,4 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         }
         return result;
     }
-
-
 }

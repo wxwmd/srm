@@ -141,6 +141,7 @@ public class ConsignmentSalesInvoiceApi extends BaseApi {
      */
     @PostMapping("/merge")
     public JsonResult addMerge(@RequestBody ConsignmentSalesInvoiceDto consignmentSalesInvoiceDto, HttpServletRequest request) {
+
         String token = request.getHeader("Credential");
 //        Integer quota = JwtUtil.getQuota(token);
 //        未设置限额
