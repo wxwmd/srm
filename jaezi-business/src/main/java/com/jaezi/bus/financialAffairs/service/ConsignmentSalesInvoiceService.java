@@ -136,6 +136,9 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         }
         Page<ConsignmentSalesInvoice> page = PageHelper.startPage(Integer.parseInt(filter.get("page")), Integer.parseInt(filter.get("limit")));
         List<ConsignmentSalesInvoice> list = consignmentSalesInvoiceDao.findAll(filter);
+        for (ConsignmentSalesInvoice invoice:list){
+            invoice.setTaxRate(invoice.getTaxRate().multiply(new BigDecimal(100)));
+        }
         dg.setRecords(list);
         dg.setTotal(page.getTotal());
         return dg;
@@ -247,11 +250,12 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         consignmentSalesInvoice.setInvoiceCode(consignmentSalesInvoiceDto.getInvoiceCode());
         consignmentSalesInvoice.setInvoiceNumber(consignmentSalesInvoiceDto.getInvoiceNumber());
         consignmentSalesInvoice.setOutInvoiceDate(consignmentSalesInvoiceDto.getOutInvoiceDate());
-        consignmentSalesInvoice.setTaxRate(resultList.get("truthTaxRate"));
+        consignmentSalesInvoice.setTaxRate(resultList.get("truthTaxRate").divide(new BigDecimal(100)));
         consignmentSalesInvoice.setPurchaseOrder(consignmentSalesInvoiceDto.getPurchaseOrder());
         consignmentSalesInvoice.setInvoiceDate(consignmentSalesInvoiceDto.getInvoiceDate());
         Integer interimInvoiceNumber = IDUtil.getId();
         consignmentSalesInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
+        System.out.println(consignmentSalesInvoice.toString());
         consignmentSalesInvoiceDao.add(consignmentSalesInvoice);
         for (int i = 0; i < combinedData.size(); i++) {
             Map<String, String> stringStringMap = combinedData.get(i);

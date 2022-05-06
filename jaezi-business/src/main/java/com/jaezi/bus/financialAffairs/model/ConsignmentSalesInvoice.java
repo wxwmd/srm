@@ -334,4 +334,35 @@ public class ConsignmentSalesInvoice extends BaseModel {
     public void setDiscountCause(String discountCause) {
         this.discountCause = discountCause;
     }
+
+    @Override
+    public String toString() {
+        return "ConsignmentSalesInvoice{" +
+                "id=" + id +
+                ", plant=" + plant +
+                ", materialNumber='" + materialNumber + '\'' +
+                ", quantity=" + quantity +
+                ", outInvoicePeriod='" + outInvoicePeriod + '\'' +
+                ", amount=" + amount +
+                ", taxAmount=" + taxAmount +
+                ", taxPriceTotal=" + taxPriceTotal +
+                ", createTime='" + createTime + '\'' +
+                ", supplierCode='" + supplierCode + '\'' +
+                ", supplierName='" + supplierName + '\'' +
+                ", invoiceCode=" + invoiceCode +
+                ", invoiceNumber=" + invoiceNumber +
+                ", outInvoiceDate='" + outInvoiceDate + '\'' +
+                ", taxRate=" + taxRate +
+                ", purchaseOrder='" + purchaseOrder + '\'' +
+                ", hongProject=" + hongProject +
+                ", materialVoucher=" + materialVoucher +
+                ", voucherProject=" + voucherProject +
+                ", material='" + material + '\'' +
+                ", materialDescribe='" + materialDescribe + '\'' +
+                ", invoiceDate='" + invoiceDate + '\'' +
+                ", invoiceStatus=" + invoiceStatus +
+                ", interimInvoiceNumber=" + interimInvoiceNumber +
+                ", discountCause='" + discountCause + '\'' +
+                '}';
+    }
 }

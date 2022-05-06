@@ -108,6 +108,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             LocalDate nowTime = LocalDate.now();
             //standardInvoice.setOnAccountDate(String.valueOf(nowTime));
             standardInvoice.setInvoiceStatus(1);
+            standardInvoice.setTaxRate(standardInvoice.getTaxRate().divide(new BigDecimal(100)));
             return standardInvoiceDao.update(standardInvoice);
         } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
             return standardInvoiceDao.update(standardInvoice);
@@ -121,9 +122,9 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
      *
      * @param filter 过滤条件
      * @return OutInvoice>
-     * @author yx
-     * @date 2021年8月10日 18:12:45
-     * @since 1.0
+     * @author wxx
+     * @date 2022年5月6日
+     * @since 2.0
      */
     public DataGrid<StandardInvoice> findAll(Map<String, String> filter) {
         DataGrid<StandardInvoice> dg = new DataGrid<>();
@@ -134,6 +135,9 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         }
         Page<StandardInvoice> page = PageHelper.startPage(Integer.parseInt(filter.get("page")), Integer.parseInt(filter.get("limit")));
         List<StandardInvoice> list = standardInvoiceDao.findAll(filter);
+        for (StandardInvoice standardInvoice:list){
+            standardInvoice.setTaxRate(standardInvoice.getTaxRate().multiply(new BigDecimal(100)));
+        }
         dg.setRecords(list);
         dg.setTotal(page.getTotal());
         return dg;
@@ -274,7 +278,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         standardInvoice.setWithoutTaxAmount(withoutTaxAmountSum);
         standardInvoice.setTaxAmount(taxAmountSum);
         standardInvoice.setTotalAmount(totalAmountSum);
-        standardInvoice.setTaxRate(taxAmountSum.multiply(new BigDecimal(100)).divide(withoutTaxAmountSum,2));
+        standardInvoice.setTaxRate(taxAmountSum.divide(withoutTaxAmountSum,2));
         //生成发票创建时间
         standardInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
         LocalDate nowTime = LocalDate.now();
