@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxx
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/11  9:55:25
+ * @date 2021/5/9
  * @description
  */
 @Service
@@ -108,6 +108,9 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             }
         }
         //如果是供应商可设置发票状态为已提交
+        BigDecimal taxRate = consignmentSalesInvoice.getTaxRate().divide(new BigDecimal(100));
+        taxRate.setScale(4,BigDecimal.ROUND_DOWN);
+        consignmentSalesInvoice.setTaxRate(taxRate);
         if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
             consignmentSalesInvoice.setInvoiceStatus(0);
             return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);

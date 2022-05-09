@@ -278,7 +278,9 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         standardInvoice.setWithoutTaxAmount(withoutTaxAmountSum);
         standardInvoice.setTaxAmount(taxAmountSum);
         standardInvoice.setTotalAmount(totalAmountSum);
-        standardInvoice.setTaxRate(taxAmountSum.divide(withoutTaxAmountSum,2));
+        BigDecimal taxRate = taxAmountSum.divide(withoutTaxAmountSum);
+        taxRate = taxRate.setScale(4,BigDecimal.ROUND_DOWN);
+        standardInvoice.setTaxRate(taxRate);
         //生成发票创建时间
         standardInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
         LocalDate nowTime = LocalDate.now();
