@@ -35,9 +35,9 @@ public interface StandardInvoiceOutDao extends BaseDao<StandardInvoiceOut, Stand
      * @param purchaseOrder 标准物资开票对象
      * @param material      物料
      * @return OutInvoice 对象
-     * @author yx
-     * @date 2021年8月17日17:08:52
-     * @since 1.0
+     * @author wxw
+     * @date 2021年5月10日
+     * @since 2.0
      */
     StandardInvoiceOut getStandardByPOrderAndMat(String purchaseOrder, String material);
 

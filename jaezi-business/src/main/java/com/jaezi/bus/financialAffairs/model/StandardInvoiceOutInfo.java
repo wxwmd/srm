@@ -152,4 +152,21 @@ public class StandardInvoiceOutInfo extends BaseModel {
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public String toString() {
+        return "StandardInvoiceOutInfo{" +
+                "id=" + id +
+                ", serialNumber=" + serialNumber +
+                ", purchaseOrder='" + purchaseOrder + '\'' +
+                ", hongProject='" + hongProject + '\'' +
+                ", materialVoucher='" + materialVoucher + '\'' +
+                ", voucherProject='" + voucherProject + '\'' +
+                ", material='" + material + '\'' +
+                ", materialDescribe='" + materialDescribe + '\'' +
+                ", interimInvoiceNumber=" + interimInvoiceNumber +
+                ", supplierCode='" + supplierCode + '\'' +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

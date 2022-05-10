@@ -53,39 +53,43 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
      * @param id 标准物资发票id
      * @return int 删除个数
      * 删除发票后，将erp表中的总标准物资发票订单的未开票个数加一
-     * @author yx
-     * @date 2021年8月19日11:38:51
-     * @since 1.0
+     * @author wxw
+     * @date 2022年5月10日
+     * @since 2.0
      */
     @Override
     public int delete(Serializable id) {
-        int result = 0;
-        StandardInvoice oneById = standardInvoiceDao.getOneById(id);
-        if (oneById != null) {
-            if (oneById.getInvoiceType() != null && oneById.getInvoiceType() == 1) {
-                return standardInvoiceDao.delete(id);
-            }
-            if (oneById.getInvoiceStatus() != null && oneById.getInvoiceStatus() == 0) {
-                List<StandardInvoiceOutInfo> byInterimInvoiceNumber = standardInvoiceOutInfoDao.findByInterimInvoiceNumber(oneById.getInterimInvoiceNumber());
+        int result = -1;
+        StandardInvoice standardInvoice = standardInvoiceDao.getOneById(id);
+        // 发票不为空才能删除
+        if (standardInvoice != null) {
+            // 已挂帐的发票不让删除
+            if (standardInvoice.getInvoiceStatus()<2){
+                // 正常的暂存|已提交发票，可以删除
+                List<StandardInvoiceOutInfo> byInterimInvoiceNumber = standardInvoiceOutInfoDao.findByInterimInvoiceNumber(standardInvoice.getInterimInvoiceNumber());
                 if (byInterimInvoiceNumber.size() != 0) {
+                    // 找到发票中包含的项，将项更改为未开票状态
                     for (StandardInvoiceOutInfo standardInvoiceOutInfo : byInterimInvoiceNumber) {
                         String purchaseOrder = standardInvoiceOutInfo.getPurchaseOrder();
+                        System.out.println("===============================");
+                        System.out.println(standardInvoiceOutInfo.toString());
+                        System.out.println(standardInvoiceOutDao.getStandardByPOrderAndMat(purchaseOrder, standardInvoiceOutInfo.getMaterial()).toString());
                         StandardInvoiceOut standardInvoiceOutData = standardInvoiceOutDao.getStandardByPOrderAndMat(purchaseOrder, standardInvoiceOutInfo.getMaterial());
                         if (standardInvoiceOutData == null || standardInvoiceOutData.getNotOutInvoiceNumber() == null || standardInvoiceOutInfo.getQuantity() == null) {
                             result = -1;
                             return result;
                         }
                         standardInvoiceOutData.setNotOutInvoiceNumber(standardInvoiceOutData.getNotOutInvoiceNumber().add(standardInvoiceOutInfo.getQuantity()));
+                        standardInvoiceOutData.setStatus(-1);
                         //设置开票单状态为未开票
                         standardInvoiceOutDao.update(standardInvoiceOutData);
-                        standardInvoiceOutInfoDao.deleteByInterimInvoiceNumber(oneById.getInterimInvoiceNumber());
-                        return standardInvoiceDao.delete(id);
+                        standardInvoiceOutInfoDao.deleteByInterimInvoiceNumber(standardInvoice.getInterimInvoiceNumber());
                     }
+                    return standardInvoiceDao.delete(id);
                 }
-                result = -1;
-                return result;
+            } else{
+                result=0;
             }
-            return result;
         }
         return result;
     }

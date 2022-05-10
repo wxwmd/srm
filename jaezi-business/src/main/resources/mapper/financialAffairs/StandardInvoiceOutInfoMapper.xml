@@ -109,7 +109,7 @@
 
     <!-- 根据临时发票号查询 -->
     <select id="findByInterimInvoiceNumber" parameterType="java.lang.Integer"
-            resultType="com.jaezi.bus.financialAffairs.model.StandardInvoiceOutInfo">
+            resultMap="standardInvoiceOutInfo">
         select * FROM bus_standard_invoice_out_info WHERE interim_invoice_number = #{interimInvoiceNumber}
     </select>
 

@@ -61,7 +61,7 @@ public enum ResponseEnum {
     AGGREGATE_AMOUNT_ERROR(505,"总金额已超过限额或不存在该订单！"),
     ORDER_UNSELECTED(502,"订单未选中！"),
     INVOICE_INEXISTENCE(509,"审核！"),
-    KEEP_IN_UNDELETABLE(508,"该发票为暂存状态，不可废弃！"),
+    KEEP_IN_UNDELETABLE(508,"该发票已挂帐，不可废弃！"),
     INVOICE_DATA_HAVE_PROBLEM(513,"该发票数据存在问题,删除失败！"),
     Do_NOT_LOOK_AT(510,"不可查看！"),
     NEED_DISCOUNT_REASON(511,"请填写折扣原因！"),
