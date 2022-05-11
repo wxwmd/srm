@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -47,12 +48,16 @@ public class StandardInvoiceOutApi extends BaseApi {
     @GetMapping
     public JsonResult getAll(@RequestParam Map<String, String> filter, HttpServletRequest request) throws ParseException {
         Integer userType = JwtUtil.getUserType(request);
-        filter.put("userType", String.valueOf(userType));
-        filter.put("realName", JwtUtil.getRealName(request));
-        // 只取那些没有被开票的行项目
-        filter.put("status","-1");
-        DataGrid<StandardInvoiceOut> all = standardInvoiceOutService.findAll(filter);
-        return returnObjectResult(all);
+        if (JwtUtil.getRealName(request)!=null && !Objects.equals(JwtUtil.getRealName(request), "")){
+            filter.put("userType", String.valueOf(userType));
+            filter.put("realName", JwtUtil.getRealName(request));
+            // 只取那些没有被开票的行项目
+            filter.put("status","-1");
+            DataGrid<StandardInvoiceOut> all = standardInvoiceOutService.findAll(filter);
+            return returnObjectResult(all);
+        } else {
+            return new JsonResult(ResponseEnum.FAILURE_UNAUTHORIZED);
+        }
     }
 
     /**

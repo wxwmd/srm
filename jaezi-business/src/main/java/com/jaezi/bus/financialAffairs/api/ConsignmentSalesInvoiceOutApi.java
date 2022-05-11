@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author wxw
@@ -40,10 +41,14 @@ public class ConsignmentSalesInvoiceOutApi extends BaseApi {
      */
     @GetMapping
     public JsonResult getAll(@RequestParam Map<String, String> filter, HttpServletRequest request) throws ParseException {
-        Integer userType = JwtUtil.getUserType(request);
-        filter.put("userType", String.valueOf(userType));
-        filter.put("realName", JwtUtil.getRealName(request));
-        return returnObjectResult(consignmentSalesInvoiceOutService.findAll(filter));
+        if (JwtUtil.getRealName(request)!=null && !Objects.equals(JwtUtil.getRealName(request), "")){
+            Integer userType = JwtUtil.getUserType(request);
+            filter.put("userType", String.valueOf(userType));
+            filter.put("realName", JwtUtil.getRealName(request));
+            return returnObjectResult(consignmentSalesInvoiceOutService.findAll(filter));
+        }else {
+            return new JsonResult(ResponseEnum.FAILURE_UNAUTHORIZED);
+        }
     }
 
     /**
