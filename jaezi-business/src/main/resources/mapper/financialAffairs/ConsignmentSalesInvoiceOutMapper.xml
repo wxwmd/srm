@@ -187,6 +187,38 @@
         </where>
     </select>
 
+
+    <select id="getConssignmentByInvoiceNumAndMatNum" parameterType="java.lang.String"
+            resultMap="consignmentSalesInvoiceOut">
+        SELECT
+        bcsio.id,
+        bcsio.plant,
+        bcsio.material_number,
+        bcsio.quantity,
+        bcsio.out_invoice_period,
+        bcsio.amount,
+        bcsio.tax_price_total,
+        bcsio.create_time,
+        bcsio.supplier_code,
+        bcsio.tax_rate,
+        bcsio.purchase_order,
+        bcsio.material_number,
+        bcsio.not_out_invoice_number,
+        bcsio.unit_price,
+        bcsio.status,
+        bcsio.invoice_group,
+        bcsio.temporal_interval
+        FROM bus_consignment_sales_invoice_out bcsio
+        <where>
+            <if test="invoiceNumber != null and invoiceNumber != ''">
+                bcsio.purchase_order = #{purchaseOrder}
+            </if>
+            <if test="materialNumber != null and materialNumber != ''">
+                AND bcsio.material_number = #{materialNumber}
+            </if>
+        </where>
+    </select>
+
     <!-- 更新寄售物资开票信息 -->
     <delete id="delete" parameterType="java.lang.Integer">
         DELETE

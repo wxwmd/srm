@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxx
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/11  9:46:22
+ * @date 2022/5/11
  * @description 寄售物资发票API
  */
 @RestController

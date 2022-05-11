@@ -6,14 +6,13 @@ import com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceOutDao;
 import com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceDao;
 import com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceOutInfoDao;
 import com.jaezi.bus.financialAffairs.dto.ConsignmentSalesInvoiceDto;
-import com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoice;
-import com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOut;
-import com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOutInfo;
+import com.jaezi.bus.financialAffairs.model.*;
 import com.jaezi.bus.financialAffairs.vo.ConsignmentSalesInvoiceVo;
 import com.jaezi.common.base.BaseService;
 import com.jaezi.common.bean.DataGrid;
 import com.jaezi.common.util.IDUtil;
 import com.jaezi.common.util.JwtUtil;
+import org.apache.commons.collections4.map.SingletonMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,26 +53,33 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
      * @param id 寄售物资发票id
      * @return int 删除个数
      * 删除发票后，将erp表中的总寄售物资发票订单的未开票个数加一
-     * @author yx
-     * @date 2021年8月19日11:49:02
-     * @since 1.0
+     * @author wxw
+     * @date 2022年5月11日
+     * @since 2.0
      */
     @Override
     public int delete(Serializable id) {
         int result = 0;
-        ConsignmentSalesInvoice oneById = consignmentSalesInvoiceDao.getOneById(id);
-        if (oneById != null) {
-            if (oneById.getInvoiceStatus() == 0) {
-                String purchaseOrder = oneById.getPurchaseOrder();
-                if (purchaseOrder == null){
-                    result = -1;
-                    return result;
+        ConsignmentSalesInvoice consignmentSalesInvoice = consignmentSalesInvoiceDao.getOneById(id);
+        if (consignmentSalesInvoice != null) {
+            // 只有已提交的寄售物资发票才能废弃
+            if (consignmentSalesInvoice.getInvoiceStatus() == 0) {
+                Map<String,String> filter=new HashMap<>();
+                filter.put("invoiceNumber",consignmentSalesInvoice.getInvoiceNumber().toString());
+                List<ConsignmentSalesInvoiceOutInfo> consignmentSalesInvoiceOutInfos = consignmentSalesInvoiceOutInfoDao.findAll(filter);
+
+                if (consignmentSalesInvoiceOutInfos.size()>0){
+                    for (ConsignmentSalesInvoiceOutInfo consignmentSalesInvoiceOutInfo:consignmentSalesInvoiceOutInfos){
+                        String purchaseOrder = consignmentSalesInvoiceOutInfo.getPurchaseOrder();
+                        ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutDao.getConsignmentByPOrderAndMatNum(purchaseOrder, consignmentSalesInvoice.getMaterialNumber());
+                        System.out.println(consignmentSalesInvoiceOut);
+
+                        Integer notOutInvoiceNumber = consignmentSalesInvoiceOut.getNotOutInvoiceNumber()+Integer.parseInt(consignmentSalesInvoiceOutInfo.getQuantity().setScale(0,BigDecimal.ROUND_DOWN).toString());
+                        consignmentSalesInvoiceOut.setNotOutInvoiceNumber(notOutInvoiceNumber);
+                        consignmentSalesInvoiceOut.setStatus(-1);
+                        consignmentSalesInvoiceOutDao.update(consignmentSalesInvoiceOut);
+                    }
                 }
-                ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutDao.getConsignmentByPOrderAndMatNum(purchaseOrder, oneById.getMaterialNumber());
-                Integer notOutInvoiceNumber = consignmentSalesInvoiceOut.getNotOutInvoiceNumber();
-                consignmentSalesInvoiceOut.setNotOutInvoiceNumber(notOutInvoiceNumber + 1);
-                consignmentSalesInvoiceOut.setStatus(-1);
-                consignmentSalesInvoiceOutDao.update(consignmentSalesInvoiceOut);
                 return consignmentSalesInvoiceDao.delete(id);
             }
             return result;
@@ -204,7 +210,7 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
     /**
      * 寄售物资合票
      * @since 2.0
-     * @author wxx
+     * @author wxw
      * @date 2022年4月24日
      * @param consignmentSalesInvoiceDto consignmentSalesInvoiceDto
      * @param quota 供应商开票限额
@@ -258,6 +264,7 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         consignmentSalesInvoice.setInvoiceDate(consignmentSalesInvoiceDto.getInvoiceDate());
         Integer interimInvoiceNumber = IDUtil.getId();
         consignmentSalesInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
+        System.out.println("=======================================>");
         System.out.println(consignmentSalesInvoice.toString());
         consignmentSalesInvoiceDao.add(consignmentSalesInvoice);
         for (int i = 0; i < combinedData.size(); i++) {

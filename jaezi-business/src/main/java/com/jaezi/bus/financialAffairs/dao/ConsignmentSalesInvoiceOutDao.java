@@ -41,4 +41,6 @@ public interface ConsignmentSalesInvoiceOutDao extends BaseDao<ConsignmentSalesI
      * @since 1.0
      */
     ConsignmentSalesInvoiceOut getConsignmentByPOrderAndMatNum(String purchaseOrder, String materialNumber);
+
+    ConsignmentSalesInvoiceOut getConssignmentByInvoiceNumAndMatNum(String invoiceNumber,String materialNumber);
 }
