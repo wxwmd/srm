@@ -68,7 +68,8 @@ public enum ResponseEnum {
     ORDER_INFO_BLANK(514,"该开票信息所属的订单不存在"),
     SUPER_ENTERPRISE_USER(1203,"只允许超级企业用户操作！"),
     HAVE_MINUS(512,"折扣发票不能包含负数区间"),
-    UPDATE(200,"未修改内容");
+    UPDATE(200,"未修改内容"),
+    KEEP_IN_UNMODIFIED(520,"该发票已挂账，不可修改！");
 
 
     private int code;

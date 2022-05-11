@@ -75,6 +75,8 @@ public class ConsignmentSalesInvoiceApi extends BaseApi {
             return JsonResult.SUCCESS;
         } else if (update == 2) {
             return new JsonResult(ResponseEnum.HAVE_MINUS);
+        } else if (update==3){
+            return new JsonResult(ResponseEnum.KEEP_IN_UNMODIFIED);
         }
         return new JsonResult(ResponseEnum.UPDATE);
     }
@@ -101,9 +103,12 @@ public class ConsignmentSalesInvoiceApi extends BaseApi {
         int result = consignmentSalesInvoice.delete(id);
         if (result > 0) {
             return JsonResult.SUCCESS;
-        } else {
+        } else if (result==-1) {
+            return new JsonResult(ResponseEnum.KEEP_IN_UNDELETABLE);
+        }else{
             return new JsonResult(ResponseEnum.INVOICE_DATA_HAVE_PROBLEM);
         }
+
     }
 
     /**

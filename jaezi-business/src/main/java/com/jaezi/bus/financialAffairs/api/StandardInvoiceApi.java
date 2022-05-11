@@ -69,9 +69,13 @@ public class StandardInvoiceApi extends BaseApi {
      */
     @PutMapping
     public JsonResult update(@RequestBody StandardInvoice standardInvoice) {
-        if (standardInvoiceService.update(standardInvoice) != 0) {
+        int result=standardInvoiceService.update(standardInvoice);
+        if (result > 0) {
             return JsonResult.SUCCESS;
-        } else {
+        } else if  (result==-1){
+            return new JsonResult(ResponseEnum.KEEP_IN_UNMODIFIED);
+        }
+        else {
             return new JsonResult(ResponseEnum.UPDATE);
         }
     }

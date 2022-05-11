@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,23 +102,34 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
      * @return int 修改条数
      * 标准物资发票维护完成之后即为已提交状态，其erp导入的信息表中的那条数据也修改为已提交状态
      * @author wxw
-     * @date 2022年04月13日
-     * @since 1.0
+     * @date 2022年05月11日
+     * @since 2.0
      */
     @Override
     public int update(StandardInvoice standardInvoice) {
-        int result = 0;
-        //如果是供应商可设置发票状态为已维护
-        if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
-            LocalDate nowTime = LocalDate.now();
-            //standardInvoice.setOnAccountDate(String.valueOf(nowTime));
-            standardInvoice.setInvoiceStatus(1);
-            standardInvoice.setTaxRate(standardInvoice.getTaxRate().divide(new BigDecimal(100)));
-            return standardInvoiceDao.update(standardInvoice);
-        } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
-            return standardInvoiceDao.update(standardInvoice);
+        Map<String,String> filter = new HashMap<>();
+        filter.put("invoiceNumber",standardInvoice.getInvoiceNumber());
+        List<StandardInvoice> check = standardInvoiceDao.findAll(filter);
+        if (check.size()>0){
+            // 在更新前先check一下这张发票是否已被挂账
+            System.out.println("============================");
+            System.out.println(check.get(0));
+            if (check.get(0).getInvoiceStatus()==2){
+                return -1;
+            }
+
+            //如果是供应商可设置发票状态为已维护
+            if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
+                LocalDate nowTime = LocalDate.now();
+
+                standardInvoice.setInvoiceStatus(1);
+                standardInvoice.setTaxRate(standardInvoice.getTaxRate().divide(new BigDecimal(100)));
+                return standardInvoiceDao.update(standardInvoice);
+            } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
+                return standardInvoiceDao.update(standardInvoice);
+            }
         }
-        return result;
+        return 0;
     }
 
 

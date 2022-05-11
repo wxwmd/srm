@@ -59,7 +59,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
      */
     @Override
     public int delete(Serializable id) {
-        int result = 0;
         ConsignmentSalesInvoice consignmentSalesInvoice = consignmentSalesInvoiceDao.getOneById(id);
         if (consignmentSalesInvoice != null) {
             // 只有已提交的寄售物资发票才能废弃
@@ -81,10 +80,11 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
                     }
                 }
                 return consignmentSalesInvoiceDao.delete(id);
+            } else {
+                return -1;
             }
-            return result;
         }
-        return result;
+        return 0;
     }
 
     /**
@@ -93,38 +93,51 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
      * @param consignmentSalesInvoice 寄售物资发票信息
      * @return int 修改条数
      * 寄售物资发票维护完成之后即为已提交状态，其erp导入的信息表中的那条数据也修改为已提交状态
-     * @author yx
-     * @date 2021年8月19日09:24:19
-     * @since 1.0
+     * @author wxw
+     * @date 2022年5月11日
+     * @since 2.0
      */
     @Override
     public int update(ConsignmentSalesInvoice consignmentSalesInvoice) {
-        int result = 0;
-        //todo 先判断是否填写了折扣原因，然后填写了折扣原因，就判断这张发票包含的订单中是否含有负数的金额（amount），如果有就不能维护成功并提示有负数金额
-        if (!"".equals(consignmentSalesInvoice.getDiscountCause())) {
-            Map<String, String> filter = new HashMap<>();
-            filter.put("invoiceNumber", String.valueOf(consignmentSalesInvoice.getInvoiceNumber()));
-            List<ConsignmentSalesInvoiceOutInfo> all = consignmentSalesInvoiceOutInfoDao.findAll(filter);
-            for (ConsignmentSalesInvoiceOutInfo consignmentSalesInvoiceOutInfo : all) {
-                ConsignmentSalesInvoiceOut byPurchaseOrder = consignmentSalesInvoiceOutDao.getConsignmentByPOrderAndMatNum(consignmentSalesInvoiceOutInfo.getPurchaseOrder(),consignmentSalesInvoiceOutInfo.getMaterialNumber());
-                if ((byPurchaseOrder.getAmount()).signum() == -1) {
-                    result = 2;
-                    return result;
-                }
+        // 远古屎山，先不删
+//        if (!"".equals(consignmentSalesInvoice.getDiscountCause())) {
+//            Map<String, String> filter = new HashMap<>();
+//            filter.put("invoiceNumber", String.valueOf(consignmentSalesInvoice.getInvoiceNumber()));
+//            List<ConsignmentSalesInvoiceOutInfo> all = consignmentSalesInvoiceOutInfoDao.findAll(filter);
+//            for (ConsignmentSalesInvoiceOutInfo consignmentSalesInvoiceOutInfo : all) {
+//                ConsignmentSalesInvoiceOut byPurchaseOrder = consignmentSalesInvoiceOutDao.getConsignmentByPOrderAndMatNum(consignmentSalesInvoiceOutInfo.getPurchaseOrder(),consignmentSalesInvoiceOutInfo.getMaterialNumber());
+//                if ((byPurchaseOrder.getAmount()).signum() == -1) {
+//                    result = 2;
+//                    return result;
+//                }
+//            }
+//        }
+
+        // 先check发票是否已被挂账
+        Map<String, String> filter = new HashMap<>();
+        filter.put("invoiceNumber", String.valueOf(consignmentSalesInvoice.getInvoiceNumber()));
+        List<ConsignmentSalesInvoice> check = consignmentSalesInvoiceDao.findAll(filter);
+        if (check.size()>0){
+            System.out.println(check.get(0));
+            // 发票已被挂账
+            if (check.get(0).getInvoiceStatus()==1){
+                return 3;
+            }
+
+            //如果是供应商可设置发票状态为已提交
+            BigDecimal taxRate = consignmentSalesInvoice.getTaxRate().divide(new BigDecimal(100));
+            taxRate.setScale(4,BigDecimal.ROUND_DOWN);
+            consignmentSalesInvoice.setTaxRate(taxRate);
+            if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
+                consignmentSalesInvoice.setInvoiceStatus(0);
+                return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);
+            } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
+                consignmentSalesInvoice.setInvoiceStatus(1);
+                return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);
             }
         }
-        //如果是供应商可设置发票状态为已提交
-        BigDecimal taxRate = consignmentSalesInvoice.getTaxRate().divide(new BigDecimal(100));
-        taxRate.setScale(4,BigDecimal.ROUND_DOWN);
-        consignmentSalesInvoice.setTaxRate(taxRate);
-        if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
-            consignmentSalesInvoice.setInvoiceStatus(0);
-            return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);
-        } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
-            consignmentSalesInvoice.setInvoiceStatus(1);
-            return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);
-        }
-        return result;
+
+        return 0;
     }
 
     /**
