@@ -122,10 +122,10 @@
                 AND bcsio.status = #{status}
             </if>
             <if test="startTime != null and startTime != ''">
-                AND bcsio.temporal_interval >= #{startTime}
+                AND left(bcsio.out_invoice_period,10) >= #{startTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                AND bcsio.temporal_interval &lt;= #{endTime}
+                AND right(bcsio.out_invoice_period,10) &lt;= #{endTime}
             </if>
             <if test="invoiceGroup != null and invoiceGroup != ''">
                 AND bcsio.invoice_group = #{invoiceGroup}

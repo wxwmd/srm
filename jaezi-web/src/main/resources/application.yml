@@ -18,7 +18,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ubuntu:3306/qy_supplier_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&useAffectedRows=true
+    url: jdbc:mysql://localhost:3306/qy_supplier_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&useAffectedRows=true
 #    username: jzkj
 #    password: ENC(ir17WBESWEKOuOMcqD943a4HOfx0GjeVh9FV4Jwz+MM=)
     initialSize: 20

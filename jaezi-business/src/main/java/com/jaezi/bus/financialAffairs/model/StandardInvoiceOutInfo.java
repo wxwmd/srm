@@ -5,10 +5,10 @@ import com.jaezi.common.base.BaseModel;
 import java.math.BigDecimal;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/27  16:14:49
+ * @date 2022/5/16
  * @description
  */
 public class StandardInvoiceOutInfo extends BaseModel {
@@ -48,7 +48,7 @@ public class StandardInvoiceOutInfo extends BaseModel {
     /**
      * 物料描述
      */
-    private String materialDescribe;
+    private String materialName;
 
     /**
      * 临时发票号
@@ -121,12 +121,12 @@ public class StandardInvoiceOutInfo extends BaseModel {
         this.material = material;
     }
 
-    public String getMaterialDescribe() {
-        return materialDescribe;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setMaterialDescribe(String materialDescribe) {
-        this.materialDescribe = materialDescribe;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
     public Integer getInterimInvoiceNumber() {
@@ -163,7 +163,7 @@ public class StandardInvoiceOutInfo extends BaseModel {
                 ", materialVoucher='" + materialVoucher + '\'' +
                 ", voucherProject='" + voucherProject + '\'' +
                 ", material='" + material + '\'' +
-                ", materialDescribe='" + materialDescribe + '\'' +
+                ", materialName='" + materialName + '\'' +
                 ", interimInvoiceNumber=" + interimInvoiceNumber +
                 ", supplierCode='" + supplierCode + '\'' +
                 ", quantity=" + quantity +

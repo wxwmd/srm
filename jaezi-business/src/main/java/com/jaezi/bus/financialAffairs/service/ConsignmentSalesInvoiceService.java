@@ -209,7 +209,7 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             consignmentSalesInvoiceOutInfo.setMaterialNumber(salesInvoiceData.getMaterialNumber());
             consignmentSalesInvoiceOutInfo.setQuantity(salesInvoiceData.getQuantity());
             consignmentSalesInvoiceOutInfo.setOutInvoicePeriod(salesInvoiceData.getOutInvoicePeriod());
-            consignmentSalesInvoiceOutInfo.setMaterialDescribe(salesInvoiceData.getMaterialDescribe());
+            consignmentSalesInvoiceOutInfo.setMaterialName(salesInvoiceData.getMaterial());
             consignmentSalesInvoiceOutInfo.setSupplierCode(salesInvoiceData.getSupplierCode());
             consignmentSalesInvoiceOutInfoDao.add(consignmentSalesInvoiceOutInfo);
             consignmentSalesInvoiceOut.setStatus(0);
@@ -289,7 +289,7 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             consignmentSalesInvoiceOutInfo.setMaterialNumber(materialNumber);
             consignmentSalesInvoiceOutInfo.setQuantity(quantity);
             consignmentSalesInvoiceOutInfo.setOutInvoicePeriod(consignmentSalesInvoiceDto.getOutInvoicePeriod());
-            consignmentSalesInvoiceOutInfo.setMaterialDescribe(stringStringMap.get("materialDescribe"));
+            consignmentSalesInvoiceOutInfo.setMaterialName(stringStringMap.get("materialName"));
             String purchaseOrder = stringStringMap.get("purchaseOrder");
             consignmentSalesInvoiceOutInfo.setPurchaseOrder(purchaseOrder);
             consignmentSalesInvoiceOutInfo.setSupplierCode(username);

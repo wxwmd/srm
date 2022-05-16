@@ -1,15 +1,17 @@
 package com.jaezi.bus.financialAffairs.dto;
 
 import com.jaezi.bus.financialAffairs.model.ConsignmentSalesInvoiceOut;
+import com.jaezi.common.bean.DataGrid;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/30  18:56:53
+ * @date 2022/5/16
  * @description
  */
 public class ConsignmentSalesInvoiceOutDto {

@@ -146,7 +146,7 @@ public class StandardInvoiceOutService extends BaseService<StandardInvoiceOut, S
                         standardInvoiceOutInfo.setMaterialVoucher(oneById.getMaterialVoucher());
                         standardInvoiceOutInfo.setVoucherProject(oneById.getVoucherProject());
                         standardInvoiceOutInfo.setMaterial(oneById.getMaterial());
-                        standardInvoiceOutInfo.setMaterialDescribe(oneById.getMaterialDescribe());
+                        standardInvoiceOutInfo.setMaterialName(oneById.getMaterialName());
                         standardInvoiceOutInfo.setInterimInvoiceNumber(interimInvoiceNumber);
                         standardInvoiceOutInfo.setSupplierCode(oneById.getSupplierCode());
                         standardInvoiceOutInfo.setQuantity(oneById.getQuantity());

@@ -38,7 +38,7 @@ public class ConsignmentSalesInvoiceOutInfo extends BaseModel {
     /**
      * 物料描述
      */
-    private String materialDescribe;
+    private String materialName;
 
     /**
      * 采购订单
@@ -87,12 +87,12 @@ public class ConsignmentSalesInvoiceOutInfo extends BaseModel {
         this.outInvoicePeriod = outInvoicePeriod;
     }
 
-    public String getMaterialDescribe() {
-        return materialDescribe;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setMaterialDescribe(String materialDescribe) {
-        this.materialDescribe = materialDescribe;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
     public String getSupplierCode() {

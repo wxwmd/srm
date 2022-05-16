@@ -108,12 +108,11 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
     @Override
     public int update(StandardInvoice standardInvoice) {
         Map<String,String> filter = new HashMap<>();
-        filter.put("invoiceNumber",standardInvoice.getInvoiceNumber());
+        String interimInvoiceNumber = standardInvoice.getInterimInvoiceNumber().toString();
+        filter.put("interimInvoiceNumber",interimInvoiceNumber);
         List<StandardInvoice> check = standardInvoiceDao.findAll(filter);
         if (check.size()>0){
             // 在更新前先check一下这张发票是否已被挂账
-            System.out.println("============================");
-            System.out.println(check.get(0));
             if (check.get(0).getInvoiceStatus()==2){
                 return -1;
             }
@@ -223,7 +222,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             standardInvoiceOutInfo.setMaterialVoucher(standardInvoiceOut.getMaterialVoucher());
             standardInvoiceOutInfo.setVoucherProject(standardInvoiceOut.getVoucherProject());
             standardInvoiceOutInfo.setMaterial(standardInvoiceOut.getMaterial());
-            standardInvoiceOutInfo.setMaterialDescribe(standardInvoiceOut.getMaterialDescribe());
+            standardInvoiceOutInfo.setMaterialName(standardInvoiceOut.getMaterialName());
             standardInvoiceOutInfo.setInterimInvoiceNumber(interimInvoiceNumber);
             standardInvoiceOutInfo.setSupplierCode(standardInvoiceOut.getSupplierCode());
             standardInvoiceOutInfoDao.add(standardInvoiceOutInfo);
@@ -248,19 +247,15 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
         List<StandardInvoice> standardInvoiceList = new ArrayList<>();
         List<StandardInvoiceOut> standardInvoiceOutList = new ArrayList<>();
         for (StandardInvoice standardInvoice : standardInvoices) {
-
+            System.out.println(standardInvoice.toString());
             StandardInvoiceOut byPurchaseOrder = standardInvoiceOutDao.getStandardByPOrderAndMat(standardInvoice.getPurchaseOrder(), standardInvoice.getMaterial());
             if (byPurchaseOrder == null) {
                 return standardInvoiceList;
             }
             standardInvoiceOutList.add(byPurchaseOrder);
-
-
             // 单价
             BigDecimal unitPrice = byPurchaseOrder.getUnitPrice();
             BigDecimal moneyData = unitPrice.multiply(byPurchaseOrder.getNotOutInvoiceNumber());
-
-
             /*
             * 判断填写的不含税金额书否正确
             * 对每行数据来说有两种情况数据是出错的：
@@ -268,11 +263,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             * 2. 总金额（税价合计）！=总金额（不含税）+税价
             * */
             if (moneyData.compareTo(standardInvoice.getWithoutTaxAmount()) != 0 || standardInvoice.getTotalAmount().compareTo(standardInvoice.getWithoutTaxAmount().add(standardInvoice.getTaxAmount()))!=0) {
-                if (standardInvoices.size() == 1){
-                    return standardInvoiceList;
-                }
-                standardInvoiceList.add(standardInvoice);
-                return standardInvoiceList;
+                return null;
             }
             withoutTaxAmountSum=withoutTaxAmountSum.add(standardInvoice.getWithoutTaxAmount());
             taxAmountSum=taxAmountSum.add(standardInvoice.getTaxAmount());
@@ -280,11 +271,6 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             standardInvoiceList.add(standardInvoice);
         }
 
-        //判断总金额是否小于等于限额
-//        if (aggregateMoney.compareTo(quotaData) > 0) {
-//            standardInvoiceList.clear();
-//            return standardInvoiceList;
-//        }
 
         // 生成临时发票
         StandardInvoice standardInvoice = new StandardInvoice();
@@ -317,7 +303,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
             standardInvoiceOutInfo.setMaterialVoucher(standardInvoiceOut.getMaterialVoucher());
             standardInvoiceOutInfo.setVoucherProject(standardInvoiceOut.getVoucherProject());
             standardInvoiceOutInfo.setMaterial(standardInvoiceOut.getMaterial());
-            standardInvoiceOutInfo.setMaterialDescribe(standardInvoiceOut.getMaterialDescribe());
+            standardInvoiceOutInfo.setMaterialName(standardInvoiceOut.getMaterialName());
             standardInvoiceOutInfo.setInterimInvoiceNumber(interimInvoiceNumber);
             standardInvoiceOutInfo.setSupplierCode(standardInvoiceOut.getSupplierCode());
             standardInvoiceOutInfo.setQuantity(standardInvoiceOut.getNotOutInvoiceNumber());

@@ -1,7 +1,5 @@
 package com.jaezi.bus.financialAffairs.service;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceDao;
 import com.jaezi.bus.financialAffairs.dao.ConsignmentSalesInvoiceOutDao;
 import com.jaezi.bus.financialAffairs.dto.ConsignmentSalesInvoiceOutDto;
@@ -11,7 +9,6 @@ import com.jaezi.bus.financialAffairs.vo.ConsignmentSalesInvoiceOutVo;
 import com.jaezi.bus.purchase.dao.PurchaseDao;
 import com.jaezi.bus.purchase.model.Purchase;
 import com.jaezi.common.base.BaseService;
-import com.jaezi.common.bean.DataGrid;
 import com.jaezi.common.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +22,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author yx
- * @version v1.0
+ * @author wxw
+ * @version v2.0
  * @corporation copyright by jaezi.com
- * @date 2021/8/10  16:13:31
+ * @date 2022/5/16
  * @description
  */
 @Service
@@ -53,21 +50,24 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
      *
      * @param filter 过滤条件
      * @return ConsignmentSalesInvoiceQuery>
-     * @author yx
-     * @date 2021年8月10日17:07:20
-     * @since 1.0
+     * @author wxw
+     * @date 2022年5月16日
+     * @since 2.0
      */
-    public DataGrid<ConsignmentSalesInvoiceOutDto> findAll(Map<String, String> filter) throws ParseException {
-        DataGrid<ConsignmentSalesInvoiceOutDto> dg = new DataGrid<>();
+    public ConsignmentSalesInvoiceOutDto findAll(Map<String, String> filter) throws ParseException {
         BigDecimal aggregateAmount = new BigDecimal("0.00");
         BigDecimal taxAmount = new BigDecimal("0.00");
-        ConsignmentSalesInvoiceOutDto consignmentSalesInvoiceOutDto = new ConsignmentSalesInvoiceOutDto();
-        List<ConsignmentSalesInvoiceOutDto> list1 = new ArrayList<>();
+        ConsignmentSalesInvoiceOutDto result = new ConsignmentSalesInvoiceOutDto();
         List<BigDecimal> resultList = new ArrayList<>();
         //如果携带invoiceGroup条件，则计算不含税金额，税额，税价合计返回给前端
         if (filter.get("invoiceGroup") != null || filter.get("startTime") != null || filter.get("endTime") != null) {
-            Page<ConsignmentSalesInvoiceOut> page = PageHelper.startPage(Integer.parseInt(filter.get("page")), Integer.parseInt(filter.get("limit")));
             List<ConsignmentSalesInvoiceOut> all = consignmentSalesInvoiceOutDao.findAll(filter);
+            all.sort(new Comparator<ConsignmentSalesInvoiceOut>() {
+                @Override
+                public int compare(ConsignmentSalesInvoiceOut o1, ConsignmentSalesInvoiceOut o2) {
+                    return o1.getOutInvoicePeriod().compareTo(o2.getOutInvoicePeriod());
+                }
+            });
             for (ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut : all) {
                 //只计算未开票
                 if (consignmentSalesInvoiceOut.getStatus() == -1) {
@@ -77,7 +77,7 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
                     * 如果有不含税金额，直接使用不含税金额
                     * 如果没有，再使用单价*未开票数量
                     * */
-                    BigDecimal amount=null;
+                    BigDecimal amount;
                     if (consignmentSalesInvoiceOut.getAmount()!=null){
                         amount=consignmentSalesInvoiceOut.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP);
                     } else {
@@ -91,27 +91,12 @@ public class ConsignmentSalesInvoiceOutService extends BaseService<ConsignmentSa
             resultList.add(aggregateAmount);
             resultList.add(taxAmount);
             resultList.add(aggregateAmount.add(taxAmount));
-            consignmentSalesInvoiceOutDto.setConsignmentSalesInvoiceOuts(all);
-            consignmentSalesInvoiceOutDto.setResultList(resultList);
-            list1.add(consignmentSalesInvoiceOutDto);
-            dg.setRecords(list1);
-            dg.setTotal(page.getTotal());
-            return dg;
+            result.setResultList(resultList);
+            // 现在需要将查询到的所有寄售物资对象，根据开票区间进行聚类
+            result.setConsignmentSalesInvoiceOuts(all);
+            return result;
         }
-        if (filter.get("limit") == null || filter.get("page") == null) {
-            List<ConsignmentSalesInvoiceOut> all = consignmentSalesInvoiceOutDao.findAll(filter);
-            consignmentSalesInvoiceOutDto.setConsignmentSalesInvoiceOuts(all);
-            list1.add(consignmentSalesInvoiceOutDto);
-            dg.setRecords(list1);
-            return dg;
-        }
-        Page<ConsignmentSalesInvoiceOut> page = PageHelper.startPage(Integer.parseInt(filter.get("page")), Integer.parseInt(filter.get("limit")));
-        List<ConsignmentSalesInvoiceOut> list = consignmentSalesInvoiceOutDao.findAll(filter);
-        consignmentSalesInvoiceOutDto.setConsignmentSalesInvoiceOuts(list);
-        list1.add(consignmentSalesInvoiceOutDto);
-        dg.setRecords(list1);
-        dg.setTotal(page.getTotal());
-        return dg;
+        return null;
     }
 
     /**

@@ -36,9 +36,9 @@ public class ConsignmentSalesInvoiceOutInfoService extends BaseService<Consignme
      *
      * @param filter 过滤条件
      * @return OutInvoice>
-     * @author yx
-     * @date 2021年8月10日 18:12:45
-     * @since 1.0
+     * @author wxx
+     * @date 2022年5月16日
+     * @since 2.0
      */
     public DataGrid<ConsignmentSalesInvoiceOutInfo> findAll(Map<String, String> filter) {
         DataGrid<ConsignmentSalesInvoiceOutInfo> dg = new DataGrid<>();

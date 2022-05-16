@@ -163,11 +163,11 @@ public class StandardInvoiceApi extends BaseApi {
         String username = JwtUtil.getUsername(token);
         if (standardInvoices.size() != 0) {
             List<StandardInvoice> standardInvoiceList = standardInvoiceService.addMerge(standardInvoices, quota, username);
-
-            if (standardInvoiceList.size() == standardInvoices.size()) {
-                return JsonResult.SUCCESS;
-            } else if (standardInvoiceList.size() == 0) {
+            if (standardInvoiceList == null){
                 return new JsonResult(ResponseEnum.MERGE_ORDER_AGGREGATE_AMOUNT_ERROR);
+            }
+            else if (standardInvoiceList.size() == standardInvoices.size()) {
+                return JsonResult.SUCCESS;
             }
             return new JsonResult(standardInvoiceList);
         }

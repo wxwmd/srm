@@ -106,7 +106,7 @@ public class ConsignmentSalesInvoice extends BaseModel {
     private Integer voucherProject;
 
     /**
-     * 物料
+     * 物料名称
      */
     private String material;
 

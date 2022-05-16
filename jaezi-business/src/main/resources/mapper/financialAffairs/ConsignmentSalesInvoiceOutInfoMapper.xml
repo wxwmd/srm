@@ -10,13 +10,13 @@
         <result column="purchase_order" property="purchaseOrder" jdbcType="VARCHAR"/>
         <result column="out_invoice_period" property="outInvoicePeriod" jdbcType="VARCHAR"/>
         <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR"/>
-        <result column="material_describe" property="materialDescribe" jdbcType="VARCHAR"/>
+        <result column="material_name" property="materialName" jdbcType="VARCHAR"/>
         <result column="invoice_number" property="invoiceNumber" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="base_column">
         bcsioi.id,bcsioi.plant,bcsioi.material_number,bcsioi.quantity,bcsioi.out_invoice_period,bcsioi.supplier_code,
-        bcsioi.purchase_order,sm.material_description as material_describe,bcsioi.invoice_number
+        bcsioi.purchase_order,sm.material_name as material_name,bcsioi.invoice_number
       </sql>
 
     <!-- 寄售物资开票信息查询-->
