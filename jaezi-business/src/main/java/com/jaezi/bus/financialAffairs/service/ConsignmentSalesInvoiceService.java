@@ -233,9 +233,13 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
     public int addMerge(ConsignmentSalesInvoiceDto consignmentSalesInvoiceDto, Integer quota, String username) {
         BigDecimal quotaData = new BigDecimal(String.valueOf(quota));
         int result = 0;
+        /*
+        resultList: 这张票的信息：不含税金额，税额，价税合计
+        combinedData: 这张票所包含的物料是所有信息
+         */
         List<Map<String, String>> combinedData = consignmentSalesInvoiceDto.getCombinedData();
         Map<String, BigDecimal> resultList = consignmentSalesInvoiceDto.getResultList();
-        BigDecimal amount = resultList.get("truthAmount");
+        BigDecimal amount = resultList.get("amount");
 
         System.out.println(amount);
         if (amount.compareTo(quotaData) > 0) {
@@ -265,14 +269,14 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         consignmentSalesInvoice.setPlant(consignmentSalesInvoiceDto.getPlant());
         consignmentSalesInvoice.setOutInvoicePeriod(consignmentSalesInvoiceDto.getOutInvoicePeriod());
         consignmentSalesInvoice.setAmount(totalMoney);
-        consignmentSalesInvoice.setTaxAmount(resultList.get("truthTaxAmount"));
-        consignmentSalesInvoice.setTaxPriceTotal(resultList.get("truthTaxPriceTotal"));
+        consignmentSalesInvoice.setTaxAmount(resultList.get("taxAmount"));
+        consignmentSalesInvoice.setTaxPriceTotal(resultList.get("taxPriceTotal"));
         consignmentSalesInvoice.setCreateTime(String.valueOf(System.currentTimeMillis()));
         consignmentSalesInvoice.setSupplierCode(username);
         consignmentSalesInvoice.setInvoiceCode(consignmentSalesInvoiceDto.getInvoiceCode());
         consignmentSalesInvoice.setInvoiceNumber(consignmentSalesInvoiceDto.getInvoiceNumber());
         consignmentSalesInvoice.setOutInvoiceDate(consignmentSalesInvoiceDto.getOutInvoiceDate());
-        consignmentSalesInvoice.setTaxRate(resultList.get("truthTaxRate").divide(new BigDecimal(100)));
+        consignmentSalesInvoice.setTaxRate(resultList.get("taxRate").divide(new BigDecimal(100)));
         consignmentSalesInvoice.setPurchaseOrder(consignmentSalesInvoiceDto.getPurchaseOrder());
         consignmentSalesInvoice.setInvoiceDate(consignmentSalesInvoiceDto.getInvoiceDate());
         Integer interimInvoiceNumber = IDUtil.getId();

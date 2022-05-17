@@ -164,9 +164,9 @@ public class ConsignmentSalesInvoiceOutApi extends BaseApi {
      *
      * @param ids 寄售物资开票id
      * @return JsonResult 不含税金额，税额，税价合计
-     * @author yx
-     * @date 2021年9月2日16:42:51
-     * @since 1.0
+     * @author wxw
+     * @date 2022年5月16日
+     * @since 2.0
      */
     @PostMapping("/money")
     public JsonResult getMoney(@RequestBody Map<String, List<String>> ids) {
