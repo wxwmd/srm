@@ -12,12 +12,12 @@ import com.jaezi.common.base.BaseService;
 import com.jaezi.common.bean.DataGrid;
 import com.jaezi.common.util.IDUtil;
 import com.jaezi.common.util.JwtUtil;
-import org.apache.commons.collections4.map.SingletonMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,20 +114,28 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
 
         // 先check发票是否已被挂账
         Map<String, String> filter = new HashMap<>();
-        filter.put("invoiceNumber", String.valueOf(consignmentSalesInvoice.getInvoiceNumber()));
-        List<ConsignmentSalesInvoice> check = consignmentSalesInvoiceDao.findAll(filter);
-        if (check.size()>0){
+        filter.put("id", String.valueOf(consignmentSalesInvoice.getId()));
+        List<ConsignmentSalesInvoice> consignmentSalesInvoices = consignmentSalesInvoiceDao.findAll(filter);
+        if (consignmentSalesInvoices.size()>0){
             // 发票已被挂账
-            if (check.get(0).getInvoiceStatus()==1){
+            if (consignmentSalesInvoices.get(0).getInvoiceStatus()==1){
                 return 3;
             }
 
             //如果是供应商可设置发票状态为已提交
-            BigDecimal taxRate = consignmentSalesInvoice.getTaxRate().divide(new BigDecimal(100));
-            taxRate.setScale(4,BigDecimal.ROUND_DOWN);
+            BigDecimal taxRate = consignmentSalesInvoice.getTaxRate().divide(new BigDecimal(100),2, RoundingMode.DOWN);
+            taxRate.setScale(4, RoundingMode.DOWN);
             consignmentSalesInvoice.setTaxRate(taxRate);
+
+            System.out.println("**********************");
             if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 1) {
                 consignmentSalesInvoice.setInvoiceStatus(0);
+                /*
+                把与这张发票关联的物料的发票号也改了
+                 */
+                Integer oldInvoiceNumber = consignmentSalesInvoices.get(0).getInvoiceNumber();
+                Integer newInvoiceNumber = consignmentSalesInvoice.getInvoiceNumber();
+                consignmentSalesInvoiceOutInfoDao.updateInvoiceNumber(oldInvoiceNumber,newInvoiceNumber);
                 return consignmentSalesInvoiceDao.update(consignmentSalesInvoice);
             } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
                 consignmentSalesInvoice.setInvoiceStatus(1);

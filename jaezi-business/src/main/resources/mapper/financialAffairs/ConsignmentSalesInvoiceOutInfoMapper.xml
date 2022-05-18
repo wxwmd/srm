@@ -124,4 +124,12 @@
         </trim>
         WHERE id = #{id}
     </update>
+
+    <update id="updateInvoiceNumber">
+        UPDATE bus_consignment_sales_invoice_out_info
+        SET
+        <if test="newInvoiceNumber != null">invoice_number = #{newInvoiceNumber}</if>
+        WHERE
+        <if test="oldInvoiceNumber != null">invoice_number = #{oldInvoiceNumber}</if>
+    </update>
 </mapper>

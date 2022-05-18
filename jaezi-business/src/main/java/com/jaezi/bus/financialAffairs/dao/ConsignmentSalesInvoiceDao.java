@@ -25,6 +25,7 @@ public interface ConsignmentSalesInvoiceDao extends BaseDao<ConsignmentSalesInvo
      *               invoiceDate 发票日期
      *               invoiceNumber 发票号
      *               invoiceStatus 发票状态
+     *               id
      * @return ConsignmentSalesInvoice>
      */
     List<ConsignmentSalesInvoice> findAll(Map<String, String> filter);

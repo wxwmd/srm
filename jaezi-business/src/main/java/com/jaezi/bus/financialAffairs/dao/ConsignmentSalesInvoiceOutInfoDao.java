@@ -26,4 +26,6 @@ public interface ConsignmentSalesInvoiceOutInfoDao extends BaseDao<ConsignmentSa
      * @return ConsignmentSalesInvoiceOutInfo>
      */
     List<ConsignmentSalesInvoiceOutInfo> findAll(Map<String, String> filter);
+
+    int updateInvoiceNumber(Integer oldInvoiceNumber,Integer newInvoiceNumber);
 }

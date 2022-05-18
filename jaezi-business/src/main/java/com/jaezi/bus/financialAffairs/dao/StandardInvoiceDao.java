@@ -21,7 +21,8 @@ public interface StandardInvoiceDao extends BaseDao<StandardInvoice, StandardInv
     /**
      * 查询所有标准物资开票
      *
-     * @param filter serialNumber 序号
+     * @param filter id 发票id
+     *               serialNumber 序号
      *               invoiceType 发票类型
      *               interimInvoiceNumber 临时发票号
      *               invoiceNumber 发票号

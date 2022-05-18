@@ -108,8 +108,8 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
     @Override
     public int update(StandardInvoice standardInvoice) {
         Map<String,String> filter = new HashMap<>();
-        String interimInvoiceNumber = standardInvoice.getInterimInvoiceNumber().toString();
-        filter.put("interimInvoiceNumber",interimInvoiceNumber);
+        String invoiceId = String.valueOf(standardInvoice.getId());
+        filter.put("id",invoiceId);
         List<StandardInvoice> check = standardInvoiceDao.findAll(filter);
         if (check.size()>0){
             // 在更新前先check一下这张发票是否已被挂账

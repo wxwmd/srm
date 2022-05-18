@@ -182,6 +182,9 @@
             <if test="invoiceDate != null and invoiceDate != ''">
                 AND bsi.invoice_date = #{invoiceDate}
             </if>
+            <if test="id != null and id != ''">
+                AND bsi.id = #{id}
+            </if>
         </where>
     </select>
 
