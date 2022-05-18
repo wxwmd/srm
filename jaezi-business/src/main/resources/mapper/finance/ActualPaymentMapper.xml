@@ -6,7 +6,7 @@
 <mapper namespace="com.jaezi.bus.finance.dao.ActualPaymentDao">
     <resultMap id="actualPayment" type="com.jaezi.bus.finance.model.ActualPayment">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="real_name" jdbcType="VARCHAR" property="company"/>
         <result column="accounting_year" jdbcType="VARCHAR" property="accountingYear"/>
         <result column="month" jdbcType="VARCHAR" property="month"/>
         <result column="payment_amount" jdbcType="INTEGER" property="paymentAmount"/>
@@ -25,11 +25,23 @@
         bap.text
     </sql>
 
+    <sql id="base_column1">
+        bap.id,
+        bap.company,
+        su.real_name,
+        bap.accounting_year,
+        bap.payment_amount,
+        bap.`month`,
+        bap.text
+    </sql>
+
     <!-- 查询所有实际付款情况信息 -->
     <select id="getAllVos" resultMap="actualPayment" parameterType="java.util.Map">
         SELECT
-        <include refid="base_column"></include>
+        <include refid="base_column1"></include>
         FROM bus_actual_payment bap
+        LEFT JOIN sys_user su
+        on bap.company=su.username
         <where>
             <if test="company != null and company != ''">
                 bap.company = #{company},
@@ -45,6 +57,9 @@
             </if>
             <if test="text != null and text != ''">
                 AND bap.text = #{text}
+            </if>
+            <if test="realName != null and realName != ''">
+                AND su.real_name = #{realName}
             </if>
         </where>
     </select>

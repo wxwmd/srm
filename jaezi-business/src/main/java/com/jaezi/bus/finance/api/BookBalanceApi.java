@@ -4,8 +4,10 @@ import com.jaezi.bus.finance.model.BookBalance;
 import com.jaezi.bus.finance.service.BookBalanceService;
 import com.jaezi.common.base.BaseApi;
 import com.jaezi.common.bean.JsonResult;
+import com.jaezi.common.util.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -32,7 +34,11 @@ public class BookBalanceApi extends BaseApi {
      * @return 账面余额列表
      */
     @GetMapping
-    public JsonResult getAll(@RequestParam Map<String, String> filter) {
+    public JsonResult getAll(@RequestParam Map<String, String> filter, HttpServletRequest request) {
+        Integer userType = JwtUtil.getUserType(request);
+        if (userType!=null && userType==1){
+            filter.put("realName", JwtUtil.getRealName(request));
+        }
         return returnObjectResult(bookBalanceService.getAll(filter));
     }
 

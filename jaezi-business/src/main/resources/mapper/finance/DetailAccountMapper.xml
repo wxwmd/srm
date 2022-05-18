@@ -6,7 +6,7 @@
 <mapper namespace="com.jaezi.bus.finance.dao.DetailAccountDao">
     <resultMap id="detailAccount" type="com.jaezi.bus.finance.model.DetailAccount">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="real_name" jdbcType="VARCHAR" property="company"/>
         <result column="date" jdbcType="VARCHAR" property="date"/>
         <result column="voucher_number" jdbcType="INTEGER" property="voucherNumber"/>
         <result column="digest" jdbcType="VARCHAR" property="digest"/>
@@ -22,6 +22,7 @@
     <sql id="base_column">
         bda.id,
         bda.company,
+        su.real_name,
         bda.`date`,
         bda.voucher_number,
         bda.digest,
@@ -36,6 +37,8 @@
         SELECT
         <include refid="base_column"></include>
         FROM bus_detail_account bda
+        LEFT JOIN sys_user su
+        on bda.company=su.username
         <where>
             <if test="company != null and company != ''">
                 AND bda.company = #{company},
@@ -63,6 +66,9 @@
             </if>
             <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
                 AND bda.`date` BETWEEN #{startTime} AND #{entTime}
+            </if>
+            <if test="realName != null and realName != ''">
+                AND su.real_name = #{realName}
             </if>
         </where>
     </select>
