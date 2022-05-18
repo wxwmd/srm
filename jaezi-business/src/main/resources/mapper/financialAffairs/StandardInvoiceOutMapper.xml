@@ -75,6 +75,9 @@
             <if test="startTime != null and startTime != '' and entTime !=null and entTime != '' ">
                 AND bsio.create_time BETWEEN #{startTime} AND #{entTime}
             </if>
+            <if test="purchaseOrder != null and purchaseOrder != ''">
+                AND bsio.purchase_order = #{purchaseOrder}
+            </if>
         </where>
     </select>
 

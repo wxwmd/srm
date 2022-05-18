@@ -71,7 +71,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
                     for (ConsignmentSalesInvoiceOutInfo consignmentSalesInvoiceOutInfo:consignmentSalesInvoiceOutInfos){
                         String purchaseOrder = consignmentSalesInvoiceOutInfo.getPurchaseOrder();
                         ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutDao.getConsignmentByPOrderAndMatNum(purchaseOrder, consignmentSalesInvoice.getMaterialNumber());
-                        System.out.println(consignmentSalesInvoiceOut);
 
                         Integer notOutInvoiceNumber = consignmentSalesInvoiceOut.getNotOutInvoiceNumber()+Integer.parseInt(consignmentSalesInvoiceOutInfo.getQuantity().setScale(0,BigDecimal.ROUND_DOWN).toString());
                         consignmentSalesInvoiceOut.setNotOutInvoiceNumber(notOutInvoiceNumber);
@@ -118,7 +117,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         filter.put("invoiceNumber", String.valueOf(consignmentSalesInvoice.getInvoiceNumber()));
         List<ConsignmentSalesInvoice> check = consignmentSalesInvoiceDao.findAll(filter);
         if (check.size()>0){
-            System.out.println(check.get(0));
             // 发票已被挂账
             if (check.get(0).getInvoiceStatus()==1){
                 return 3;
@@ -241,7 +239,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         Map<String, BigDecimal> resultList = consignmentSalesInvoiceDto.getResultList();
         BigDecimal amount = resultList.get("amount");
 
-        System.out.println(amount);
         if (amount.compareTo(quotaData) > 0) {
             return result;
         }
@@ -254,9 +251,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             consignmentSalesInvoiceOutMoneyData.add(consignmentSalesInvoiceOutData);
         }
         BigDecimal totalMoney = new BigDecimal("0.00");
-        for (ConsignmentSalesInvoiceOut c:consignmentSalesInvoiceOutMoneyData){
-            System.out.println(c.toString());
-        }
         if (consignmentSalesInvoiceOutMoneyData.size() == 1){
             ConsignmentSalesInvoiceOut consignmentSalesInvoiceOut = consignmentSalesInvoiceOutMoneyData.get(0);
             totalMoney = consignmentSalesInvoiceOut.getAmount();
@@ -281,8 +275,6 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
         consignmentSalesInvoice.setInvoiceDate(consignmentSalesInvoiceDto.getInvoiceDate());
         Integer interimInvoiceNumber = IDUtil.getId();
         consignmentSalesInvoice.setInterimInvoiceNumber(interimInvoiceNumber);
-        System.out.println("=======================================>");
-        System.out.println(consignmentSalesInvoice.toString());
         consignmentSalesInvoiceDao.add(consignmentSalesInvoice);
         for (int i = 0; i < combinedData.size(); i++) {
             Map<String, String> stringStringMap = combinedData.get(i);
@@ -296,6 +288,7 @@ public class ConsignmentSalesInvoiceService extends BaseService<ConsignmentSales
             consignmentSalesInvoiceOutInfo.setMaterialName(stringStringMap.get("materialName"));
             String purchaseOrder = stringStringMap.get("purchaseOrder");
             consignmentSalesInvoiceOutInfo.setPurchaseOrder(purchaseOrder);
+
             consignmentSalesInvoiceOutInfo.setSupplierCode(username);
             consignmentSalesInvoiceOutInfo.setInvoiceNumber(consignmentSalesInvoiceDto.getInvoiceNumber());
             consignmentSalesInvoiceOutInfoDao.add(consignmentSalesInvoiceOutInfo);

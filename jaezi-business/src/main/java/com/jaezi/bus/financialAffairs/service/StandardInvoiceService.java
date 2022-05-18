@@ -122,7 +122,7 @@ public class StandardInvoiceService extends BaseService<StandardInvoice, Standar
                 LocalDate nowTime = LocalDate.now();
 
                 standardInvoice.setInvoiceStatus(1);
-                standardInvoice.setTaxRate(standardInvoice.getTaxRate().divide(new BigDecimal(100)));
+                standardInvoice.setTaxRate(standardInvoice.getTaxRate().divide(new BigDecimal(100),2,BigDecimal.ROUND_DOWN));
                 return standardInvoiceDao.update(standardInvoice);
             } else if (JwtUtil.getUserType() != null && JwtUtil.getUserType() == 3) {
                 return standardInvoiceDao.update(standardInvoice);
